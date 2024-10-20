@@ -1,6 +1,6 @@
 import Geolocation from '@react-native-community/geolocation';
 import textStyle from '@src/theme/text';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Alert, StyleSheet, Text, View } from 'react-native';
 import { API_KEY } from 'react-native-dotenv';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
@@ -8,6 +8,7 @@ import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 
 import parkingLotAPI from '@src/api/parking-lot.api';
+import { debounce } from 'lodash';
 import { Image } from 'react-native';
 import ParkingLotModal from './components/ParkingLotModal';
 
@@ -19,106 +20,92 @@ Geolocation.setRNConfiguration({
 const RADIUS_KM = 3;
 const SIGNIFICANT_CHANGE = 0.01; // Khoảng 1.1 km
 
+
 const ParkingLotsMap = ({ initialLocation }) => {
-const [region, setRegion] = useState(null);
-const [parkingslots, setParkingslots] = useState([]);
-const [markerPosition, setMarkerPosition] = useState(null);
-const [selectedParkingslot, setSelectedParkingslot] = useState(null);
-const mapRef = useRef(null);
-const lastFetchedLocation = useRef(null);
-const [fetchError, setFetchError] = useState(false);
+  const [region, setRegion] = useState(null);
+  const [parkingslots, setParkingslots] = useState([]);
+  const [markerPosition, setMarkerPosition] = useState(null);
+  const [selectedParkingslot, setSelectedParkingslot] = useState(null);
+  const mapRef = useRef(null);
+  const lastFetchedLocation = useRef(null);
+  const [fetchError, setFetchError] = useState(false);
 
-console.log("rerender")
-const fetchParkingSlots = async (latitude, longitude) => {
-  if (fetchError) return;
-  try {
-    const response = await parkingLotAPI.getParkingLotsInRegion({latitude, longitude, radius: RADIUS_KM});
-    console.log('response', response);
-    lastFetchedLocation.current = { latitude, longitude };
-    setParkingslots(response);
-  } catch (error) {
-    console.error('Error fetching parking slots:', error);
-    setFetchError(()=>true);
-    Alert.alert('Lỗi', 'Không thể tải dữ liệu bãi đỗ xe');
-  }
-};
-
-const getCurrentLocation = () => {
-  return new Promise((resolve, reject) => {
-    Geolocation.getCurrentPosition(
-      position => {
-        const { latitude, longitude } = position.coords;
-        //UIT 10.87061180891543, 106.8022367824454
-        resolve({ latitude: 10.87061180891543, longitude: 106.8022367824454 });
-      },
-      error => reject(error),
-      { enableHighAccuracy: false, timeout: 20000 },
-    );
-  });
-};
-
-useEffect(() => {
-  const setupLocation = async () => {
+  const fetchParkingSlots = useCallback(async (latitude, longitude) => {
+    if (fetchError) return;
     try {
-      let location;
-      if (initialLocation) {
-        location = initialLocation;
-      } else {
-        location = await getCurrentLocation();
-      }
-
-      const newRegion = {
-        ...location,
-        latitudeDelta: 0.01,
-        longitudeDelta: 0.01,
-      };
-
-      setRegion(newRegion);
-      setMarkerPosition(location);
-      fetchParkingSlots(location.latitude, location.longitude);
+      const response = await parkingLotAPI.getParkingLotsInRegion({latitude, longitude, radius: RADIUS_KM});
+      lastFetchedLocation.current = { latitude, longitude };
+      setParkingslots(response);
     } catch (error) {
-      Alert.alert('Lỗi', 'Không thể lấy vị trí hiện tại');
+      console.error('Error fetching parking slots:', error);
+      setFetchError(true);
+      Alert.alert('Lỗi', 'Không thể tải dữ liệu bãi đỗ xe');
     }
-  };
+  }, [fetchError]);
 
-  setupLocation();
-}, []);
+  const getCurrentLocation = useCallback(() => {
+    return new Promise((resolve, reject) => {
+      Geolocation.getCurrentPosition(
+        position => {
+          const { latitude, longitude } = position.coords;
+          resolve({ latitude: 10.87061180891543, longitude: 106.8022367824454 });
+        },
+        error => reject(error),
+        { enableHighAccuracy: false, timeout: 20000 },
+      );
+    });
+  }, []);
 
-const handleRegionChangeComplete = (newRegion) => {
-  if (fetchError) return;
-  setRegion(newRegion);
-  console.log("Region", newRegion);
-  if (!lastFetchedLocation.current) {
-    fetchParkingSlots(newRegion.latitude, newRegion.longitude);
-    return;
+  useEffect(() => {
+    const setupLocation = async () => {
+      try {
+        const location = initialLocation || await getCurrentLocation();
+        const newRegion = {
+          ...location,
+          latitudeDelta: 0.01,
+          longitudeDelta: 0.01,
+        };
+        setRegion(newRegion);
+        setMarkerPosition(location);
+        fetchParkingSlots(location.latitude, location.longitude);
+      } catch (error) {
+        Alert.alert('Lỗi', 'Không thể lấy vị trí hiện tại');
+      }
+    };
+    setupLocation();
+  }, [initialLocation, getCurrentLocation, fetchParkingSlots]);
+
+  const handleRegionChangeComplete = useMemo(() => debounce(async (newRegion) => {
+    if (fetchError) return;
+    setRegion(newRegion);
+    if (!lastFetchedLocation.current) {
+      await fetchParkingSlots(newRegion.latitude, newRegion.longitude);
+      return;
+    }
+    const latChange = Math.abs(newRegion.latitude - lastFetchedLocation.current.latitude);
+    const lonChange = Math.abs(newRegion.longitude - lastFetchedLocation.current.longitude);
+    if (latChange > SIGNIFICANT_CHANGE || lonChange > SIGNIFICANT_CHANGE) {
+      await fetchParkingSlots(newRegion.latitude, newRegion.longitude);
+    }
+  }, 300), [fetchError, fetchParkingSlots]);
+
+  const handlePress = useCallback((data, details = null) => {
+    if (fetchError) return;
+    const {location} = details.geometry;
+    const newRegion = {
+      latitude: location.lat,
+      longitude: location.lng,
+      latitudeDelta: 0.0922,
+      longitudeDelta: 0.0621,
+    };
+    setRegion(newRegion);
+    mapRef.current.animateToRegion(newRegion, 1000);
+    fetchParkingSlots(location.lat, location.lng);
+  }, [fetchError, fetchParkingSlots]);
+
+  if (!region || !markerPosition) {
+    return null;
   }
-
-  const latChange = Math.abs(newRegion.latitude - lastFetchedLocation.current.latitude);
-  const lonChange = Math.abs(newRegion.longitude - lastFetchedLocation.current.longitude);
-  console.log("lastFetchedLocation", lastFetchedLocation.current);
-  console.log("latChange", latChange, "lonChange", lonChange);
-  if (latChange > SIGNIFICANT_CHANGE || lonChange > SIGNIFICANT_CHANGE) {
-    fetchParkingSlots(newRegion.latitude, newRegion.longitude);
-  }
-};
-
-const handlePress = (data, details = null) => {
-  if (fetchError) return;
-  const {location} = details.geometry;
-  const newRegion = {
-    latitude: location.lat,
-    longitude: location.lng,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0621,
-  };
-  setRegion(newRegion);
-  mapRef.current.animateToRegion(newRegion, 1000);
-  fetchParkingSlots(location.lat, location.lng);
-};
-
-if (!region || !markerPosition) {
-  return null;
-}
 
   return (
     <View style={styles.container}>
@@ -127,6 +114,7 @@ if (!region || !markerPosition) {
         ref={mapRef}
         style={styles.map}
         region={region}
+        onRegionChangeComplete={handleRegionChangeComplete}
         >
         {parkingslots.map((parkingslot, index) => (
           <Marker
@@ -189,7 +177,7 @@ if (!region || !markerPosition) {
       )}
     </View>
   );
-};
+}
 
 export default ParkingLotsMap;
 
