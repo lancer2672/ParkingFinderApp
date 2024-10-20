@@ -7,16 +7,12 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 function App() {
   return (
     <GestureHandlerRootView style={{flex: 1}}>
-    
-    
-      
             <ThemeProviderComponent>
               <SafeAreaView style={{flex: 1}}>
                 <Root></Root>
                 <FlashMessage position="top" />
               </SafeAreaView>
             </ThemeProviderComponent>
-
     </GestureHandlerRootView>
   );
 }

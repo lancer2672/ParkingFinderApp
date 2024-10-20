@@ -2,6 +2,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SignIn from '@src/screens/Authentication/SignIn';
 import SignUp from '@src/screens/Authentication/SignUp';
+import ParkingLotsMap from '@src/screens/ParkingLot/ParkingLotMap';
 import { ROLE } from '@src/utils/constant';
 import { useState } from 'react';
 import { navigationRef } from './NavigationController';
@@ -29,10 +30,10 @@ const MainStack = () => {
 
   return (
     <Stack.Navigator
-      initialRouteName={'Tabs'}
+      initialRouteName={'ParkingLotMap'}
       screenOptions={{presentation: 'card', ...screenOptions}}>
       <Stack.Group screenOptions={screenOptions}>
-        <Stack.Screen name={'Tabs'} component={Tabs} />
+        <Stack.Screen name={'ParkingLotMap'} component={ParkingLotsMap} />
       </Stack.Group>
     </Stack.Navigator>
   );
@@ -51,7 +52,7 @@ const Root = () => {
   return (
     <NavigationContainer ref={navigationRef}>
       <Stack.Navigator screenOptions={screenOptions}>
-        {false ? (
+        {true ? (
           getStackByRole(ROLE.USER)
         ) : (
           <Stack.Screen
