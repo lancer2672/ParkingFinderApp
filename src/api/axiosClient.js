@@ -1,9 +1,13 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
-const baseURL = 'http://54.255.249.131:8080';
+const baseURL = 'https://parkingfinder-java.onrender.com';
+const ac = 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI0IiwiaWF0IjoxNzI5NDE1NzUwLCJleHAiOjE3Mjk1MDIxNTB9.J1wFb2uPMCvs-_G0YCobfULcJLk6cHERdUsDVqorWbsfo5C9pT3p76qSnVxkm4p59b8ThRZZA4NZBwtWayp1EQ';
 const axiosClient = axios.create({
   baseURL,
+  headers: {
+    'Authorization': `Bearer ${ac}`
+  }
 });
 
 axiosClient.interceptors.request.use(
