@@ -7,7 +7,7 @@ import { rowCenter } from '@src/theme/style';
 import textStyle from '@src/theme/text';
 import { Formik } from 'formik';
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View, Image } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Fontisto from 'react-native-vector-icons/Fontisto';
@@ -16,7 +16,7 @@ const STAFF_EMAIL = "nguyenkhang@gmail.com"
 const STAFF_PASSWORD = "JBdragonfire1135@"
 
 //MOCK user 
-const userInfo = {"email": "jbkhanhtran@gmail.com",hotelId:16, "firstName": "Khánh", "id": 15, "lastName": "Trần", "phoneNumber": "0846354255", "role": "USER", "status": "ACTIVE"}
+const userInfo = { "email": "jbkhanhtran@gmail.com", hotelId: 16, "firstName": "Khánh", "id": 15, "lastName": "Trần", "phoneNumber": "0846354255", "role": "USER", "status": "ACTIVE" }
 const SignIn = () => {
   const [value, setValue] = useState('');
   const [secureTextEntry, setSecureTextEntry] = useState(true);
@@ -27,51 +27,51 @@ const SignIn = () => {
 
   const [isLoading, setIsloading] = useState(false);
 
-  const handleStaffLogin= (values) =>{
-    if(values.password == STAFF_PASSWORD){
-        setUser(staffInfo);
+  const handleStaffLogin = (values) => {
+    if (values.password == STAFF_PASSWORD) {
+      setUser(staffInfo);
     }
   }
-  const handleAgentLogin= (values) =>{
-    if(values.password == STAFF_PASSWORD){
-        setUser(agentInfo);
+  const handleAgentLogin = (values) => {
+    if (values.password == STAFF_PASSWORD) {
+      setUser(agentInfo);
     }
   }
-  const handleUserLogin= (values) =>{
-    if(values.password == STAFF_PASSWORD){
-        setUser(userInfo);
+  const handleUserLogin = (values) => {
+    if (values.password == STAFF_PASSWORD) {
+      setUser(userInfo);
     }
   }
   const handleFormSubmit = async (values) => {
     const controller = new AbortController();
     const signal = controller.signal;
-    if(values.email == STAFF_EMAIL){
+    if (values.email == STAFF_EMAIL) {
       handleStaffLogin(values)
-    
+
     }
-    if(values.email == userInfo.email){
+    if (values.email == userInfo.email) {
       handleUserLogin(values)
-   
+
     }
-    if(values.email == agentInfo.email){
+    if (values.email == agentInfo.email) {
       handleAgentLogin(values)
-    
+
     }
     showMessage({
       message: 'Đăng nhập thành công',
       type: 'success',
     });
     try {
-      
+
     } catch (er) {
-    
+
     } finally {
-    
+
     }
   };
   return (
     <View style={styles.container}>
-      <Text
+      {/* <Text
         style={[
           textStyle.h[2],
           {
@@ -82,14 +82,13 @@ const SignIn = () => {
           },
         ]}>
         Đăng Nhập
-      </Text>
-      {/* <Text style={styles.content}>Điền thông tin bên dưới</Text> */}
-
-      <View style={[rowCenter, {marginVertical: 12}]}>
+      </Text> */}
+      <View style={[rowCenter, { marginVertical: 12,  }]}>
         <View style={styles.sep}></View>
-        <Text style={{paddingHorizontal: 12, color: 'white'}}>
-          Đăng nhập bằng email
-        </Text>
+        <Image
+          source={require('../../assets/icons/iconapp.png')}
+          style={{ width: 180, height: 100 }}
+        />
         <View style={styles.sep}></View>
       </View>
       <LoadingModal
@@ -111,7 +110,7 @@ const SignIn = () => {
 
           handleSubmit,
         }) => (
-          <View style={{flex: 1}}>
+          <View style={{ flex: 1 }}>
             <TextInputComponent
               placeholder="Nhập Email"
               onChangeText={text => {
@@ -121,7 +120,7 @@ const SignIn = () => {
               widthTextInput={'80%'}
               heightTextInput={40}
               leftContent={
-                <Fontisto name="email" color="white" size={20}></Fontisto>
+                <Fontisto name="email" color="black" size={20}></Fontisto>
               }
               error={!!errors.email && !!touched.email}
               errorMessage={errors.email}
@@ -132,7 +131,7 @@ const SignIn = () => {
                 textStyle.h[5],
               ]}
               style={styles.textinput}
-              placeholderColor="white"
+              placeholderColor="black"
             />
             <TextInputComponent
               placeholder="Nhập mật khẩu"
@@ -140,7 +139,7 @@ const SignIn = () => {
               heightTextInput={40}
               secureTextEntry={secureTextEntry}
               leftContent={
-                <Entypo name="lock" color="white" size={20}></Entypo>
+                <Entypo name="lock" color="black" size={20}></Entypo>
               }
               rightContent={
                 <Pressable
@@ -150,7 +149,7 @@ const SignIn = () => {
                   {/* <Entypo name="eye" color="white" size={20}></Entypo> */}
                   <Entypo
                     name={secureTextEntry ? 'eye-with-line' : 'eye'}
-                    color="white"
+                    color="black"
                     size={20}></Entypo>
                 </Pressable>
               }
@@ -167,17 +166,17 @@ const SignIn = () => {
                 textStyle.h[5],
               ]}
               style={styles.textinput}
-              placeholderColor="white"
+              placeholderColor="black"
             />
 
             <Pressable
               onPress={() => {
                 navigate('ForgotPassword');
               }}
-              style={{marginVertical: 12, alignSelf: 'flex-end'}}>
+              style={{ marginVertical: 12, alignSelf: 'flex-end' }}>
               <Text
                 style={{
-                  color: 'white',
+                  color: 'blue',
                   textDecorationLine: 'underline',
                   fontWeight: '500',
                 }}>
@@ -191,6 +190,7 @@ const SignIn = () => {
               }}
               style={styles.buttonItem}
               text="Đăng nhập"
+              color = "blue"
             />
           </View>
         )}
@@ -209,37 +209,20 @@ const SignIn = () => {
           }}>
           <Text
             style={{
-              color: 'white',
+              color: 'black',
             }}>
             Chưa có tải khoản?{' '}
           </Text>
           <Text
             style={{
-              color: 'white',
+              color: 'blue',
               textDecorationLine: 'underline',
               fontWeight: '500',
             }}>
             Đăng ký ngay
           </Text>
         </Pressable>
-        <Pressable
-          onPress={() => {
-            navigate('AgentSignUp');
-          }}
-          style={{
-            alignSelf: 'center',
-            marginBottom: 20,
-            flexDirection: 'row',
-          }}>
-          <Text
-            style={{
-              color: 'white',
-              textDecorationLine: 'underline',
-              fontWeight: '500',
-            }}>
-            Đăng ký làm agent
-          </Text>
-        </Pressable>
+
       </View>
     </View>
   );
@@ -251,25 +234,29 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: generalColor.other.darkblue,
+    backgroundColor: generalColor.other.white,
   },
   buttonItem: {
     marginVertical: 20,
     paddingVertical: 12,
   },
+  image: {
+    width: 100,
+    height: 100,
+  },
   textinput: {
     backgroundColor: undefined,
-    borderColor: generalColor.white[50],
+    borderColor: generalColor.black[50],
     paddingVertical: 4,
-    borderWidth: 2,
+    borderBottomWidth: 2,
+    color: 'black',
   },
   sep: {
-    backgroundColor: '#666',
     borderRadius: 50,
     height: 2,
     flex: 1,
   },
   content: {
-    color: 'white',
+    color: 'black',
   },
 });

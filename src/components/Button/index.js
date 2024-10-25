@@ -8,15 +8,16 @@ const ButtonComponent = ({
   text,
   txtStyle = {},
   onPress,
+  color = 'blue', 
 }) => {
   return (
     <Pressable onPress={onPress}>
       <View
         style={{
-          backgroundColor: outline ? undefined : generalColor.primary,
+          backgroundColor: outline ? undefined :color,
           borderRadius: 2,
           alignItems: 'center',
-          borderColor: generalColor.primary,
+          borderColor: color,
           borderWidth: outline ? 2 : 0,
           justifyContent: 'center',
           padding: 10,
