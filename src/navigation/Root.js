@@ -1,10 +1,11 @@
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import SignIn from '@src/screens/Authentication/SignIn';
 import SignUp from '@src/screens/Authentication/SignUp';
-import { ROLE } from '@src/utils/constant';
-import { useState } from 'react';
-import { navigationRef } from './NavigationController';
+import {ROLE} from '@src/utils/constant';
+import {useState} from 'react';
+import {navigationRef} from './NavigationController';
+import ParkingHistory from '@src/screens/History/ParkingHistory';
 const screenOptions = {
   header: () => null,
   cardOverlayEnabled: true,
@@ -19,6 +20,7 @@ const AuthenticationStack = () => {
         <Stack.Group>
           <Stack.Screen name={'SignUp'} component={SignUp} />
 
+          {/* <Stack.Screen name={'SignIn'} component={ParkingHistory} /> */}
           <Stack.Screen name={'SignIn'} component={SignIn} />
         </Stack.Group>
       ) : null}
@@ -26,7 +28,6 @@ const AuthenticationStack = () => {
   );
 };
 const MainStack = () => {
-
   return (
     <Stack.Navigator
       initialRouteName={'Tabs'}
