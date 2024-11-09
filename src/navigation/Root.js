@@ -1,6 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import Onboarding from '@src/components/onboarding';
+import SplashScreen from '@src/components/splash';
 import SignIn from '@src/screens/Authentication/SignIn';
 import SignUp from '@src/screens/Authentication/SignUp';
 import ParkingLotsMap from '@src/screens/ParkingLot/ParkingLotMap';
@@ -13,13 +15,17 @@ const screenOptions = {
   cardOverlayEnabled: true,
   headerShown: false,
 };
+
 const Stack = createNativeStackNavigator();
+
 const AuthenticationStack = () => {
   const username = null;
   return (
-    <Stack.Navigator initialRouteName="SignIn" screenOptions={screenOptions}>
+    <Stack.Navigator initialRouteName="SplashScreen" screenOptions={screenOptions}>
       {username == null ? (
         <Stack.Group>
+          <Stack.Screen name="SplashScreen" component={SplashScreen} />
+          <Stack.Screen name="Onboarding" component={Onboarding} />
           <Stack.Screen name={'SignUp'} component={SignUp} />
 
           <Stack.Screen name={'SignIn'} component={SignIn} />
@@ -28,8 +34,8 @@ const AuthenticationStack = () => {
     </Stack.Navigator>
   );
 };
-const MainStack = () => {
 
+const MainStack = () => {
   return (
     <Stack.Navigator
       initialRouteName={'ParkingLotMap'}
@@ -40,6 +46,7 @@ const MainStack = () => {
     </Stack.Navigator>
   );
 };
+
 const Root = () => {
   const [isLoading, setIsloading] = useState(false);
   const [userId, setUserId] = useState(null);
@@ -62,11 +69,12 @@ const Root = () => {
   const getStackByRole = role => {
     switch (role) {
       case ROLE.USER:
-        return <Stack.Screen name={'MainStack'} component={MainStack} />;
+        return <Stack.Screen name="MainStack" component={MainStack} />;
       default:
-        return <Stack.Screen name={'MainStack'} component={MainStack} />;
+        return <Stack.Screen name="MainStack" component={MainStack} />;
     }
   };
+
   return (
     <NavigationContainer ref={navigationRef}>
       <Stack.Navigator screenOptions={screenOptions}>
@@ -77,7 +85,7 @@ const Root = () => {
             options={{
               animationTypeForReplace: true ? 'push' : 'pop',
             }}
-            name={'AuthenticationStack'}
+            name="AuthenticationStack"
             component={AuthenticationStack}
           />
         )}
@@ -85,4 +93,5 @@ const Root = () => {
     </NavigationContainer>
   );
 };
+
 export default Root;

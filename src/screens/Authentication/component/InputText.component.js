@@ -36,10 +36,10 @@ const InputText = forwardRef(
           contentStyle={{
             margin: 0,
           }}
-          placeholderTextColor={'white'}
-          textColor={'white'}
+          placeholderTextColor={'black'}
+          textColor={'black'}
           editable={!disabled}
-          outlineColor={hasValidationError ? '#b85454' : 'white'}
+          outlineColor={hasValidationError ? '#b85454' : 'black'}
           style={styles.textInput}
           activeOutlineColor={hasValidationError ? '#b85454' : '#8145ba'}
           secureTextEntry={passwordType && !showPassword}
@@ -54,7 +54,7 @@ const InputText = forwardRef(
                 onPress={() => {
                   setShowPassword(!showPassword);
                 }}
-                color={'white'}
+                color={'black'}
                 icon={showPassword ? 'eye' : 'eye-off'}
               />
             )
@@ -71,12 +71,12 @@ export default memo(InputText);
 
 const styles = StyleSheet.create({
   textInput: {
-    backgroundColor: 'rgba(0,0,0,0)',
+    backgroundColor: 'rgba(0,0,0,1)',
     marginTop: 8,
 
     fontSize: 14,
     padding: 0,
-    color: 'white',
+    color: 'black',
   },
   sep: {
     backgroundColor: '#666',
