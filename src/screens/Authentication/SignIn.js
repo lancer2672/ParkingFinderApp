@@ -117,6 +117,7 @@ const SignIn = () => {
         }) => (
           <View style={{ flex: 1, marginTop:40 }}>
             <TextInputComponent
+                keyboardType="numeric"
               placeholder="Nhập số điện thoại"
               onChangeText={text => {
                 handleChange('phoneNumber')(text);

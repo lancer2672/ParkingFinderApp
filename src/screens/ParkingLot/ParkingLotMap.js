@@ -8,7 +8,7 @@ import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 
 import parkingLotAPI from '@src/api/parkingLot.api';
-import { Image } from 'react-native';
+import { Image, TouchableOpacity } from 'react-native';
 import ParkingLotModal from './components/ParkingLotModal';
 
 Geolocation.setRNConfiguration({
@@ -18,13 +18,16 @@ Geolocation.setRNConfiguration({
 const RADIUS_KM = 3;
 
 const ParkingLotsMap = ({initialLocation}) => {
-  const [region, setRegion] = useState(null);
+ 
   const [parkingslots, setParkingslots] = useState([]);
   const [markerPosition, setMarkerPosition] = useState(null);
   const [selectedParkingslot, setSelectedParkingslot] = useState(null);
+  const [isMapMoved, setIsMapMoved] = useState(false);
+  const [currentRegion, setCurrentRegion] = useState(null);
   const mapRef = useRef(null);
   const lastFetchedLocation = useRef(null);
   const [fetchError, setFetchError] = useState(false);
+
 
   const fetchParkingSlots = useCallback(
     async (latitude, longitude) => {
@@ -68,7 +71,7 @@ const ParkingLotsMap = ({initialLocation}) => {
           latitudeDelta: 0.01,
           longitudeDelta: 0.01,
         };
-        setRegion(newRegion);
+        setCurrentRegion(newRegion);
         setMarkerPosition(location);
         fetchParkingSlots(location.latitude, location.longitude);
       } catch (error) {
@@ -78,20 +81,11 @@ const ParkingLotsMap = ({initialLocation}) => {
     setupLocation();
   }, [initialLocation, getCurrentLocation, fetchParkingSlots]);
 
-  // const handleRegionChangeComplete = useMemo(() => debounce(async (newRegion) => {
-  //   if (fetchError) return;
-  //   setRegion(newRegion);
-  //   if (!lastFetchedLocation.current) {
-  //     await fetchParkingSlots(newRegion.latitude, newRegion.longitude);
-  //     return;
-  //   }
-  //   const latChange = Math.abs(newRegion.latitude - lastFetchedLocation.current.latitude);
-  //   const lonChange = Math.abs(newRegion.longitude - lastFetchedLocation.current.longitude);
-  //   if (latChange > SIGNIFICANT_CHANGE || lonChange > SIGNIFICANT_CHANGE) {
-  //     await fetchParkingSlots(newRegion.latitude, newRegion.longitude);
-  //   }
-  // }, 300), [fetchError, fetchParkingSlots]);
-
+const handleSearchThisArea = () => {
+    if (currentRegion) {
+      fetchParkingSlots(currentRegion.latitude, currentRegion.longitude);
+    }
+  };
   const handlePress = useCallback(
     (data, details = null) => {
       if (fetchError) return;
@@ -102,24 +96,34 @@ const ParkingLotsMap = ({initialLocation}) => {
         latitudeDelta: 0.0922,
         longitudeDelta: 0.0621,
       };
-      setRegion(newRegion);
+      setCurrentRegion(newRegion);
       mapRef.current.animateToRegion(newRegion, 1000);
       fetchParkingSlots(location.lat, location.lng);
     },
     [fetchError, fetchParkingSlots],
   );
 
-  if (!region || !markerPosition) {
+  if (!currentRegion || !markerPosition) {
     return null;
   }
-
+  const handleRegionChange = (newRegion) => {
+    if(Math.abs(newRegion.latitude - currentRegion.latitude) < 0.001 && Math.abs(newRegion.longitude - currentRegion.longitude) < 0.001) {
+      return;
+    }
+    console.log("newRegion", newRegion);
+    console.log("Region", currentRegion)
+    setCurrentRegion(newRegion);
+    setIsMapMoved(true);
+  };
+  console.log("parkingslots",parkingslots.length)
   return (
     <View style={styles.container}>
       <MapView
         provider={PROVIDER_GOOGLE}
         ref={mapRef}
         style={styles.map}
-        region={region}>
+        onRegionChangeComplete={handleRegionChange}
+        region={currentRegion}>
         {parkingslots.map((parkingslot, index) => (
           <Marker
             key={index}
@@ -155,7 +159,7 @@ const ParkingLotsMap = ({initialLocation}) => {
         <Marker coordinate={markerPosition} />
         {selectedParkingslot && (
           <MapViewDirections
-            origin={region}
+            origin={currentRegion}
             destination={selectedParkingslot.location}
             apikey={API_KEY}
             strokeWidth={3}
@@ -164,7 +168,7 @@ const ParkingLotsMap = ({initialLocation}) => {
         )}
       </MapView>
 
-      <View style={styles.searchContainer}>
+      <View style={[styles.searchContainer, {position: 'absolute', top: 40, left:24, right:24}]}>
         <GooglePlacesAutocomplete
           placeholder="Tìm kiếm"
           onPress={handlePress}
@@ -174,7 +178,17 @@ const ParkingLotsMap = ({initialLocation}) => {
           }}
           onFail={error => console.log('Find place error', error)}
         />
+         {isMapMoved && (
+        <TouchableOpacity
+          style={styles.searchAreaButton}
+          onPress={handleSearchThisArea}>
+          <Text style={styles.searchAreaButtonText}>
+            Tìm kiếm khu vực này
+          </Text>
+        </TouchableOpacity>
+      )}
       </View>
+      
       {selectedParkingslot && (
         <ParkingLotModal
           parkingslot={selectedParkingslot}
@@ -219,7 +233,7 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     height: 48,
-    width: '100%',
+    
   },
   seperator: {
     width: 3,
@@ -227,5 +241,35 @@ const styles = StyleSheet.create({
     height: 32,
     marginHorizontal: 8,
     backgroundColor: 'gray',
+  },
+  searchAreaButton: {
+    position: 'absolute',
+    top: 100,
+    left: '50%',
+    transform: [{ translateX: -75 }],
+    backgroundColor: 'white',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  searchAreaButtonText: {
+    color: '#4A55A2',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  searchContainer: {
+    position: 'absolute',
+    top: 40,
+    left: 24,
+    right: 24,
+    height: 48,
   },
 });

@@ -11,6 +11,7 @@ import useUserStore from '@src/store/userStore';
 import { UserID_Key } from '@src/utils/localStorage';
 import { useEffect, useState } from 'react';
 import { navigationRef } from './NavigationController';
+import { Tabs } from './NavigationTab';
 const screenOptions = {
   header: () => null,
   cardOverlayEnabled: true,
@@ -39,9 +40,10 @@ const AuthenticationStack = () => {
 const MainStack = () => {
   return (
     <Stack.Navigator
-      initialRouteName={'ParkingLotMap'}
+      initialRouteName={'Tabs'}
       screenOptions={{presentation: 'card', ...screenOptions}}>
       <Stack.Group screenOptions={screenOptions}>
+        <Stack.Screen name={'Tabs'} component={Tabs} />
         <Stack.Screen name={'ParkingLotMap'} component={ParkingLotsMap} />
       </Stack.Group>
     </Stack.Navigator>
@@ -59,7 +61,7 @@ const Root = () => {
         if( userId != null){
           userRes = await userAPI.getUserByID(userId);
           console.log('userRes', userRes);
-          setUser(userRes.data);
+          setUser(userRes);
         }
       } catch (error) {
         console.error('Error fetching user ID:', error);
