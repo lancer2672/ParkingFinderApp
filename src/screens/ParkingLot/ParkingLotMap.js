@@ -1,6 +1,6 @@
 import Geolocation from '@react-native-community/geolocation';
 import textStyle from '@src/theme/text';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Alert, StyleSheet, Text, View } from 'react-native';
 import { API_KEY } from 'react-native-dotenv';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
@@ -8,7 +8,6 @@ import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 
 import parkingLotAPI from '@src/api/parking-lot.api';
-import { debounce } from 'lodash';
 import { Image } from 'react-native';
 import ParkingLotModal from './components/ParkingLotModal';
 
@@ -16,12 +15,9 @@ Geolocation.setRNConfiguration({
   skipPermissionRequests: false,
 });
 
-
 const RADIUS_KM = 3;
-const SIGNIFICANT_CHANGE = 0.01; // Khoảng 1.1 km
 
-
-const ParkingLotsMap = ({ initialLocation }) => {
+const ParkingLotsMap = ({initialLocation}) => {
   const [region, setRegion] = useState(null);
   const [parkingslots, setParkingslots] = useState([]);
   const [markerPosition, setMarkerPosition] = useState(null);
@@ -30,28 +26,35 @@ const ParkingLotsMap = ({ initialLocation }) => {
   const lastFetchedLocation = useRef(null);
   const [fetchError, setFetchError] = useState(false);
 
-  const fetchParkingSlots = useCallback(async (latitude, longitude) => {
-    if (fetchError) return;
-    try {
-      const response = await parkingLotAPI.getParkingLotsInRegion({latitude, longitude, radius: RADIUS_KM});
-      lastFetchedLocation.current = { latitude, longitude };
-      setParkingslots(response);
-    } catch (error) {
-      console.error('Error fetching parking slots:', error);
-      setFetchError(true);
-      Alert.alert('Lỗi', 'Không thể tải dữ liệu bãi đỗ xe');
-    }
-  }, [fetchError]);
+  const fetchParkingSlots = useCallback(
+    async (latitude, longitude) => {
+      if (fetchError) return;
+      try {
+        const response = await parkingLotAPI.getParkingLotsInRegion({
+          latitude,
+          longitude,
+          radius: RADIUS_KM,
+        });
+        lastFetchedLocation.current = {latitude, longitude};
+        setParkingslots(response);
+      } catch (error) {
+        console.error('Error fetching parking slots:', error);
+        setFetchError(true);
+        Alert.alert('Lỗi', 'Không thể tải dữ liệu bãi đỗ xe');
+      }
+    },
+    [fetchError],
+  );
 
   const getCurrentLocation = useCallback(() => {
     return new Promise((resolve, reject) => {
       Geolocation.getCurrentPosition(
         position => {
-          const { latitude, longitude } = position.coords;
-          resolve({ latitude: 10.87061180891543, longitude: 106.8022367824454 });
+          const {latitude, longitude} = position.coords;
+          resolve({latitude: 10.87061180891543, longitude: 106.8022367824454});
         },
         error => reject(error),
-        { enableHighAccuracy: false, timeout: 20000 },
+        {enableHighAccuracy: false, timeout: 20000},
       );
     });
   }, []);
@@ -59,7 +62,7 @@ const ParkingLotsMap = ({ initialLocation }) => {
   useEffect(() => {
     const setupLocation = async () => {
       try {
-        const location = initialLocation || await getCurrentLocation();
+        const location = initialLocation || (await getCurrentLocation());
         const newRegion = {
           ...location,
           latitudeDelta: 0.01,
@@ -75,33 +78,36 @@ const ParkingLotsMap = ({ initialLocation }) => {
     setupLocation();
   }, [initialLocation, getCurrentLocation, fetchParkingSlots]);
 
-  const handleRegionChangeComplete = useMemo(() => debounce(async (newRegion) => {
-    if (fetchError) return;
-    setRegion(newRegion);
-    if (!lastFetchedLocation.current) {
-      await fetchParkingSlots(newRegion.latitude, newRegion.longitude);
-      return;
-    }
-    const latChange = Math.abs(newRegion.latitude - lastFetchedLocation.current.latitude);
-    const lonChange = Math.abs(newRegion.longitude - lastFetchedLocation.current.longitude);
-    if (latChange > SIGNIFICANT_CHANGE || lonChange > SIGNIFICANT_CHANGE) {
-      await fetchParkingSlots(newRegion.latitude, newRegion.longitude);
-    }
-  }, 300), [fetchError, fetchParkingSlots]);
+  // const handleRegionChangeComplete = useMemo(() => debounce(async (newRegion) => {
+  //   if (fetchError) return;
+  //   setRegion(newRegion);
+  //   if (!lastFetchedLocation.current) {
+  //     await fetchParkingSlots(newRegion.latitude, newRegion.longitude);
+  //     return;
+  //   }
+  //   const latChange = Math.abs(newRegion.latitude - lastFetchedLocation.current.latitude);
+  //   const lonChange = Math.abs(newRegion.longitude - lastFetchedLocation.current.longitude);
+  //   if (latChange > SIGNIFICANT_CHANGE || lonChange > SIGNIFICANT_CHANGE) {
+  //     await fetchParkingSlots(newRegion.latitude, newRegion.longitude);
+  //   }
+  // }, 300), [fetchError, fetchParkingSlots]);
 
-  const handlePress = useCallback((data, details = null) => {
-    if (fetchError) return;
-    const {location} = details.geometry;
-    const newRegion = {
-      latitude: location.lat,
-      longitude: location.lng,
-      latitudeDelta: 0.0922,
-      longitudeDelta: 0.0621,
-    };
-    setRegion(newRegion);
-    mapRef.current.animateToRegion(newRegion, 1000);
-    fetchParkingSlots(location.lat, location.lng);
-  }, [fetchError, fetchParkingSlots]);
+  const handlePress = useCallback(
+    (data, details = null) => {
+      if (fetchError) return;
+      const {location} = details.geometry;
+      const newRegion = {
+        latitude: location.lat,
+        longitude: location.lng,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0621,
+      };
+      setRegion(newRegion);
+      mapRef.current.animateToRegion(newRegion, 1000);
+      fetchParkingSlots(location.lat, location.lng);
+    },
+    [fetchError, fetchParkingSlots],
+  );
 
   if (!region || !markerPosition) {
     return null;
@@ -113,9 +119,7 @@ const ParkingLotsMap = ({ initialLocation }) => {
         provider={PROVIDER_GOOGLE}
         ref={mapRef}
         style={styles.map}
-        region={region}
-        onRegionChangeComplete={handleRegionChangeComplete}
-        >
+        region={region}>
         {parkingslots.map((parkingslot, index) => (
           <Marker
             key={index}
@@ -127,15 +131,22 @@ const ParkingLotsMap = ({ initialLocation }) => {
               longitude: parkingslot.longitude,
             }}>
             <View style={styles.markerContainer}>
-              <Text
-                numberOfLines={2}
-                style={styles.markerText}>
+              <Text numberOfLines={2} style={styles.markerText}>
                 {parkingslot.name}
               </Text>
-              <View style={[styles.markerAvatar, { borderWidth: 6, width:36, height:36, backgroundColor:"red" }]}>
+              <View
+                style={[
+                  styles.markerAvatar,
+                  {
+                    borderWidth: 6,
+                    width: 36,
+                    height: 36,
+                    backgroundColor: 'red',
+                  },
+                ]}>
                 <Image
                   source={require('../../assets/imgs/Parking.png')}
-                  style={{ width: '100%', height: '100%', resizeMode: 'contain' }}
+                  style={{width: '100%', height: '100%', resizeMode: 'contain'}}
                 />
               </View>
             </View>
@@ -167,9 +178,7 @@ const ParkingLotsMap = ({ initialLocation }) => {
       {selectedParkingslot && (
         <ParkingLotModal
           parkingslot={selectedParkingslot}
-          handleContinue={() => {
-            
-          }}
+          handleContinue={() => {}}
           isVisible={selectedParkingslot != null}
           onClose={() => {
             setSelectedParkingslot(null);
@@ -177,22 +186,21 @@ const ParkingLotsMap = ({ initialLocation }) => {
       )}
     </View>
   );
-}
+};
 
 export default ParkingLotsMap;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'gray'
+    backgroundColor: 'gray',
   },
   map: {
     flex: 1,
-    width: '100%'
+    width: '100%',
   },
   markerContainer: {
     alignItems: 'center',
-    
   },
   markerText: {
     ...textStyle.h[5],
@@ -207,12 +215,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   markerAvatar: {
-    borderColor: 'white'
-    
+    borderColor: 'white',
   },
   searchContainer: {
     height: 48,
-    width: '100%'
+    width: '100%',
   },
   seperator: {
     width: 3,
