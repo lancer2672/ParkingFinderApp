@@ -7,7 +7,7 @@ import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplet
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 
-import parkingLotAPI from '@src/api/parking-lot.api';
+import parkingLotAPI from '@src/api/parkingLot.api';
 import { Image } from 'react-native';
 import ParkingLotModal from './components/ParkingLotModal';
 

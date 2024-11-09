@@ -17,3 +17,4 @@ const useUserStore = create((set) => ({
   resetUser: () => set({ user: { email: '', phoneNumber: '', role: '' } }),
   setUser: (user) => set({ user }),
 }))
+export default useUserStore

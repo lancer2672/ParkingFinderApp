@@ -1,6 +1,6 @@
-import {generalColor} from '@src/theme/color';
+import { generalColor } from '@src/theme/color';
 import textStyle from '@src/theme/text';
-import {Pressable, StyleSheet, Text, View} from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 const ButtonComponent = ({
   outline,
   style = {},
@@ -9,9 +9,10 @@ const ButtonComponent = ({
   txtStyle = {},
   onPress,
   color = 'blue', 
+  loadingState = false,
 }) => {
   return (
-    <Pressable onPress={onPress}>
+    <Pressable onPress={onPress} disabled={loadingState}>
       <View
         style={{
           backgroundColor: outline ? undefined :color,
@@ -22,21 +23,25 @@ const ButtonComponent = ({
           justifyContent: 'center',
           padding: 10,
           flexDirection: 'row',
-          minHeight: 38,
+          minHeight: 52, 
           ...style,
         }}>
         {leftIcon && leftIcon}
-        <Text
-          style={{
-            color: outline ? generalColor.primary : 'white',
+        {loadingState ? (
+          <ActivityIndicator size="small" color="white" />
+        ) : (
+          <Text
+            style={{
+              color: outline ? generalColor.primary : 'white',
 
-            textAlign: 'center',
-            marginHorizontal: 4,
-            ...textStyle.h[4],
-            ...txtStyle,
-          }}>
-          {text}
-        </Text>
+              textAlign: 'center',
+              marginHorizontal: 4,
+              ...textStyle.h[4],
+              ...txtStyle,
+            }}>
+            {text}
+          </Text>
+        )}
       </View>
     </Pressable>
   );
