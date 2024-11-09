@@ -1,42 +1,54 @@
 import Geolocation from '@react-native-community/geolocation';
+import parkingLotAPI from '@src/api/parkingLot.api';
+import { generalColor } from '@src/theme/color';
 import textStyle from '@src/theme/text';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Alert, StyleSheet, Text, View } from 'react-native';
+import { Alert, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { API_KEY } from 'react-native-dotenv';
+import { SelectCountry } from 'react-native-element-dropdown';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
-
-import parkingLotAPI from '@src/api/parkingLot.api';
-import { Image, TouchableOpacity } from 'react-native';
 import ParkingLotModal from './components/ParkingLotModal';
-
 Geolocation.setRNConfiguration({
   skipPermissionRequests: false,
 });
 
 const RADIUS_KM = 3;
+const local_data = [
+  {
+    value: 'CAR',
+    lable: 'Ô tô',
+    image: require("../../assets/icons/car.png"),
+  },
+  {
+    value: 'MOTORCYCLE',
+    lable: 'Xe máy',
+    image: require("../../assets/icons/motorbike.png"),
 
+  },
+];
 const ParkingLotsMap = ({initialLocation}) => {
- 
   const [parkingslots, setParkingslots] = useState([]);
   const [markerPosition, setMarkerPosition] = useState(null);
   const [selectedParkingslot, setSelectedParkingslot] = useState(null);
   const [isMapMoved, setIsMapMoved] = useState(false);
+  const [vehicleType, setVehicleType] = useState('CAR');
   const [currentRegion, setCurrentRegion] = useState(null);
   const mapRef = useRef(null);
   const lastFetchedLocation = useRef(null);
   const [fetchError, setFetchError] = useState(false);
 
 
-  const fetchParkingSlots = useCallback(
-    async (latitude, longitude) => {
+  const fetchParkingLots = useCallback(
+    async (latitude, longitude, type) => {
       if (fetchError) return;
       try {
         const response = await parkingLotAPI.getParkingLotsInRegion({
           latitude,
           longitude,
           radius: RADIUS_KM,
+          type,
         });
         lastFetchedLocation.current = {latitude, longitude};
         setParkingslots(response);
@@ -73,17 +85,17 @@ const ParkingLotsMap = ({initialLocation}) => {
         };
         setCurrentRegion(newRegion);
         setMarkerPosition(location);
-        fetchParkingSlots(location.latitude, location.longitude);
+        fetchParkingLots(location.latitude, location.longitude, vehicleType);
       } catch (error) {
         Alert.alert('Lỗi', 'Không thể lấy vị trí hiện tại');
       }
     };
     setupLocation();
-  }, [initialLocation, getCurrentLocation, fetchParkingSlots]);
+  }, [initialLocation, getCurrentLocation, fetchParkingLots]);
 
 const handleSearchThisArea = () => {
     if (currentRegion) {
-      fetchParkingSlots(currentRegion.latitude, currentRegion.longitude);
+      fetchParkingLots(currentRegion.latitude, currentRegion.longitude,vehicleType);
     }
   };
   const handlePress = useCallback(
@@ -98,24 +110,29 @@ const handleSearchThisArea = () => {
       };
       setCurrentRegion(newRegion);
       mapRef.current.animateToRegion(newRegion, 1000);
-      fetchParkingSlots(location.lat, location.lng);
+      fetchParkingLots(location.lat, location.lng);
     },
-    [fetchError, fetchParkingSlots],
+    [fetchError, fetchParkingLots],
   );
 
   if (!currentRegion || !markerPosition) {
     return null;
   }
-  const handleRegionChange = (newRegion) => {
-    if(Math.abs(newRegion.latitude - currentRegion.latitude) < 0.001 && Math.abs(newRegion.longitude - currentRegion.longitude) < 0.001) {
+  const handleRegionChange = (newRegion, details) => {
+    if (!details.isGesture){
+      return
+    }
+    if(Math.abs(newRegion.latitude - currentRegion.latitude) < 0.0001 && Math.abs(newRegion.longitude - currentRegion.longitude) < 0.0001) {
       return;
     }
-    console.log("newRegion", newRegion);
-    console.log("Region", currentRegion)
-    setCurrentRegion(newRegion);
+    console.log("selected parkingslot",selectedParkingslot ==null) 
+    if(selectedParkingslot == null){
+      return
+    }
+    setCurrentRegion(()=>newRegion);
     setIsMapMoved(true);
   };
-  console.log("parkingslots",parkingslots.length)
+  console.log("parkingslots", selectedParkingslot == null)
   return (
     <View style={styles.container}>
       <MapView
@@ -127,8 +144,18 @@ const handleSearchThisArea = () => {
         {parkingslots.map((parkingslot, index) => (
           <Marker
             key={index}
+           
             onPress={() => {
-              setSelectedParkingslot(selectedParkingslot ? null : parkingslot);
+              if(selectedParkingslot ==null){
+                setCurrentRegion({
+                  ...currentRegion,
+                  latitude: parkingslot.latitude,
+                  longitude: parkingslot.longitude,
+                });
+                setSelectedParkingslot( parkingslot);
+              } else {
+                setSelectedParkingslot(null)
+              }
             }}
             coordinate={{
               latitude: parkingslot.latitude,
@@ -189,6 +216,30 @@ const handleSearchThisArea = () => {
       )}
       </View>
       
+      <View style={{ width:120, right:24, backgroundColor:generalColor.other.bluepurple, borderRadius:8,padding:3, position:"absolute", bottom:130}}>
+      <SelectCountry
+        style={styles.dropdown(generalColor)}
+        selectedTextStyle={styles.selectedTextStyle(generalColor)}
+        placeholderStyle={styles.placeholderStyle}
+        imageStyle={styles.imageStyle}
+        iconStyle={styles.iconStyle}
+    
+        maxHeight={200}
+        value={vehicleType}
+        data={local_data}
+        valueField="value"
+        itemTextStyle = {{color:generalColor.other.white}}
+        activeColor = {generalColor.other.bluepurple}
+        itemContainerStyle = {{backgroundColor:generalColor.other.bluepurple}}
+        labelField="lable"
+        imageField="image"
+        onChange={async(e) => {
+          console.log("value",e);
+          setVehicleType(e.value);
+          await fetchParkingLots(currentRegion.latitude, currentRegion.longitude, e.value);
+        }}
+      />
+      </View>
       {selectedParkingslot && (
         <ParkingLotModal
           parkingslot={selectedParkingslot}
@@ -271,5 +322,30 @@ const styles = StyleSheet.create({
     left: 24,
     right: 24,
     height: 48,
+  },
+  dropdown: ( generalColor)=> {
+    // height: 50,
+    backgroundColor:"blue"
+  },
+  imageStyle: {
+    width: 24,
+    height: 24,
+  },
+  placeholderStyle: {
+    fontSize: 16,
+  },
+  selectedTextStyle: (generalColor) => ({
+    fontSize: 16,
+    marginLeft: 8,
+    color: "white",
+
+  }),
+  iconStyle: {
+    width: 20,
+    height: 20,
+  },
+  inputSearchStyle: {
+    height: 40,
+    fontSize: 16,
   },
 });

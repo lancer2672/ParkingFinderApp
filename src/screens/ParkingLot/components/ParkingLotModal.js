@@ -45,22 +45,6 @@ const ParkingLotModal = ({
             <Image
               source={{uri: parkingslot.avatar}}
               style={styles.img}></Image>
-            {/* <View style={row}>
-              <StarRating
-                fullStarColor={generalColor.other.yellow}
-                disabled={true}
-                maxStars={5}
-                containerStyle={{marginTop: 8}}
-                rating={parkingslot.rating}
-                starSize={16}
-              />
-              <Text style={{lineHeight: 32, color: 'black'}}>
-                ({parkingslot.rating})
-              </Text>
-            </View> */}
-            {/* <Text style={{lineHeight: 18, color: 'black'}}>
-              (xxx lượt đánh giá)
-            </Text> */}
           </View>
           <View
             style={{
@@ -116,8 +100,10 @@ const ParkingLotModal = ({
           </TouchableOpacity>
         </View>
         <ButtonComponent
+
           onPress={onContinue}
-          style={{marginVertical: 24, marginTop: 40}}
+          color={generalColor.other.bluepurple}
+          style={{marginVertical: 24, marginTop: 40, borderRadius: 12}} 
           text={'Tiếp tục'}></ButtonComponent>
       </View>
     </ReactNativeModal>
