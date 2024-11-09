@@ -1,10 +1,12 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SignIn from '@src/screens/Authentication/SignIn';
 import SignUp from '@src/screens/Authentication/SignUp';
 import ParkingLotsMap from '@src/screens/ParkingLot/ParkingLotMap';
 import { ROLE } from '@src/utils/constant';
-import { useState } from 'react';
+import { UserID_Key } from '@src/utils/localStorage';
+import { useEffect, useState } from 'react';
 import { navigationRef } from './NavigationController';
 const screenOptions = {
   header: () => null,
@@ -39,8 +41,24 @@ const MainStack = () => {
   );
 };
 const Root = () => {
-  // const user = useUserStore(state => state.user);
   const [isLoading, setIsloading] = useState(false);
+  const [userId, setUserId] = useState(null);
+
+  useEffect(() => {
+    const fetchUsere = async () => {
+      try {
+        const userId = await AsyncStorage.getItem(UserID_Key);
+        if( userId != null){
+          setUserId(userId);
+        }
+      } catch (error) {
+        console.error('Error fetching user ID:', error);
+      }
+    };
+
+    fetchUsere();
+  }, []);
+
   const getStackByRole = role => {
     switch (role) {
       case ROLE.USER:
@@ -52,7 +70,7 @@ const Root = () => {
   return (
     <NavigationContainer ref={navigationRef}>
       <Stack.Navigator screenOptions={screenOptions}>
-        {true ? (
+        {false ? (
           getStackByRole(ROLE.USER)
         ) : (
           <Stack.Screen
