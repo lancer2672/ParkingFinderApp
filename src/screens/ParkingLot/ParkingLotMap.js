@@ -1,14 +1,22 @@
 import Geolocation from '@react-native-community/geolocation';
 import parkingLotAPI from '@src/api/parkingLot.api';
-import { generalColor } from '@src/theme/color';
+import {generalColor} from '@src/theme/color';
 import textStyle from '@src/theme/text';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { Alert, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { API_KEY } from 'react-native-dotenv';
-import { SelectCountry } from 'react-native-element-dropdown';
-import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import {useCallback, useEffect, useRef, useState} from 'react';
+import {
+  Alert,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import {API_KEY} from 'react-native-dotenv';
+import {SelectCountry} from 'react-native-element-dropdown';
+import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
+import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
+import VNPayModal from '../VNPayModal/VNPayModal';
 import ParkingLotModal from './components/ParkingLotModal';
 Geolocation.setRNConfiguration({
   skipPermissionRequests: false,
@@ -19,13 +27,12 @@ const local_data = [
   {
     value: 'CAR',
     lable: 'Ô tô',
-    image: require("../../assets/icons/car.png"),
+    image: require('../../assets/icons/car.png'),
   },
   {
     value: 'MOTORCYCLE',
     lable: 'Xe máy',
-    image: require("../../assets/icons/motorbike.png"),
-
+    image: require('../../assets/icons/motorbike.png'),
   },
 ];
 const ParkingLotsMap = ({initialLocation}) => {
@@ -38,7 +45,10 @@ const ParkingLotsMap = ({initialLocation}) => {
   const mapRef = useRef(null);
   const lastFetchedLocation = useRef(null);
   const [fetchError, setFetchError] = useState(false);
+  const [showVNPay, setShowVNPay] = useState(false);
 
+  const paymentUrl =
+    'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?vnp_Amount=23700000&vnp_BankCode=NCB&vnp_Command=pay&vnp_CreateDate=20241118002952&vnp_CurrCode=VND&vnp_ExpireDate=20241118004452&vnp_IpAddr=0%3A0%3A0%3A0%3A0%3A0%3A0%3A1&vnp_Locale=vn&vnp_OrderInfo=Thanh+toan+don+hang%3A44246705&vnp_OrderType=other&vnp_ReturnUrl=http%3A%2F%2Flocalhost%3A8080%2Fapi%2Fv1%2Fpayment%2Fvn-pay-callback&vnp_TmnCode=58X4B4HP&vnp_TxnRef=62075358&vnp_Version=2.1.0&vnp_SecureHash=637d369f7eb2e2e21f5aa0b0c9d98e07b0f87323687121291038b7594a2b0b4ac0f40e134f3cd565eb1eb321ea123869b2be1d4bdf9bb6e778be2250be4d868f';
 
   const fetchParkingLots = useCallback(
     async (latitude, longitude, type) => {
@@ -93,9 +103,13 @@ const ParkingLotsMap = ({initialLocation}) => {
     setupLocation();
   }, [initialLocation, getCurrentLocation, fetchParkingLots]);
 
-const handleSearchThisArea = () => {
+  const handleSearchThisArea = () => {
     if (currentRegion) {
-      fetchParkingLots(currentRegion.latitude, currentRegion.longitude,vehicleType);
+      fetchParkingLots(
+        currentRegion.latitude,
+        currentRegion.longitude,
+        vehicleType,
+      );
     }
   };
   const handlePress = useCallback(
@@ -119,20 +133,23 @@ const handleSearchThisArea = () => {
     return null;
   }
   const handleRegionChange = (newRegion, details) => {
-    if (!details.isGesture){
-      return
-    }
-    if(Math.abs(newRegion.latitude - currentRegion.latitude) < 0.0001 && Math.abs(newRegion.longitude - currentRegion.longitude) < 0.0001) {
+    if (!details.isGesture) {
       return;
     }
-    console.log("selected parkingslot",selectedParkingslot ==null) 
-    if(selectedParkingslot == null){
-      return
+    if (
+      Math.abs(newRegion.latitude - currentRegion.latitude) < 0.0001 &&
+      Math.abs(newRegion.longitude - currentRegion.longitude) < 0.0001
+    ) {
+      return;
     }
-    setCurrentRegion(()=>newRegion);
+    console.log('selected parkingslot', selectedParkingslot == null);
+    if (selectedParkingslot == null) {
+      return;
+    }
+    setCurrentRegion(() => newRegion);
     setIsMapMoved(true);
   };
-  console.log("parkingslots", selectedParkingslot == null)
+  console.log('parkingslots', selectedParkingslot == null);
   return (
     <View style={styles.container}>
       <MapView
@@ -144,18 +161,18 @@ const handleSearchThisArea = () => {
         {parkingslots.map((parkingslot, index) => (
           <Marker
             key={index}
-           
             onPress={() => {
-              if(selectedParkingslot ==null){
+              if (selectedParkingslot == null) {
                 setCurrentRegion({
                   ...currentRegion,
                   latitude: parkingslot.latitude,
                   longitude: parkingslot.longitude,
                 });
-                setSelectedParkingslot( parkingslot);
+                setSelectedParkingslot(parkingslot);
               } else {
-                setSelectedParkingslot(null)
+                setSelectedParkingslot(null);
               }
+              setShowVNPay(true);
             }}
             coordinate={{
               latitude: parkingslot.latitude,
@@ -195,7 +212,11 @@ const handleSearchThisArea = () => {
         )}
       </MapView>
 
-      <View style={[styles.searchContainer, {position: 'absolute', top: 40, left:24, right:24}]}>
+      <View
+        style={[
+          styles.searchContainer,
+          {position: 'absolute', top: 40, left: 24, right: 24},
+        ]}>
         <GooglePlacesAutocomplete
           placeholder="Tìm kiếm"
           onPress={handlePress}
@@ -205,40 +226,52 @@ const handleSearchThisArea = () => {
           }}
           onFail={error => console.log('Find place error', error)}
         />
-         {isMapMoved && (
-        <TouchableOpacity
-          style={styles.searchAreaButton}
-          onPress={handleSearchThisArea}>
-          <Text style={styles.searchAreaButtonText}>
-            Tìm kiếm khu vực này
-          </Text>
-        </TouchableOpacity>
-      )}
+        {isMapMoved && (
+          <TouchableOpacity
+            style={styles.searchAreaButton}
+            onPress={handleSearchThisArea}>
+            <Text style={styles.searchAreaButtonText}>
+              Tìm kiếm khu vực này
+            </Text>
+          </TouchableOpacity>
+        )}
       </View>
-      
-      <View style={{ width:120, right:24, backgroundColor:generalColor.other.bluepurple, borderRadius:8,padding:3, position:"absolute", bottom:130}}>
-      <SelectCountry
-        style={styles.dropdown(generalColor)}
-        selectedTextStyle={styles.selectedTextStyle(generalColor)}
-        placeholderStyle={styles.placeholderStyle}
-        imageStyle={styles.imageStyle}
-        iconStyle={styles.iconStyle}
-    
-        maxHeight={200}
-        value={vehicleType}
-        data={local_data}
-        valueField="value"
-        itemTextStyle = {{color:generalColor.other.white}}
-        activeColor = {generalColor.other.bluepurple}
-        itemContainerStyle = {{backgroundColor:generalColor.other.bluepurple}}
-        labelField="lable"
-        imageField="image"
-        onChange={async(e) => {
-          console.log("value",e);
-          setVehicleType(e.value);
-          await fetchParkingLots(currentRegion.latitude, currentRegion.longitude, e.value);
-        }}
-      />
+
+      <View
+        style={{
+          width: 120,
+          right: 24,
+          backgroundColor: generalColor.other.bluepurple,
+          borderRadius: 8,
+          padding: 3,
+          position: 'absolute',
+          bottom: 130,
+        }}>
+        <SelectCountry
+          style={styles.dropdown(generalColor)}
+          selectedTextStyle={styles.selectedTextStyle(generalColor)}
+          placeholderStyle={styles.placeholderStyle}
+          imageStyle={styles.imageStyle}
+          iconStyle={styles.iconStyle}
+          maxHeight={200}
+          value={vehicleType}
+          data={local_data}
+          valueField="value"
+          itemTextStyle={{color: generalColor.other.white}}
+          activeColor={generalColor.other.bluepurple}
+          itemContainerStyle={{backgroundColor: generalColor.other.bluepurple}}
+          labelField="lable"
+          imageField="image"
+          onChange={async e => {
+            console.log('value', e);
+            setVehicleType(e.value);
+            await fetchParkingLots(
+              currentRegion.latitude,
+              currentRegion.longitude,
+              e.value,
+            );
+          }}
+        />
       </View>
       {selectedParkingslot && (
         <ParkingLotModal
@@ -249,6 +282,18 @@ const handleSearchThisArea = () => {
             setSelectedParkingslot(null);
           }}></ParkingLotModal>
       )}
+
+      <VNPayModal
+        visible={showVNPay}
+        paymentUrl={paymentUrl}
+        onPaymentFailure={() => {}}
+        onPaymentSuccess={() => {
+          Alert.alert('Thành công', 'Thanh toán thành công');
+        }}
+        onClose={() => {
+          console.log(':D');
+          setShowVNPay(false);
+        }}></VNPayModal>
     </View>
   );
 };
@@ -284,7 +329,6 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     height: 48,
-    
   },
   seperator: {
     width: 3,
@@ -297,7 +341,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 100,
     left: '50%',
-    transform: [{ translateX: -75 }],
+    transform: [{translateX: -75}],
     backgroundColor: 'white',
     paddingHorizontal: 16,
     paddingVertical: 8,
@@ -323,9 +367,9 @@ const styles = StyleSheet.create({
     right: 24,
     height: 48,
   },
-  dropdown: ( generalColor)=> {
+  dropdown: generalColor => {
     // height: 50,
-    backgroundColor:"blue"
+    backgroundColor: 'blue';
   },
   imageStyle: {
     width: 24,
@@ -334,11 +378,10 @@ const styles = StyleSheet.create({
   placeholderStyle: {
     fontSize: 16,
   },
-  selectedTextStyle: (generalColor) => ({
+  selectedTextStyle: generalColor => ({
     fontSize: 16,
     marginLeft: 8,
-    color: "white",
-
+    color: 'white',
   }),
   iconStyle: {
     width: 20,

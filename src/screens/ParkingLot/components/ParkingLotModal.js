@@ -16,7 +16,6 @@ import { Divider } from 'react-native-paper';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Feather from 'react-native-vector-icons/Feather';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 const ParkingLotModal = ({
   parkingslot = parkingslotsMock[0],
   isVisible,
@@ -27,8 +26,11 @@ const ParkingLotModal = ({
     Linking.openURL(`tel:${parkingslot.argent?.phoneNumber}`);
   };
   const onContinue = () => {
+    onClose();
+
     handleContinue();
   };
+
   return (
     <ReactNativeModal
       isVisible={isVisible}
@@ -83,8 +85,8 @@ const ParkingLotModal = ({
           <Text style={styles.txt}>Wifi miễn phí</Text>
 
           <Divider style={{marginLeft: 12}}></Divider>
-          <FontAwesome5 name="parking" color="black" size={20}></FontAwesome5>
-          <Text style={styles.txt}>Có bãi đỗ xe</Text>
+          {/* <FontAwesome5 name="parking" color="black" size={20}></FontAwesome5>
+          <Text style={styles.txt}>Có bãi đỗ xe</Text> */}
 
           <TouchableOpacity
             style={{
@@ -100,10 +102,9 @@ const ParkingLotModal = ({
           </TouchableOpacity>
         </View>
         <ButtonComponent
-
           onPress={onContinue}
           color={generalColor.other.bluepurple}
-          style={{marginVertical: 24, marginTop: 40, borderRadius: 12}} 
+          style={{marginVertical: 24, marginTop: 40, borderRadius: 12}}
           text={'Tiếp tục'}></ButtonComponent>
       </View>
     </ReactNativeModal>
