@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import userAPI from '@src/api/user.api';
 import Onboarding from '@src/components/onboarding';
 import SplashScreen from '@src/components/splash';
@@ -8,10 +8,10 @@ import SignIn from '@src/screens/Authentication/SignIn';
 import SignUp from '@src/screens/Authentication/SignUp';
 import ParkingLotsMap from '@src/screens/ParkingLot/ParkingLotMap';
 import useUserStore from '@src/store/userStore';
-import { UserID_Key } from '@src/utils/localStorage';
-import { useEffect, useState } from 'react';
-import { navigationRef } from './NavigationController';
-import { Tabs } from './NavigationTab';
+import {UserID_Key} from '@src/utils/localStorage';
+import {useEffect, useState} from 'react';
+import {navigationRef} from './NavigationController';
+import {Tabs} from './NavigationTab';
 const screenOptions = {
   header: () => null,
   cardOverlayEnabled: true,
@@ -23,7 +23,9 @@ const Stack = createNativeStackNavigator();
 const AuthenticationStack = () => {
   const username = null;
   return (
-    <Stack.Navigator initialRouteName="SplashScreen" screenOptions={screenOptions}>
+    <Stack.Navigator
+      initialRouteName="SplashScreen"
+      screenOptions={screenOptions}>
       {username == null ? (
         <Stack.Group>
           <Stack.Screen name="SplashScreen" component={SplashScreen} />
@@ -58,7 +60,7 @@ const Root = () => {
     const fetchUser = async () => {
       try {
         const userId = await AsyncStorage.getItem(UserID_Key);
-        if( userId != null){
+        if (userId != null) {
           userRes = await userAPI.getUserByID(userId);
           console.log('userRes', userRes);
           setUser(userRes);
@@ -71,11 +73,11 @@ const Root = () => {
     fetchUser();
   }, []);
 
-  console.log("User store is", user);
+  console.log('User store is', user);
   return (
     <NavigationContainer ref={navigationRef}>
       <Stack.Navigator screenOptions={screenOptions}>
-        {user ? (
+        {user.phoneNumber ? (
           <Stack.Screen name="MainStack" component={MainStack} />
         ) : (
           <Stack.Screen
