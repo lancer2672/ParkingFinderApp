@@ -7,7 +7,7 @@ import { row, rowCenter } from '@src/theme/style';
 import textStyle from '@src/theme/text';
 import { Formik } from 'formik';
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View, Image } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Fontisto from 'react-native-vector-icons/Fontisto';
@@ -43,25 +43,41 @@ const SignUp = () => {
 
   return (
     <View style={styles.container}>
-      <Text
+      <View style={{
+        alignSelf: 'center',
+        marginTop: 30,
+        alignItems: 'center',
+
+        justifyContent: 'center',
+        marginBottom: 12,
+        flexDirection: 'row',
+      }}>
+
+        <Image
+          source={require('../../assets/icons/iconapp.png')}
+          style={{ width: 180, height: 70 }}
+        />
+
+      </View>
+      {/* <Text
         style={[
           textStyle.h[2],
           {
             fontFamily: 'serif',
-            color: 'white',
+            color: 'black',
             marginTop: 12,
             marginBottom: 6,
           },
         ]}>
         Đăng Ký
-      </Text>
+      </Text> */}
       <Text style={styles.content}>Điền thông tin bên dưới</Text>
 
-      <View style={[rowCenter, {marginVertical: 12}]}>
+      {/* <View style={[rowCenter, {marginVertical: 12}]}>
         <View style={styles.sep}></View>
 
         <View style={styles.sep}></View>
-      </View>
+      </View> */}
 
       <Formik
         validationSchema={signUpSchema}
@@ -77,8 +93,8 @@ const SignUp = () => {
           handleSubmit,
         }) => (
           <>
-            <View style={[row, {justifyContent: 'space-between'}]}>
-              <View style={{flex: 1}}>
+            <View style={[row, { justifyContent: 'space-between' }]}>
+              <View style={{ flex: 1 }}>
                 <TextInputComponent
                   placeholder="Nhập Tên"
                   onChangeText={text => {
@@ -86,16 +102,16 @@ const SignUp = () => {
                   }}
                   value={values.firstName}
                   widthTextInput={'80%'}
-                  labelStyle={{color: 'white'}}
+                  labelStyle={{ color: 'black' }}
                   heightTextInput={40}
                   error={!!errors.firstName && !!touched.firstName}
                   errorMessage={errors.firstName}
                   styleTextInput={[textStyle.h[5]]}
                   style={styles.textinput}
-                  placeholderColor="white"
+                  placeholderColor="black"
                 />
               </View>
-              <View style={{flex: 1, marginLeft: 12}}>
+              <View style={{ flex: 1, marginLeft: 12 }}>
                 <TextInputComponent
                   placeholder="Nhập Họ"
                   onChangeText={text => {
@@ -103,13 +119,13 @@ const SignUp = () => {
                   }}
                   value={values.lastName}
                   widthTextInput={'90%'}
-                  labelStyle={{color: 'white'}}
+                  labelStyle={{ color: 'black' }}
                   heightTextInput={40}
                   error={!!errors.lastName && !!touched.lastName}
                   errorMessage={errors.lastName}
                   styleTextInput={[textStyle.h[5]]}
                   style={styles.textinput}
-                  placeholderColor="white"
+                  placeholderColor="black"
                 />
               </View>
             </View>
@@ -118,7 +134,7 @@ const SignUp = () => {
               widthTextInput={'80%'}
               heightTextInput={40}
               keyboardType="numeric"
-              labelStyle={{color: 'white'}}
+              labelStyle={{ color: 'black' }}
               onChangeText={text => {
                 handleChange('phoneNumber')(text);
               }}
@@ -132,7 +148,7 @@ const SignUp = () => {
                 textStyle.h[5],
               ]}
               style={styles.textinput}
-              placeholderColor="white"
+              placeholderColor="black"
             />
             <TextInputComponent
               placeholder="Nhập Email"
@@ -141,11 +157,11 @@ const SignUp = () => {
               }}
               value={values.email}
               widthTextInput={'80%'}
-              label="Email"
-              labelStyle={{color: 'white'}}
+
+              labelStyle={{ color: 'black' }}
               heightTextInput={40}
               leftContent={
-                <Fontisto name="email" color="white" size={20}></Fontisto>
+                <Fontisto name="email" color="black" size={20}></Fontisto>
               }
               error={!!errors.email && !!touched.email}
               errorMessage={errors.email}
@@ -156,18 +172,18 @@ const SignUp = () => {
                 textStyle.h[5],
               ]}
               style={styles.textinput}
-              placeholderColor="white"
+              placeholderColor="black"
             />
 
             <TextInputComponent
               placeholder="Nhập mật khẩu"
               widthTextInput={'80%'}
               heightTextInput={40}
-              label="Mật khẩu"
-              labelStyle={{color: 'white'}}
+
+              labelStyle={{ color: 'black' }}
               secureTextEntry={secureTextEntry}
               leftContent={
-                <Entypo name="lock" color="white" size={20}></Entypo>
+                <Entypo name="lock" color="black" size={20}></Entypo>
               }
               rightContent={
                 <Pressable
@@ -177,7 +193,7 @@ const SignUp = () => {
                   {/* <Entypo name="eye" color="white" size={20}></Entypo> */}
                   <Entypo
                     name={secureTextEntry ? 'eye-with-line' : 'eye'}
-                    color="white"
+                    color="black"
                     size={20}></Entypo>
                 </Pressable>
               }
@@ -194,7 +210,7 @@ const SignUp = () => {
                 textStyle.h[5],
               ]}
               style={styles.textinput}
-              placeholderColor="white"
+              placeholderColor="black"
             />
 
             <ButtonComponent
@@ -220,13 +236,13 @@ const SignUp = () => {
               }}>
               <Text
                 style={{
-                  color: 'white',
+                  color: 'black',
                 }}>
                 Đã có tài khoản{' '}
               </Text>
               <Text
                 style={{
-                  color: 'white',
+                  color: 'blue',
                   textDecorationLine: 'underline',
                   fontWeight: '500',
                 }}>
@@ -252,7 +268,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: generalColor.other.darkblue,
+    backgroundColor: generalColor.other.white,
   },
   buttonItem: {
     marginVertical: 20,
@@ -260,7 +276,7 @@ const styles = StyleSheet.create({
   },
   textinput: {
     backgroundColor: undefined,
-    borderColor: generalColor.white[50],
+    borderColor: generalColor.black[50],
     paddingVertical: 4,
     borderWidth: 2,
   },
@@ -271,6 +287,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    color: 'white',
+    color: 'black',
+  },
+  rowCenter: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

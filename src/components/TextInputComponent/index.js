@@ -30,8 +30,8 @@ const AppTextInput = props => {
     labelColor = generalColor.black['25'],
     hasPress = false,
 
-    colorText = generalColor.white['100'],
-    placeholderColor = generalColor.white['100'],
+    colorText = generalColor.black['100'],
+    placeholderColor = generalColor.black['100'],
     heightTextInput,
     multiline = false,
     active = true,
