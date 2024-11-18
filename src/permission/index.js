@@ -1,4 +1,4 @@
-import { PermissionsAndroid, Platform } from 'react-native';
+import {PermissionsAndroid, Platform} from 'react-native';
 
 export const requestNotificationPermission = async () => {
   try {
@@ -36,7 +36,7 @@ export const requestLocationPermission = async () => {
       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
       {
         title: 'Location Permission',
-        message:  'Chúng tôi muốn truy cập vào vị trí của bạn',
+        message: 'Chúng tôi muốn truy cập vào vị trí của bạn',
         buttonNeutral: 'Hỏi lại sau',
         buttonNegative: 'Huỷ',
         buttonPositive: 'OK',

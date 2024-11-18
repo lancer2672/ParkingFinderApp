@@ -1,13 +1,17 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import authAPI from '@src/api/auth.api';
+import userAPI from '@src/api/user.api';
 import ButtonComponent from '@src/components/Button';
-import LoadingModal from '@src/components/LoadingModal/LoadingModal';
 import TextInputComponent from '@src/components/TextInputComponent';
 import { navigate } from '@src/navigation/NavigationController';
+import useUserStore from '@src/store/userStore';
 import { generalColor } from '@src/theme/color';
 import { rowCenter } from '@src/theme/style';
 import textStyle from '@src/theme/text';
+import { UserID_Key } from '@src/utils/localStorage';
 import { Formik } from 'formik';
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Fontisto from 'react-native-vector-icons/Fontisto';
@@ -16,62 +20,68 @@ const STAFF_EMAIL = "nguyenkhang@gmail.com"
 const STAFF_PASSWORD = "JBdragonfire1135@"
 
 //MOCK user 
-const userInfo = {"email": "jbkhanhtran@gmail.com",hotelId:16, "firstName": "Khánh", "id": 15, "lastName": "Trần", "phoneNumber": "0846354255", "role": "USER", "status": "ACTIVE"}
+const userInfo = { "phoneNumber": "jbkhanhtran@gmail.com", hotelId: 16, "firstName": "Khánh", "id": 15, "lastName": "Trần", "phoneNumber": "0846354255", "role": "USER", "status": "ACTIVE" }
 const SignIn = () => {
-  const [value, setValue] = useState('');
+  const setUser = useUserStore  (state => state.setUser);
   const [secureTextEntry, setSecureTextEntry] = useState(true);
   const initialValues = {
-    email: '',
+    phoneNumber: '',
     password: '',
   };
 
   const [isLoading, setIsloading] = useState(false);
+  const handleUserLogin = async(values) => {
+    try {
+      const data = await authAPI.loginUser(values);
+      console.log('data', data);
 
-  const handleStaffLogin= (values) =>{
-    if(values.password == STAFF_PASSWORD){
-        setUser(staffInfo);
+      let accessToken = data.accessToken;
+      await AsyncStorage.setItem('accessToken', accessToken);
+      await AsyncStorage.setItem(UserID_Key, data.userId.toString());
+      return data.userId;
+    } catch (error) {
+      console.error('Error logging in:', error);
+      throw error;
     }
-  }
-  const handleAgentLogin= (values) =>{
-    if(values.password == STAFF_PASSWORD){
-        setUser(agentInfo);
+  };
+
+  const fetchUserById = async(userId) => {
+    try {
+      // Assuming there's an API to fetch user by ID
+      const data = await userAPI.getUserByID(userId);
+      console.log('Fetched user:', data);
+      // Set the user in zustandStorage
+      setUser(data);
+    } catch (error) {
+      console.error('Error fetching user:', error);
+      throw error;
     }
-  }
-  const handleUserLogin= (values) =>{
-    if(values.password == STAFF_PASSWORD){
-        setUser(userInfo);
-    }
-  }
+  };
+
   const handleFormSubmit = async (values) => {
     const controller = new AbortController();
     const signal = controller.signal;
-    if(values.email == STAFF_EMAIL){
-      handleStaffLogin(values)
-    
-    }
-    if(values.email == userInfo.email){
-      handleUserLogin(values)
-   
-    }
-    if(values.email == agentInfo.email){
-      handleAgentLogin(values)
-    
-    }
-    showMessage({
-      message: 'Đăng nhập thành công',
-      type: 'success',
-    });
+    setIsloading(true);
     try {
-      
-    } catch (er) {
-    
+      const userId = await handleUserLogin(values);
+      await fetchUserById(userId);
+      showMessage({
+        message: 'Đăng nhập thành công',
+        type: 'success',
+      });
+    } catch (error) {
+      console.error('Error during login or fetching user:', error);
+      showMessage({
+        message: 'Đăng nhập thất bại',
+        type: 'danger',
+      });
     } finally {
-    
+      setIsloading(false);
     }
   };
   return (
     <View style={styles.container}>
-      <Text
+      {/* <Text
         style={[
           textStyle.h[2],
           {
@@ -82,21 +92,15 @@ const SignIn = () => {
           },
         ]}>
         Đăng Nhập
-      </Text>
-      {/* <Text style={styles.content}>Điền thông tin bên dưới</Text> */}
-
-      <View style={[rowCenter, {marginVertical: 12}]}>
+      </Text> */}
+      <View style={[rowCenter, { marginVertical: 12,  marginTop:40  }]}>
         <View style={styles.sep}></View>
-        <Text style={{paddingHorizontal: 12, color: 'white'}}>
-          Đăng nhập bằng email
-        </Text>
+        <Image
+          source={require('../../assets/icons/iconapp.png')}
+          style={{ width: 120, height: 80 }}
+        />
         <View style={styles.sep}></View>
       </View>
-      <LoadingModal
-        onClose={() => {
-          setIsloading(false);
-        }}
-        visible={isLoading}></LoadingModal>
 
       <Formik
         validationSchema={accountSchema}
@@ -111,20 +115,21 @@ const SignIn = () => {
 
           handleSubmit,
         }) => (
-          <View style={{flex: 1}}>
+          <View style={{ flex: 1, marginTop:40 }}>
             <TextInputComponent
-              placeholder="Nhập Email"
+                keyboardType="numeric"
+              placeholder="Nhập số điện thoại"
               onChangeText={text => {
-                handleChange('email')(text);
+                handleChange('phoneNumber')(text);
               }}
-              value={values.email}
+              value={values.phoneNumber}
               widthTextInput={'80%'}
               heightTextInput={40}
               leftContent={
-                <Fontisto name="email" color="white" size={20}></Fontisto>
+                <Fontisto name="phone" color= {generalColor.secondary}  size={20}></Fontisto>
               }
-              error={!!errors.email && !!touched.email}
-              errorMessage={errors.email}
+              error={!!errors.phoneNumber && !!touched.phoneNumber}
+              errorMessage={errors.phoneNumber}
               styleTextInput={[
                 {
                   paddingLeft: 12,
@@ -132,7 +137,8 @@ const SignIn = () => {
                 textStyle.h[5],
               ]}
               style={styles.textinput}
-              placeholderColor="white"
+              placeholderColor= {generalColor.secondary} 
+
             />
             <TextInputComponent
               placeholder="Nhập mật khẩu"
@@ -140,7 +146,7 @@ const SignIn = () => {
               heightTextInput={40}
               secureTextEntry={secureTextEntry}
               leftContent={
-                <Entypo name="lock" color="white" size={20}></Entypo>
+                <Entypo name="lock" color={generalColor.secondary} size={20}></Entypo>
               }
               rightContent={
                 <Pressable
@@ -150,7 +156,7 @@ const SignIn = () => {
                   {/* <Entypo name="eye" color="white" size={20}></Entypo> */}
                   <Entypo
                     name={secureTextEntry ? 'eye-with-line' : 'eye'}
-                    color="white"
+                    color={generalColor.secondary} 
                     size={20}></Entypo>
                 </Pressable>
               }
@@ -167,17 +173,18 @@ const SignIn = () => {
                 textStyle.h[5],
               ]}
               style={styles.textinput}
-              placeholderColor="white"
+              placeholderColor= {generalColor.secondary} 
+
             />
 
             <Pressable
               onPress={() => {
                 navigate('ForgotPassword');
               }}
-              style={{marginVertical: 12, alignSelf: 'flex-end'}}>
+              style={{ marginVertical: 12, alignSelf: 'flex-end' }}>
               <Text
                 style={{
-                  color: 'white',
+                  color: generalColor.other.bluepurple,
                   textDecorationLine: 'underline',
                   fontWeight: '500',
                 }}>
@@ -185,12 +192,14 @@ const SignIn = () => {
               </Text>
             </Pressable>
             <ButtonComponent
+            loadingState={isLoading}
               onPress={() => {
                 console.log('press');
                 handleSubmit();
               }}
               style={styles.buttonItem}
               text="Đăng nhập"
+              color = {generalColor.other.bluepurple}
             />
           </View>
         )}
@@ -202,44 +211,27 @@ const SignIn = () => {
             navigate('SignUp');
           }}
           style={{
-            marginTop: 'auto',
+           
             alignSelf: 'center',
-            marginBottom: 20,
+        
             flexDirection: 'row',
           }}>
           <Text
             style={{
-              color: 'white',
+              color: 'black',
             }}>
-            Chưa có tải khoản?{' '}
+            Chưa có tài khoản?{' '}
           </Text>
           <Text
             style={{
-              color: 'white',
+              color: generalColor.other.bluepurple,
               textDecorationLine: 'underline',
               fontWeight: '500',
             }}>
             Đăng ký ngay
           </Text>
         </Pressable>
-        <Pressable
-          onPress={() => {
-            navigate('AgentSignUp');
-          }}
-          style={{
-            alignSelf: 'center',
-            marginBottom: 20,
-            flexDirection: 'row',
-          }}>
-          <Text
-            style={{
-              color: 'white',
-              textDecorationLine: 'underline',
-              fontWeight: '500',
-            }}>
-            Đăng ký làm agent
-          </Text>
-        </Pressable>
+
       </View>
     </View>
   );
@@ -251,25 +243,30 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: generalColor.other.darkblue,
+    backgroundColor: generalColor.other.white,
   },
   buttonItem: {
     marginVertical: 20,
+    borderRadius:12,
     paddingVertical: 12,
+  },
+  image: {
+    width: 100,
+    height: 100,
   },
   textinput: {
     backgroundColor: undefined,
-    borderColor: generalColor.white[50],
+    borderColor: generalColor.black[50],
     paddingVertical: 4,
-    borderWidth: 2,
+    borderBottomWidth: 2,
+    color: 'black',
   },
   sep: {
-    backgroundColor: '#666',
     borderRadius: 50,
     height: 2,
     flex: 1,
   },
   content: {
-    color: 'white',
+    color: 'black',
   },
 });

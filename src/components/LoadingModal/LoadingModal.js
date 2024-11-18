@@ -1,4 +1,4 @@
-import {ActivityIndicator, Modal, StyleSheet, View} from 'react-native';
+import { ActivityIndicator, Modal, StyleSheet, View } from 'react-native';
 
 const LoadingModal = ({visible, onClose}) => {
   return (
