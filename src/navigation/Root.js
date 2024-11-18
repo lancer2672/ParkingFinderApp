@@ -13,6 +13,7 @@ import {useEffect, useState} from 'react';
 import {navigationRef} from './NavigationController';
 import {Tabs} from './NavigationTab';
 import Booking from '@src/screens/ParkingLot/components/Booking';
+import ParkingHistory from '@src/screens/History/ParkingHistory';
 const screenOptions = {
   header: () => null,
   cardOverlayEnabled: true,
@@ -50,6 +51,7 @@ const MainStack = () => {
         <Stack.Screen name={'Tabs'} component={Tabs} />
         <Stack.Screen name={'ParkingLotMap'} component={ParkingLotsMap} />
         <Stack.Screen name={'Booking'} component={Booking} />
+        <Stack.Screen name={'ParkingHistory'} component={ParkingHistory} />
       </Stack.Group>
     </Stack.Navigator>
   );
