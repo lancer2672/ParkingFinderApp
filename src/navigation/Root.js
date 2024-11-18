@@ -12,6 +12,7 @@ import { UserID_Key } from '@src/utils/localStorage';
 import { useEffect, useState } from 'react';
 import { navigationRef } from './NavigationController';
 import { Tabs } from './NavigationTab';
+import Booking from '@src/screens/ParkingLot/components/Booking';
 const screenOptions = {
   header: () => null,
   cardOverlayEnabled: true,
@@ -45,6 +46,7 @@ const MainStack = () => {
       <Stack.Group screenOptions={screenOptions}>
         <Stack.Screen name={'Tabs'} component={Tabs} />
         <Stack.Screen name={'ParkingLotMap'} component={ParkingLotsMap} />
+        <Stack.Screen name={'Booking'} component={Booking} />
       </Stack.Group>
     </Stack.Navigator>
   );
@@ -75,7 +77,7 @@ const Root = () => {
   return (
     <NavigationContainer ref={navigationRef}>
       <Stack.Navigator screenOptions={screenOptions}>
-        {user ? (
+        {user.phoneNumber ? (
           <Stack.Screen name="MainStack" component={MainStack} />
         ) : (
           <Stack.Screen

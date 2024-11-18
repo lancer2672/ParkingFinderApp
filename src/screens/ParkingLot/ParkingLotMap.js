@@ -10,6 +10,7 @@ import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplet
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 import ParkingLotModal from './components/ParkingLotModal';
+
 Geolocation.setRNConfiguration({
   skipPermissionRequests: false,
 });
@@ -18,17 +19,17 @@ const RADIUS_KM = 3;
 const local_data = [
   {
     value: 'CAR',
-    lable: 'Ô tô',
+    label: 'Ô tô',
     image: require("../../assets/icons/car.png"),
   },
   {
     value: 'MOTORCYCLE',
-    lable: 'Xe máy',
+    label: 'Xe máy',
     image: require("../../assets/icons/motorbike.png"),
-
   },
 ];
-const ParkingLotsMap = ({initialLocation}) => {
+
+const ParkingLotsMap = ({ initialLocation, navigation }) => {
   const [parkingslots, setParkingslots] = useState([]);
   const [markerPosition, setMarkerPosition] = useState(null);
   const [selectedParkingslot, setSelectedParkingslot] = useState(null);
@@ -38,7 +39,6 @@ const ParkingLotsMap = ({initialLocation}) => {
   const mapRef = useRef(null);
   const lastFetchedLocation = useRef(null);
   const [fetchError, setFetchError] = useState(false);
-
 
   const fetchParkingLots = useCallback(
     async (latitude, longitude, type) => {
@@ -50,7 +50,7 @@ const ParkingLotsMap = ({initialLocation}) => {
           radius: RADIUS_KM,
           type,
         });
-        lastFetchedLocation.current = {latitude, longitude};
+        lastFetchedLocation.current = { latitude, longitude };
         setParkingslots(response);
       } catch (error) {
         console.error('Error fetching parking slots:', error);
@@ -65,11 +65,11 @@ const ParkingLotsMap = ({initialLocation}) => {
     return new Promise((resolve, reject) => {
       Geolocation.getCurrentPosition(
         position => {
-          const {latitude, longitude} = position.coords;
-          resolve({latitude: 10.87061180891543, longitude: 106.8022367824454});
+          const { latitude, longitude } = position.coords;
+          resolve({ latitude: 10.87061180891543, longitude: 106.8022367824454 });
         },
         error => reject(error),
-        {enableHighAccuracy: false, timeout: 20000},
+        { enableHighAccuracy: false, timeout: 20000 },
       );
     });
   }, []);
@@ -93,15 +93,16 @@ const ParkingLotsMap = ({initialLocation}) => {
     setupLocation();
   }, [initialLocation, getCurrentLocation, fetchParkingLots]);
 
-const handleSearchThisArea = () => {
+  const handleSearchThisArea = () => {
     if (currentRegion) {
-      fetchParkingLots(currentRegion.latitude, currentRegion.longitude,vehicleType);
+      fetchParkingLots(currentRegion.latitude, currentRegion.longitude, vehicleType);
     }
   };
+
   const handlePress = useCallback(
     (data, details = null) => {
       if (fetchError) return;
-      const {location} = details.geometry;
+      const { location } = details.geometry;
       const newRegion = {
         latitude: location.lat,
         longitude: location.lng,
@@ -118,21 +119,21 @@ const handleSearchThisArea = () => {
   if (!currentRegion || !markerPosition) {
     return null;
   }
+
   const handleRegionChange = (newRegion, details) => {
-    if (!details.isGesture){
-      return
-    }
-    if(Math.abs(newRegion.latitude - currentRegion.latitude) < 0.0001 && Math.abs(newRegion.longitude - currentRegion.longitude) < 0.0001) {
+    if (!details.isGesture) {
       return;
     }
-    console.log("selected parkingslot",selectedParkingslot ==null) 
-    if(selectedParkingslot == null){
-      return
+    if (Math.abs(newRegion.latitude - currentRegion.latitude) < 0.0001 && Math.abs(newRegion.longitude - currentRegion.longitude) < 0.0001) {
+      return;
     }
-    setCurrentRegion(()=>newRegion);
+    if (selectedParkingslot == null) {
+      return;
+    }
+    setCurrentRegion(() => newRegion);
     setIsMapMoved(true);
   };
-  console.log("parkingslots", selectedParkingslot == null)
+
   return (
     <View style={styles.container}>
       <MapView
@@ -140,27 +141,28 @@ const handleSearchThisArea = () => {
         ref={mapRef}
         style={styles.map}
         onRegionChangeComplete={handleRegionChange}
-        region={currentRegion}>
+        region={currentRegion}
+      >
         {parkingslots.map((parkingslot, index) => (
           <Marker
             key={index}
-           
             onPress={() => {
-              if(selectedParkingslot ==null){
+              if (selectedParkingslot == null) {
                 setCurrentRegion({
                   ...currentRegion,
                   latitude: parkingslot.latitude,
                   longitude: parkingslot.longitude,
                 });
-                setSelectedParkingslot( parkingslot);
+                setSelectedParkingslot(parkingslot);
               } else {
-                setSelectedParkingslot(null)
+                setSelectedParkingslot(null);
               }
             }}
             coordinate={{
               latitude: parkingslot.latitude,
               longitude: parkingslot.longitude,
-            }}>
+            }}
+          >
             <View style={styles.markerContainer}>
               <Text numberOfLines={2} style={styles.markerText}>
                 {parkingslot.name}
@@ -174,10 +176,11 @@ const handleSearchThisArea = () => {
                     height: 36,
                     backgroundColor: 'red',
                   },
-                ]}>
+                ]}
+              >
                 <Image
                   source={require('../../assets/imgs/Parking.png')}
-                  style={{width: '100%', height: '100%', resizeMode: 'contain'}}
+                  style={{ width: '100%', height: '100%', resizeMode: 'contain' }}
                 />
               </View>
             </View>
@@ -187,7 +190,10 @@ const handleSearchThisArea = () => {
         {selectedParkingslot && (
           <MapViewDirections
             origin={currentRegion}
-            destination={selectedParkingslot.location}
+            destination={{
+              latitude: selectedParkingslot.latitude,
+              longitude: selectedParkingslot.longitude,
+            }}
             apikey={API_KEY}
             strokeWidth={3}
             strokeColor="hotpink"
@@ -195,7 +201,7 @@ const handleSearchThisArea = () => {
         )}
       </MapView>
 
-      <View style={[styles.searchContainer, {position: 'absolute', top: 40, left:24, right:24}]}>
+      <View style={[styles.searchContainer, { position: 'absolute', top: 40, left: 24, right: 24 }]}>
         <GooglePlacesAutocomplete
           placeholder="Tìm kiếm"
           onPress={handlePress}
@@ -205,49 +211,50 @@ const handleSearchThisArea = () => {
           }}
           onFail={error => console.log('Find place error', error)}
         />
-         {isMapMoved && (
-        <TouchableOpacity
-          style={styles.searchAreaButton}
-          onPress={handleSearchThisArea}>
-          <Text style={styles.searchAreaButtonText}>
-            Tìm kiếm khu vực này
-          </Text>
-        </TouchableOpacity>
-      )}
+        {isMapMoved && (
+          <TouchableOpacity
+            style={styles.searchAreaButton}
+            onPress={handleSearchThisArea}
+          >
+            <Text style={styles.searchAreaButtonText}>
+              Tìm kiếm khu vực này
+            </Text>
+          </TouchableOpacity>
+        )}
       </View>
-      
-      <View style={{ width:120, right:24, backgroundColor:generalColor.other.bluepurple, borderRadius:8,padding:3, position:"absolute", bottom:130}}>
-      <SelectCountry
-        style={styles.dropdown(generalColor)}
-        selectedTextStyle={styles.selectedTextStyle(generalColor)}
-        placeholderStyle={styles.placeholderStyle}
-        imageStyle={styles.imageStyle}
-        iconStyle={styles.iconStyle}
-    
-        maxHeight={200}
-        value={vehicleType}
-        data={local_data}
-        valueField="value"
-        itemTextStyle = {{color:generalColor.other.white}}
-        activeColor = {generalColor.other.bluepurple}
-        itemContainerStyle = {{backgroundColor:generalColor.other.bluepurple}}
-        labelField="lable"
-        imageField="image"
-        onChange={async(e) => {
-          console.log("value",e);
-          setVehicleType(e.value);
-          await fetchParkingLots(currentRegion.latitude, currentRegion.longitude, e.value);
-        }}
-      />
+
+      <View style={{ width: 120, right: 24, backgroundColor: generalColor.other.bluepurple, borderRadius: 8, padding: 3, position: "absolute", bottom: 130 }}>
+        <SelectCountry
+          style={styles.dropdown(generalColor)}
+          selectedTextStyle={styles.selectedTextStyle(generalColor)}
+          placeholderStyle={styles.placeholderStyle}
+          imageStyle={styles.imageStyle}
+          iconStyle={styles.iconStyle}
+          maxHeight={200}
+          value={vehicleType}
+          data={local_data}
+          valueField="value"
+          itemTextStyle={{ color: generalColor.other.white }}
+          activeColor={generalColor.other.bluepurple}
+          itemContainerStyle={{ backgroundColor: generalColor.other.bluepurple }}
+          labelField="label"
+          imageField="image"
+          onChange={async (e) => {
+            setVehicleType(e.value);
+            await fetchParkingLots(currentRegion.latitude, currentRegion.longitude, e.value);
+          }}
+        />
       </View>
       {selectedParkingslot && (
         <ParkingLotModal
           parkingslot={selectedParkingslot}
-          handleContinue={() => {}}
+          handleContinue={() => { }}
           isVisible={selectedParkingslot != null}
           onClose={() => {
             setSelectedParkingslot(null);
-          }}></ParkingLotModal>
+          }}
+          navigation={navigation} 
+        ></ParkingLotModal>
       )}
     </View>
   );
@@ -270,7 +277,7 @@ const styles = StyleSheet.create({
   markerText: {
     ...textStyle.h[5],
     textShadowColor: 'black',
-    textShadowOffset: {width: -1, height: 1},
+    textShadowOffset: { width: -1, height: 1 },
     width: 80,
     borderRadius: 6,
     paddingHorizontal: 4,
@@ -284,7 +291,6 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     height: 48,
-    
   },
   seperator: {
     width: 3,
@@ -316,17 +322,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
   },
-  searchContainer: {
-    position: 'absolute',
-    top: 40,
-    left: 24,
-    right: 24,
-    height: 48,
-  },
-  dropdown: ( generalColor)=> {
-    // height: 50,
-    backgroundColor:"blue"
-  },
+  dropdown: (generalColor) => ({
+    backgroundColor: "blue",
+  }),
   imageStyle: {
     width: 24,
     height: 24,
@@ -338,7 +336,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginLeft: 8,
     color: "white",
-
   }),
   iconStyle: {
     width: 20,
