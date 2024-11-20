@@ -81,12 +81,12 @@ const CreateReviewModal = ({bookingHistory, isVisible, onClose}) => {
             </View>
             <View style={styles.row}>
               <Text style={[textStyle.h[2], {color: generalColor.primary}]}>
-                {bookingHistory.property.name}
+                "Parking name"
               </Text>
             </View>
             <View style={styles.row}>
               <Text style={[textStyle.content.medium, {textAlign: 'center'}]}>
-                {bookingHistory.property.address}
+                "Address"
               </Text>
             </View>
             <View style={styles.row}>
@@ -153,7 +153,7 @@ const CreateReviewModal = ({bookingHistory, isVisible, onClose}) => {
             />
           </ScrollView>
           <ButtonComponent
-            style={{marginTop: 12}}
+            style={{marginTop: 12, backgroundColor: generalColor.primary}}
             text="Gửi"
             onPress={handleCreateReview}
           />

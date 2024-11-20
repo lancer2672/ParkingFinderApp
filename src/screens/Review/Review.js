@@ -5,9 +5,11 @@ import textStyle from '@src/theme/text';
 import {useState} from 'react';
 import {Image, Pressable, StyleSheet, Text, View} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import CreateReviewModal from './components/CreateReview';
+import FilterButton from './components/FilterButton';
 import ListReview from './components/ListReview';
+import SortModal from './components/SortModal';
 import StarModal from './components/StarModal';
-
 const Review = () => {
   const hotel = {
     name: 'Hilton',
@@ -69,7 +71,7 @@ const Review = () => {
           padding: 8,
           justifyContent: 'flex-end',
         }}>
-        {/* <FilterButton
+        <FilterButton
           onPress={() => {
             setStarModalVisible(true);
           }}
@@ -110,22 +112,25 @@ const Review = () => {
           }}
           subtitle={() => {
             return <Text>Tất cả</Text>;
-          }}></FilterButton> */}
+          }}></FilterButton>
       </View>
 
       <View style={{flex: 1, paddingHorizontal: 8}}>
         <ListReview></ListReview>
       </View>
-      {/* <SortModal
+      <SortModal
         isVisible={sortModalVisible}
         onClose={() => {
           setSortModalVisible(false);
-        }}></SortModal> */}
+        }}></SortModal>
       <StarModal
         isVisible={startModalVisible}
         onClose={() => {
           setStarModalVisible(false);
         }}></StarModal>
+      <CreateReviewModal
+        isVisible={true}
+        onClose={() => {}}></CreateReviewModal>
     </View>
   );
 };
