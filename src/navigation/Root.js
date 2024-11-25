@@ -15,6 +15,7 @@ import {Tabs} from './NavigationTab';
 import Booking from '@src/screens/ParkingLot/components/Booking';
 import ParkingHistory from '@src/screens/History/ParkingHistory';
 import AddCardView from '@src/screens/Payment/AddCardView';
+import SettingView from '@src/screens/Setting/SettingView';
 const screenOptions = {
   header: () => null,
   cardOverlayEnabled: true,
@@ -52,6 +53,7 @@ const MainStack = () => {
         <Stack.Screen name={'Booking'} component={Booking} />
         <Stack.Screen name={'ParkingHistory'} component={ParkingHistory} />
         <Stack.Screen name={'AddCardView'} component={AddCardView} />
+        <Stack.Screen name={'SettingView'} component={SettingView} />
       </Stack.Group>
     </Stack.Navigator>
   );
@@ -78,11 +80,10 @@ const Root = () => {
     fetchUser();
   }, []);
 
-  console.log('User store is', user);
   return (
     <NavigationContainer ref={navigationRef}>
       <Stack.Navigator screenOptions={screenOptions}>
-        {user.phoneNumber ? (
+        {true ? (
           <Stack.Screen name="MainStack" component={MainStack} />
         ) : (
           <Stack.Screen

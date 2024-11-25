@@ -5,10 +5,13 @@ import {
   TextInput,
   TouchableHighlight,
   Switch,
+  Pressable,
 } from 'react-native';
 import Swiper from 'react-native-swiper';
 import CardComponent from './components/CardComponent';
 import React, {useState} from 'react';
+import Material from 'react-native-vector-icons/MaterialIcons';
+import {goBack} from '@src/navigation/NavigationController';
 
 const AddCardView = () => {
   const [isEnabled, setIsEnabled] = useState(false);
@@ -17,8 +20,31 @@ const AddCardView = () => {
     <View
       style={{
         flex: 1,
-        paddingHorizontal: 20,
       }}>
+      <View
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          paddingVertical: 12,
+          marginBottom: 24,
+          alignItems: 'center',
+          gap: 18,
+          paddingHorizontal: 12,
+          backgroundColor: 'white',
+        }}>
+        <Pressable onPress={() => goBack()}>
+          <Material name="arrow-back" size={24} />
+        </Pressable>
+        <Text
+          style={{
+            fontSize: 28,
+            fontWeight: '600',
+            alignSelf: 'center',
+          }}>
+          Phương thức thanh toán
+        </Text>
+      </View>
+
       <View style={styles.container}>
         <Swiper style={styles.wrapper} showsButtons={true}>
           <View style={styles.slide1}>
@@ -36,6 +62,7 @@ const AddCardView = () => {
       <View
         style={{
           flex: 1,
+          paddingHorizontal: 20,
         }}>
         <View
           style={{
@@ -145,6 +172,7 @@ export default AddCardView;
 const styles = StyleSheet.create({
   container: {
     height: 300,
+    paddingHorizontal: 20,
   },
   wrapper: {},
   slide1: {

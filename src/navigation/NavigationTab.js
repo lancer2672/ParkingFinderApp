@@ -5,6 +5,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {useTheme} from 'styled-components';
 
 import ParkingLotsMap from '@src/screens/ParkingLot/ParkingLotMap';
+import SettingView from '@src/screens/Setting/SettingView';
 
 const Tab = createBottomTabNavigator();
 
@@ -78,7 +79,7 @@ export const Tabs = () => {
           tabBarButton: props => <CustomTabButton {...props} />,
         }}
       />
-      <Tab.Screen name="Settings" component={ParkingLotsMap} />
+      <Tab.Screen name="Settings" component={SettingView} />
       <Tab.Screen name="Profile" component={ParkingLotsMap} />
     </Tab.Navigator>
   );
