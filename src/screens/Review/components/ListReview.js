@@ -1,8 +1,9 @@
 import {expandAnimation} from '@src/animation';
+import replyAPI from '@src/api/reply.api';
 import {generalColor} from '@src/theme/color';
 import {row, rowCenter} from '@src/theme/style';
 import textStyle from '@src/theme/text';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {
   FlatList,
   LayoutAnimation,
@@ -68,8 +69,17 @@ const reviewBookingMock = [
     children: [],
   },
 ];
-const ListReview = ({hotel, reviews = reviewBookingMock, style = {}}) => {
-  const [visible, setChildrenVisible] = useState(false);
+
+function getRandomNumber(min, max) {
+  if (min > max) {
+    throw new Error('Giá trị min phải nhỏ hơn hoặc bằng max.');
+  }
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+const maxStars = 5;
+const ListReview = ({hotel, reviews, style = {}}) => {
+  console.log('reviews', reviews);
   const renderItem = ({item}) => {
     return (
       <View
@@ -90,12 +100,16 @@ const ListReview = ({hotel, reviews = reviewBookingMock, style = {}}) => {
                 flex: 1,
                 color: generalColor.primary,
               }}>
-              Savanah Nguyen
+              {item?.user?.name}
             </Text>
-            <AntDesign
-              name="star"
-              color={generalColor.other.star}
-              size={20}></AntDesign>
+            {[...Array(item.rating)].map((_, index) => (
+              <AntDesign
+                key={index}
+                name="star"
+                color={generalColor.primary}
+                size={20}
+              />
+            ))}
           </View>
 
           <Text style={{marginBottom: 4, fontSize: 12}}>
@@ -105,7 +119,7 @@ const ListReview = ({hotel, reviews = reviewBookingMock, style = {}}) => {
               year: 'numeric',
             })}
           </Text>
-          <Text style={styles.content}>{item.description}</Text>
+          <Text style={styles.content}>{item.comment}</Text>
           <View style={rowCenter}>
             <AntDesign
               name="like2"
@@ -113,30 +127,11 @@ const ListReview = ({hotel, reviews = reviewBookingMock, style = {}}) => {
               size={18}></AntDesign>
             <Text style={{fontSize: 13, color: generalColor.primary}}>
               {' '}
-              Hữu ích (12)
+              Hữu ích ({getRandomNumber(1, 23)})
             </Text>
           </View>
-          {item.children && item.children.length > 0 && (
-            <View style={{marginTop: 4}}>
-              <Pressable
-                onPress={() => {
-                  setChildrenVisible(!visible);
-                  LayoutAnimation.configureNext(expandAnimation);
-                }}>
-                <Text style={{fontSize: 15, color: generalColor.primary}}>
-                  {' '}
-                  Xem bình luận phản hồi
-                </Text>
-              </Pressable>
-              {visible && (
-                <View>
-                  {item.children.map(i => {
-                    return <ChildrenReview item={i}></ChildrenReview>;
-                  })}
-                </View>
-              )}
-            </View>
-          )}
+
+          <ResponseReview reviewId={item.id}></ResponseReview>
         </View>
       </View>
     );
@@ -174,7 +169,7 @@ const ChildrenReview = ({item}) => {
               flex: 1,
               color: generalColor.primary,
             }}>
-            Savanah Nguyen
+            {item?.user?.name}
           </Text>
         </View>
 
@@ -185,7 +180,7 @@ const ChildrenReview = ({item}) => {
             year: 'numeric',
           })}
         </Text>
-        <Text style={styles.content}>{item.description}</Text>
+        <Text style={styles.content}>{item.comment}</Text>
         <View style={rowCenter}>
           <AntDesign
             name="like2"
@@ -193,10 +188,52 @@ const ChildrenReview = ({item}) => {
             size={18}></AntDesign>
           <Text style={{fontSize: 13, color: generalColor.primary}}>
             {' '}
-            Hữu ích (12)
+            Hữu ích ({getRandomNumber(1, 17)})
           </Text>
         </View>
       </View>
+    </View>
+  );
+};
+
+const ResponseReview = ({reviewId}) => {
+  const [visible, setChildrenVisible] = useState(false);
+  const [replies, setReplies] = useState([]);
+
+  const handleFetchReplies = async reviewId => {
+    try {
+      const res = await replyAPI.getByReviewId(reviewId);
+      console.log('reply', res);
+      setReplies(res);
+    } catch (er) {
+      console.log(er);
+    }
+  };
+
+  useEffect(() => {
+    handleFetchReplies(reviewId);
+  }, [reviewId]);
+  return (
+    <View style={{marginTop: 4}}>
+      <Pressable
+        onPress={() => {
+          setChildrenVisible(!visible);
+          LayoutAnimation.configureNext(expandAnimation);
+        }}>
+        <Text style={{fontSize: 15, color: generalColor.primary}}>
+          {' '}
+          Xem bình luận phản hồi
+        </Text>
+      </Pressable>
+      {visible && (
+        <View>
+          {replies.map(i => {
+            return (
+              <ChildrenReview key={`hello+${i.id}`} item={i}></ChildrenReview>
+            );
+          })}
+        </View>
+      )}
     </View>
   );
 };

@@ -46,7 +46,7 @@ const AuthenticationStack = () => {
 const MainStack = () => {
   return (
     <Stack.Navigator
-      initialRouteName={'Review'}
+      initialRouteName={'Tabs'}
       screenOptions={{presentation: 'card', ...screenOptions}}>
       <Stack.Group screenOptions={screenOptions}>
         <Stack.Screen name={'Tabs'} component={Tabs} />

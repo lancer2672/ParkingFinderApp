@@ -1,11 +1,12 @@
+import reviewAPI from '@src/api/review.api';
 import {goBack} from '@src/navigation/NavigationController';
+import useParkingLotStore from '@src/store/useParkinglotStore';
 import {generalColor} from '@src/theme/color';
 import {row, rowCenter} from '@src/theme/style';
 import textStyle from '@src/theme/text';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {Image, Pressable, StyleSheet, Text, View} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import CreateReviewModal from './components/CreateReview';
 import FilterButton from './components/FilterButton';
 import ListReview from './components/ListReview';
 import SortModal from './components/SortModal';
@@ -16,8 +17,26 @@ const Review = () => {
     rating: 4.5,
     avatar: 'https://picsum.photos/200',
   };
+  const parkingLot = useParkingLotStore(state => state.parkingLot);
   const [sortModalVisible, setSortModalVisible] = useState(false);
   const [startModalVisible, setStarModalVisible] = useState(false);
+
+  const [reviews, setReviews] = useState([]);
+
+  const fetchReviews = async () => {
+    try {
+      const response = await reviewAPI.getByParkingLotId(parkingLot.id);
+
+      console.log('response', response);
+      setReviews(response);
+    } catch (error) {
+      console.error('Error fetching reviews:', error);
+      throw error;
+    }
+  };
+  useEffect(() => {
+    fetchReviews();
+  }, []);
   return (
     <View style={{flex: 1, backgroundColor: 'white', paddingBottom: 12}}>
       <View style={{padding: 12, marginTop: 12, ...rowCenter}}>
@@ -31,7 +50,7 @@ const Review = () => {
       </View>
       <View style={rowCenter}>
         <Image
-          source={{uri: hotel.avatar}}
+          source={{uri: parkingLot.images[0] || 'https://picsum.photos/200'}}
           style={{width: 80, height: 80, margin: 12, borderRadius: 12}}></Image>
 
         <View
@@ -43,25 +62,12 @@ const Review = () => {
             alignItems: 'flex-end',
           }}>
           <View>
-            <Text style={styles.txt}>{hotel.name}</Text>
+            <Text style={styles.txt}>{parkingLot.name}</Text>
             <View style={rowCenter}>
               <Text style={styles.rating}>{hotel.rating}</Text>
               <Text>120 lượt đánh giá</Text>
             </View>
           </View>
-          {/* <View>
-            <View style={rowCenter}>
-              <AntDesign
-                name="star"
-                color={generalColor.other.star}
-                size={32}></AntDesign>
-              <AntDesign
-                name="star"
-                color={generalColor.other.star}
-                size={32}></AntDesign>
-            </View>
-            <Text>120 lượt đánh giá</Text>
-          </View> */}
         </View>
       </View>
 
@@ -116,7 +122,7 @@ const Review = () => {
       </View>
 
       <View style={{flex: 1, paddingHorizontal: 8}}>
-        <ListReview></ListReview>
+        <ListReview reviews={reviews}></ListReview>
       </View>
       <SortModal
         isVisible={sortModalVisible}
@@ -128,9 +134,9 @@ const Review = () => {
         onClose={() => {
           setStarModalVisible(false);
         }}></StarModal>
-      <CreateReviewModal
+      {/* <CreateReviewModal
         isVisible={true}
-        onClose={() => {}}></CreateReviewModal>
+        onClose={() => {}}></CreateReviewModal> */}
     </View>
   );
 };
