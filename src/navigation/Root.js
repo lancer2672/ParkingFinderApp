@@ -14,6 +14,7 @@ import {navigationRef} from './NavigationController';
 import {Tabs} from './NavigationTab';
 import Booking from '@src/screens/ParkingLot/components/Booking';
 import ParkingHistory from '@src/screens/History/ParkingHistory';
+import AddCardView from '@src/screens/Payment/AddCardView';
 const screenOptions = {
   header: () => null,
   cardOverlayEnabled: true,
@@ -33,8 +34,6 @@ const AuthenticationStack = () => {
           <Stack.Screen name="SplashScreen" component={SplashScreen} />
           <Stack.Screen name="Onboarding" component={Onboarding} />
           <Stack.Screen name={'SignUp'} component={SignUp} />
-
-          {/* <Stack.Screen name={'SignIn'} component={ParkingHistory} /> */}
           <Stack.Screen name={'SignIn'} component={SignIn} />
         </Stack.Group>
       ) : null}
@@ -52,6 +51,7 @@ const MainStack = () => {
         <Stack.Screen name={'ParkingLotMap'} component={ParkingLotsMap} />
         <Stack.Screen name={'Booking'} component={Booking} />
         <Stack.Screen name={'ParkingHistory'} component={ParkingHistory} />
+        <Stack.Screen name={'AddCardView'} component={AddCardView} />
       </Stack.Group>
     </Stack.Navigator>
   );
