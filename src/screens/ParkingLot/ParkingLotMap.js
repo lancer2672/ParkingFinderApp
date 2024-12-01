@@ -291,7 +291,7 @@ const ParkingLotsMap = ({initialLocation, navigation}) => {
           navigation={navigation}></ParkingLotModal>
       )}
 
-      <VNPayModal
+      {/* <VNPayModal
         visible={showVNPay}
         paymentUrl={paymentUrl}
         onPaymentFailure={() => {}}
@@ -301,7 +301,7 @@ const ParkingLotsMap = ({initialLocation, navigation}) => {
         onClose={() => {
           console.log(':D');
           setShowVNPay(false);
-        }}></VNPayModal>
+        }}></VNPayModal> */}
     </View>
   );
 };

@@ -23,7 +23,7 @@ const authAPI = {
         email,
         phoneNumber,
         password,
-        role: ROLE.USER, // Set role to "USER" as per instructions
+        role: ROLE.USER,   // Set role to "USER" as per instructions
       });
       return response.data;
     } catch (error) {

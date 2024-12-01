@@ -3,7 +3,7 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { useTheme } from 'styled-components';
-
+import SecurityDashboard from '@src/screens/Security/SecurityDashboard';
 import ParkingLotsMap from '@src/screens/ParkingLot/ParkingLotMap';
 
 const Tab = createBottomTabNavigator();
@@ -31,7 +31,7 @@ const CustomTabButton = ({ children, onPress }) => (
 
 export const Tabs = () => {
   const theme = useTheme();
-  
+
   return (
     <Tab.Navigator
       initialRouteName="Home"
@@ -52,7 +52,7 @@ export const Tabs = () => {
         tabBarIcon: ({ focused }) => {
           let iconName;
           let color = focused ? '#4A55A2' : '#748c94';
-          
+
           if (route.name === 'Home') {
             return <Feather name="home" size={24} color={color} />;
           } else if (route.name === 'Wallet') {
@@ -67,9 +67,9 @@ export const Tabs = () => {
         },
       })}>
       <Tab.Screen name="Home" component={ParkingLotsMap} />
-      <Tab.Screen name="Wallet" component={ParkingLotsMap} />
-      <Tab.Screen 
-        name="Navigation" 
+      <Tab.Screen name="Wallet" component={SecurityDashboard} />
+      <Tab.Screen
+        name="Navigation"
         component={ParkingLotsMap}
         options={{
           tabBarIcon: ({ focused }) => (
