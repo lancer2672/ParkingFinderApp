@@ -79,7 +79,7 @@
     "react-native-vector-icons": "^10.0.3",
     "react-native-webview": "^13.12.3",
     "react-navigation": "^5.0.0",
-    "socket.io-client": "^4.7.5",
+    "socket.io-client": "^4.8.1",
     "styled-components": "^6.1.8",
     "yup": "^1.4.0",
     "zustand": "^4.5.5"

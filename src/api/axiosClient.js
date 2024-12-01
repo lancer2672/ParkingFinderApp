@@ -1,11 +1,11 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
-const baseURL = 'http://192.168.200.104:8080';
+export const serverURL = 'http://192.168.187.104:8080';
 const ac =
   'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI0IiwiaWF0IjoxNzI5NDE1NzUwLCJleHAiOjE3Mjk1MDIxNTB9.J1wFb2uPMCvs-_G0YCobfULcJLk6cHERdUsDVqorWbsfo5C9pT3p76qSnVxkm4p59b8ThRZZA4NZBwtWayp1EQ';
 const axiosClient = axios.create({
-  baseURL,
+  baseURL: serverURL,
   headers: {
     Authorization: `Bearer ${ac}`,
   },

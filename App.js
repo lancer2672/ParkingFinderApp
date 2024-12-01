@@ -1,4 +1,5 @@
 import useNotification from '@src/hooks/useNotification';
+import useSocket from '@src/hooks/useSocket';
 import Root from '@src/navigation/Root';
 import ThemeProviderComponent from '@src/theme/context';
 import {useEffect} from 'react';
@@ -8,6 +9,13 @@ import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {Provider} from 'react-native-paper';
 
 function App() {
+  const {on} = useSocket();
+  useEffect(() => {
+    // Lắng nghe tin nhắn từ server
+    on('payment', message => {
+      console.log('_>>>> SERVER MESSAGE', message);
+    });
+  }, [on]);
   const {displayNotification} = useNotification();
   useEffect(() => {
     displayNotification({title: 'Thanh toán thành công', body: 'TEST'});
