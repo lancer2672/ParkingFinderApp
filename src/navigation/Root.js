@@ -16,6 +16,11 @@ import {UserID_Key} from '@src/utils/localStorage';
 import {useEffect, useState} from 'react';
 import {navigationRef} from './NavigationController';
 import {Tabs} from './NavigationTab';
+import Booking from '@src/screens/ParkingLot/components/Booking';
+import ParkingHistory from '@src/screens/History/ParkingHistory';
+import AddCardView from '@src/screens/Payment/AddCardView';
+import SettingView from '@src/screens/Setting/SettingView';
+
 const screenOptions = {
   header: () => null,
   cardOverlayEnabled: true,
@@ -35,8 +40,6 @@ const AuthenticationStack = () => {
           <Stack.Screen name="SplashScreen" component={SplashScreen} />
           <Stack.Screen name="Onboarding" component={Onboarding} />
           <Stack.Screen name={'SignUp'} component={SignUp} />
-
-          {/* <Stack.Screen name={'SignIn'} component={ParkingHistory} /> */}
           <Stack.Screen name={'SignIn'} component={SignIn} />
         </Stack.Group>
       ) : null}
@@ -56,6 +59,8 @@ const MainStack = () => {
         <Stack.Screen name={'Booking'} component={Booking} />
         <Stack.Screen name={'Notification'} component={Notification} />
         <Stack.Screen name={'ParkingHistory'} component={ParkingHistory} />
+        <Stack.Screen name={'AddCardView'} component={AddCardView} />
+        <Stack.Screen name={'SettingView'} component={SettingView} />
       </Stack.Group>
     </Stack.Navigator>
   );
@@ -82,11 +87,10 @@ const Root = () => {
     fetchUser();
   }, []);
 
-  console.log('User store is', user);
   return (
     <NavigationContainer ref={navigationRef}>
       <Stack.Navigator screenOptions={screenOptions}>
-        {user.phoneNumber ? (
+        {true ? (
           <Stack.Screen name="MainStack" component={MainStack} />
         ) : (
           <Stack.Screen
