@@ -7,18 +7,17 @@ import SplashScreen from '@src/components/splash';
 import SignIn from '@src/screens/Authentication/SignIn';
 import SignUp from '@src/screens/Authentication/SignUp';
 import ParkingHistory from '@src/screens/History/ParkingHistory';
+import Notification from '@src/screens/Notification/Notification';
 import Booking from '@src/screens/ParkingLot/components/Booking';
 import ParkingLotsMap from '@src/screens/ParkingLot/ParkingLotMap';
+import AddCardView from '@src/screens/Payment/AddCardView';
 import Review from '@src/screens/Review/Review';
+import SettingView from '@src/screens/Setting/SettingView';
 import useUserStore from '@src/store/userStore';
 import {UserID_Key} from '@src/utils/localStorage';
 import {useEffect, useState} from 'react';
 import {navigationRef} from './NavigationController';
 import {Tabs} from './NavigationTab';
-import Booking from '@src/screens/ParkingLot/components/Booking';
-import ParkingHistory from '@src/screens/History/ParkingHistory';
-import AddCardView from '@src/screens/Payment/AddCardView';
-import SettingView from '@src/screens/Setting/SettingView';
 
 const screenOptions = {
   header: () => null,
@@ -49,13 +48,14 @@ const AuthenticationStack = () => {
 const MainStack = () => {
   return (
     <Stack.Navigator
-      initialRouteName={'Tabs'}
+      initialRouteName={'Notification'}
       screenOptions={{presentation: 'card', ...screenOptions}}>
       <Stack.Group screenOptions={screenOptions}>
         <Stack.Screen name={'Tabs'} component={Tabs} />
         <Stack.Screen name={'ParkingLotMap'} component={ParkingLotsMap} />
         <Stack.Screen name={'Review'} component={Review} />
         <Stack.Screen name={'Booking'} component={Booking} />
+        <Stack.Screen name={'Notification'} component={Notification} />
         <Stack.Screen name={'ParkingHistory'} component={ParkingHistory} />
         <Stack.Screen name={'AddCardView'} component={AddCardView} />
         <Stack.Screen name={'SettingView'} component={SettingView} />

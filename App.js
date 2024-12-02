@@ -10,11 +10,20 @@ import {Provider} from 'react-native-paper';
 
 function App() {
   const {on} = useSocket();
+
   useEffect(() => {
     // Lắng nghe tin nhắn từ server
     on('payment', message => {
       console.log('_>>>> SERVER MESSAGE', message);
     });
+    // (async () => {
+    //   await addItem(getNotiKey(Date.now()), {
+    //     title: 'Đặt chỗ',
+    //     description: 'Bạn đã đặt chỗ thành công',
+    //     createdAt: Date.now(),
+    //     isSeen: false,
+    //   });
+    // })();
   }, [on]);
   const {displayNotification} = useNotification();
   useEffect(() => {
