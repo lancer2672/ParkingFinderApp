@@ -6,14 +6,15 @@ import Onboarding from '@src/components/onboarding';
 import SplashScreen from '@src/components/splash';
 import SignIn from '@src/screens/Authentication/SignIn';
 import SignUp from '@src/screens/Authentication/SignUp';
+import ParkingHistory from '@src/screens/History/ParkingHistory';
+import Booking from '@src/screens/ParkingLot/components/Booking';
 import ParkingLotsMap from '@src/screens/ParkingLot/ParkingLotMap';
+import Review from '@src/screens/Review/Review';
 import useUserStore from '@src/store/userStore';
 import {UserID_Key} from '@src/utils/localStorage';
 import {useEffect, useState} from 'react';
 import {navigationRef} from './NavigationController';
 import {Tabs} from './NavigationTab';
-import Booking from '@src/screens/ParkingLot/components/Booking';
-import ParkingHistory from '@src/screens/History/ParkingHistory';
 const screenOptions = {
   header: () => null,
   cardOverlayEnabled: true,
@@ -50,6 +51,7 @@ const MainStack = () => {
       <Stack.Group screenOptions={screenOptions}>
         <Stack.Screen name={'Tabs'} component={Tabs} />
         <Stack.Screen name={'ParkingLotMap'} component={ParkingLotsMap} />
+        <Stack.Screen name={'Review'} component={Review} />
         <Stack.Screen name={'Booking'} component={Booking} />
         <Stack.Screen name={'ParkingHistory'} component={ParkingHistory} />
       </Stack.Group>
