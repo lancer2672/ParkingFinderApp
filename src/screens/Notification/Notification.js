@@ -43,7 +43,7 @@ const Notification = ({navigation}) => {
       <FlatList
         style={{flex: 1}}
         data={notifications}
-        keyExtractor={(item, index) => item._id}
+        keyExtractor={(item, index) => index}
         renderItem={({item}) => (
           <NotificationItem
             onUpdate={async () => {

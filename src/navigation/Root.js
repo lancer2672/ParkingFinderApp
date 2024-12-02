@@ -10,16 +10,14 @@ import ParkingHistory from '@src/screens/History/ParkingHistory';
 import Notification from '@src/screens/Notification/Notification';
 import Booking from '@src/screens/ParkingLot/components/Booking';
 import ParkingLotsMap from '@src/screens/ParkingLot/ParkingLotMap';
+import AddCardView from '@src/screens/Payment/AddCardView';
 import Review from '@src/screens/Review/Review';
+import SettingView from '@src/screens/Setting/SettingView';
 import useUserStore from '@src/store/userStore';
 import {UserID_Key} from '@src/utils/localStorage';
 import {useEffect, useState} from 'react';
 import {navigationRef} from './NavigationController';
 import {Tabs} from './NavigationTab';
-import Booking from '@src/screens/ParkingLot/components/Booking';
-import ParkingHistory from '@src/screens/History/ParkingHistory';
-import AddCardView from '@src/screens/Payment/AddCardView';
-import SettingView from '@src/screens/Setting/SettingView';
 
 const screenOptions = {
   header: () => null,
