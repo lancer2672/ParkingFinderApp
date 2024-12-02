@@ -7,6 +7,7 @@ import SplashScreen from '@src/components/splash';
 import SignIn from '@src/screens/Authentication/SignIn';
 import SignUp from '@src/screens/Authentication/SignUp';
 import ParkingHistory from '@src/screens/History/ParkingHistory';
+import Notification from '@src/screens/Notification/Notification';
 import Booking from '@src/screens/ParkingLot/components/Booking';
 import ParkingLotsMap from '@src/screens/ParkingLot/ParkingLotMap';
 import Review from '@src/screens/Review/Review';
@@ -46,13 +47,14 @@ const AuthenticationStack = () => {
 const MainStack = () => {
   return (
     <Stack.Navigator
-      initialRouteName={'Tabs'}
+      initialRouteName={'Notification'}
       screenOptions={{presentation: 'card', ...screenOptions}}>
       <Stack.Group screenOptions={screenOptions}>
         <Stack.Screen name={'Tabs'} component={Tabs} />
         <Stack.Screen name={'ParkingLotMap'} component={ParkingLotsMap} />
         <Stack.Screen name={'Review'} component={Review} />
         <Stack.Screen name={'Booking'} component={Booking} />
+        <Stack.Screen name={'Notification'} component={Notification} />
         <Stack.Screen name={'ParkingHistory'} component={ParkingHistory} />
       </Stack.Group>
     </Stack.Navigator>

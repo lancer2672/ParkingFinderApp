@@ -1,12 +1,12 @@
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
 import {goBack} from '@src/navigation/NavigationController';
-import {getAllValuesMatchingPattern} from '@src/store/as/as';
 import {generalColor} from '@src/theme/color';
 import {useEffect, useState} from 'react';
 import {FlatList, Text, TouchableOpacity, View} from 'react-native';
 import styled from 'styled-components/native';
 import NotificationItem from './components/NotificationItem';
+import {getAllValuesMatchingPattern} from './components/as';
 
 const Notification = ({navigation}) => {
   console.log('notification show', notifications);

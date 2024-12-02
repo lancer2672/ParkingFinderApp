@@ -1,9 +1,9 @@
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
-import {addItem, getNotiKey, removeItem} from '@src/store/as/as';
 import {generalColor} from '@src/theme/color';
 import {useState} from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {addItem, getNotiKey, removeItem} from './as';
 
 export const getTimeDifference = pastDate => {
   const now = new Date();
@@ -46,6 +46,7 @@ const NotificationItem = ({notification = {}, onUpdate}) => {
       ]}>
       <Image
         style={styles.image}
+        resizeMode="contain"
         source={require('../../../assets/icons/iconapp.png')}
       />
       <View style={{flex: 1}}>
@@ -99,7 +100,7 @@ const styles = StyleSheet.create({
   image: {
     width: 50,
     height: 50,
-    borderRadius: 25,
+    borderRadius: 3,
   },
   contentContainer: {
     flex: 1,
