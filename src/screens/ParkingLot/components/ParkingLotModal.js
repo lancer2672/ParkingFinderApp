@@ -1,8 +1,10 @@
 import ButtonComponent from '@src/components/Button';
-import { parkingslotsMock } from '@src/mock/mock';
-import { generalColor } from '@src/theme/color';
-import { center, row, rowCenter } from '@src/theme/style';
+import {parkingslotsMock} from '@src/mock/mock';
+import {navigate} from '@src/navigation/NavigationController';
+import {generalColor} from '@src/theme/color';
+import {center, row, rowCenter} from '@src/theme/style';
 import textStyle from '@src/theme/text';
+import {useState} from 'react';
 import {
   Image,
   Linking,
@@ -16,7 +18,7 @@ import { Divider } from 'react-native-paper';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Feather from 'react-native-vector-icons/Feather';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Booking from './Booking';
 import React, { useState } from 'react';
 
@@ -83,12 +85,20 @@ const ParkingLotModal = ({
                   numberOfLines={2}
                   style={{
                     ...textStyle.content.small,
-                    marginBottom: 8,
+
                     flex: 1,
                   }}>
                   {parkingslot.address}
                 </Text>
               </View>
+              <Text
+                style={{
+                  ...textStyle.content.small,
+                  color: generalColor.strongprimary,
+                  flex: 1,
+                }}>
+                4.3 (120 lượt đánh giá)
+              </Text>
             </View>
           </View>
 
@@ -98,7 +108,7 @@ const ParkingLotModal = ({
 
             <Divider style={{ marginLeft: 12 }}></Divider>
             <FontAwesome5 name="parking" color="black" size={20}></FontAwesome5>
-            <Text style={styles.txt}>Có bãi đỗ xe</Text>
+            <Text style={styles.txt}>Có bãi đỗ xe</Text> */}
 
             <TouchableOpacity
               style={{
@@ -114,9 +124,23 @@ const ParkingLotModal = ({
             </TouchableOpacity>
           </View>
           <ButtonComponent
+            leftIcon={
+              <FontAwesome
+                name="commenting-o"
+                color={generalColor.white[100]}
+                size={24}></FontAwesome>
+            }
+            onPress={() => {
+              navigate('Review');
+              onClose();
+            }}
+            color={generalColor.other.bluepurple}
+            style={{marginVertical: 24, marginTop: 40, borderRadius: 12}}
+            text={'Xem đánh giá'}></ButtonComponent>
+          <ButtonComponent
             onPress={onContinue}
             color={generalColor.other.bluepurple}
-            style={{ marginVertical: 24, marginTop: 40, borderRadius: 12 }}
+            style={{marginVertical: 24, marginTop: 0, borderRadius: 12}}
             text={'Tiếp tục'}></ButtonComponent>
         </View>
       </ReactNativeModal>
@@ -136,7 +160,7 @@ export default ParkingLotModal;
 const styles = StyleSheet.create({
   container: {
     marginTop: 'auto',
-    height: 280,
+    height: 340,
     backgroundColor: 'white',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,

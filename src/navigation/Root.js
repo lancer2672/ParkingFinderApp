@@ -6,7 +6,13 @@ import Onboarding from '@src/components/onboarding';
 import SplashScreen from '@src/components/splash';
 import SignIn from '@src/screens/Authentication/SignIn';
 import SignUp from '@src/screens/Authentication/SignUp';
+import ParkingHistory from '@src/screens/History/ParkingHistory';
+import Notification from '@src/screens/Notification/Notification';
+import Booking from '@src/screens/ParkingLot/components/Booking';
 import ParkingLotsMap from '@src/screens/ParkingLot/ParkingLotMap';
+import AddCardView from '@src/screens/Payment/AddCardView';
+import Review from '@src/screens/Review/Review';
+import SettingView from '@src/screens/Setting/SettingView';
 import useUserStore from '@src/store/userStore';
 import { UserID_Key } from '@src/utils/localStorage';
 import { useEffect, useState } from 'react';
@@ -37,8 +43,6 @@ const AuthenticationStack = () => {
           <Stack.Screen name="SplashScreen" component={SplashScreen} />
           <Stack.Screen name="Onboarding" component={Onboarding} />
           <Stack.Screen name={'SignUp'} component={SignUp} />
-
-          {/* <Stack.Screen name={'SignIn'} component={ParkingHistory} /> */}
           <Stack.Screen name={'SignIn'} component={SignIn} />
         </Stack.Group>
       ) : null}
@@ -49,13 +53,17 @@ const AuthenticationStack = () => {
 const MainStack = () => {
   return (
     <Stack.Navigator
-      initialRouteName={'Tabs'}
-      screenOptions={{ presentation: 'card', ...screenOptions }}>
+      initialRouteName={'Notification'}
+      screenOptions={{presentation: 'card', ...screenOptions}}>
       <Stack.Group screenOptions={screenOptions}>
         <Stack.Screen name={'Tabs'} component={Tabs} />
         <Stack.Screen name={'ParkingLotMap'} component={ParkingLotsMap} />
+        <Stack.Screen name={'Review'} component={Review} />
         <Stack.Screen name={'Booking'} component={Booking} />
+        <Stack.Screen name={'Notification'} component={Notification} />
         <Stack.Screen name={'ParkingHistory'} component={ParkingHistory} />
+        <Stack.Screen name={'AddCardView'} component={AddCardView} />
+        <Stack.Screen name={'SettingView'} component={SettingView} />
         <Stack.Screen name={'QrcodeScreen'} component={QrcodeScreen} />
         <Stack.Screen name={'RidesScreen'} component={RidesScreen} />
         <Stack.Screen name={'SecurityDashboard'} component={SecurityDashboard} />
@@ -86,11 +94,10 @@ const Root = () => {
     fetchUser();
   }, []);
 
-  console.log('User store is', user);
   return (
     <NavigationContainer ref={navigationRef}>
       <Stack.Navigator screenOptions={screenOptions}>
-        {user.phoneNumber ? (
+        {true ? (
           <Stack.Screen name="MainStack" component={MainStack} />
         ) : (
           <Stack.Screen

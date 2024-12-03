@@ -1,5 +1,7 @@
-import {FlatList, SafeAreaView, View, Text, StyleSheet} from 'react-native';
+import {FlatList, SafeAreaView, View, Text, Pressable} from 'react-native';
 import ParkingHistoryItem from './component/ParkingHistoryItem.component';
+import Material from 'react-native-vector-icons/MaterialIcons';
+import {goBack} from '@src/navigation/NavigationController';
 
 const ParkingHistory = () => {
   const activeData = [
@@ -21,17 +23,40 @@ const ParkingHistory = () => {
   });
 
   return (
-    <View style={styles.container}>
+    <View>
+      <View
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          paddingVertical: 12,
+          marginBottom: 24,
+          alignItems: 'center',
+          gap: 18,
+          paddingHorizontal: 12,
+          backgroundColor: 'white',
+        }}>
+        <Pressable onPress={() => goBack()}>
+          <Material name="arrow-back" size={24} />
+        </Pressable>
+        <Text
+          style={{
+            fontSize: 28,
+            fontWeight: '600',
+            alignSelf: 'center',
+          }}>
+          Lịch sử đỗ xe
+        </Text>
+      </View>
+
       <SafeAreaView>
         <FlatList
           data={activeData}
           ListHeaderComponent={() => (
             <Text
               style={{
-                paddingHorizontal: 20,
-                marginBottom: 8,
+                paddingHorizontal: 8,
                 color: 'rgba(117, 127, 140, 1)',
-                fontSize: 16,
+                fontSize: 24,
                 fontWeight: '600',
               }}>
               Bãi xe đang đỗ
@@ -48,10 +73,9 @@ const ParkingHistory = () => {
           ListHeaderComponent={() => (
             <Text
               style={{
-                paddingHorizontal: 20,
-                marginBottom: 8,
+                paddingHorizontal: 8,
                 color: 'rgba(117, 127, 140, 1)',
-                fontSize: 16,
+                fontSize: 24,
                 fontWeight: '600',
               }}>
               Bãi xe đã đỗ
@@ -66,11 +90,5 @@ const ParkingHistory = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    padding: '',
-  },
-});
 
 export default ParkingHistory;

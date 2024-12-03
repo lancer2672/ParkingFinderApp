@@ -1,14 +1,15 @@
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { useTheme } from 'styled-components';
 import SecurityDashboard from '@src/screens/Security/SecurityDashboard';
 import ParkingLotsMap from '@src/screens/ParkingLot/ParkingLotMap';
+import SettingView from '@src/screens/Setting/SettingView';
 
 const Tab = createBottomTabNavigator();
 
-const CustomTabButton = ({ children, onPress }) => (
+const CustomTabButton = ({children, onPress}) => (
   <TouchableOpacity
     style={{
       top: -30,
@@ -22,7 +23,7 @@ const CustomTabButton = ({ children, onPress }) => (
         height: 70,
         borderRadius: 35,
         backgroundColor: '#4A55A2',
-        ...styles.shadow
+        ...styles.shadow,
       }}>
       {children}
     </View>
@@ -35,7 +36,7 @@ export const Tabs = () => {
   return (
     <Tab.Navigator
       initialRouteName="Home"
-      screenOptions={({ route }) => ({
+      screenOptions={({route}) => ({
         tabBarShowLabel: false,
         headerShown: false,
         tabBarStyle: {
@@ -47,9 +48,9 @@ export const Tabs = () => {
           backgroundColor: '#ffffff',
           borderRadius: 15,
           height: 90,
-          ...styles.shadow
+          ...styles.shadow,
         },
-        tabBarIcon: ({ focused }) => {
+        tabBarIcon: ({focused}) => {
           let iconName;
           let color = focused ? '#4A55A2' : '#748c94';
 
@@ -72,15 +73,13 @@ export const Tabs = () => {
         name="Navigation"
         component={ParkingLotsMap}
         options={{
-          tabBarIcon: ({ focused }) => (
+          tabBarIcon: ({focused}) => (
             <Feather name="send" size={24} color="#ffffff" />
           ),
-          tabBarButton: (props) => (
-            <CustomTabButton {...props} />
-          )
+          tabBarButton: props => <CustomTabButton {...props} />,
         }}
       />
-      <Tab.Screen name="Settings" component={ParkingLotsMap} />
+      <Tab.Screen name="Settings" component={SettingView} />
       <Tab.Screen name="Profile" component={ParkingLotsMap} />
     </Tab.Navigator>
   );
@@ -95,6 +94,6 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.5,
-    elevation: 5
-  }
+    elevation: 5,
+  },
 });
