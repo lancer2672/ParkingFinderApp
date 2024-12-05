@@ -2,8 +2,8 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import {useTheme} from 'styled-components';
-
+import { useTheme } from 'styled-components';
+import SecurityDashboard from '@src/screens/Security/SecurityDashboard';
 import ParkingLotsMap from '@src/screens/ParkingLot/ParkingLotMap';
 import SettingView from '@src/screens/Setting/SettingView';
 
@@ -68,7 +68,7 @@ export const Tabs = () => {
         },
       })}>
       <Tab.Screen name="Home" component={ParkingLotsMap} />
-      <Tab.Screen name="Wallet" component={ParkingLotsMap} />
+      <Tab.Screen name="Wallet" component={SecurityDashboard} />
       <Tab.Screen
         name="Navigation"
         component={ParkingLotsMap}

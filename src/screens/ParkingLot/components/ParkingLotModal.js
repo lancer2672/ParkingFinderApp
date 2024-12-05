@@ -14,11 +14,13 @@ import {
   View,
 } from 'react-native';
 import ReactNativeModal from 'react-native-modal';
+import { Divider } from 'react-native-paper';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Booking from './Booking';
+import React, { useState } from 'react';
 
 const ParkingLotModal = ({
   parkingslot = parkingslotsMock[0],
@@ -34,13 +36,13 @@ const ParkingLotModal = ({
   };
 
   const onContinue = () => {
-    onClose();
+    // onClose();
 
     handleContinue();
     setIsBookingVisible(true);
   };
 
-  console.log('ParkingLotModal props:', {parkingslot, isVisible, navigation});
+  console.log('ParkingLotModal props:', { parkingslot, isVisible, navigation });
 
   return (
     <>
@@ -52,12 +54,12 @@ const ParkingLotModal = ({
         animationOut="slideOutDown"
         onBackButtonPress={onClose}
         onBackdropPress={onClose}
-        style={{margin: 0}}>
+        style={{ margin: 0 }}>
         <View style={styles.container}>
           <View style={row}>
             <View>
               <Image
-                source={{uri: parkingslot.avatar}}
+                source={{ uri: parkingslot.avatar }}
                 style={styles.img}></Image>
             </View>
             <View
@@ -76,7 +78,7 @@ const ParkingLotModal = ({
                 {parkingslot.name}
               </Text>
 
-              <View style={{...row}}>
+              <View style={{ ...row }}>
                 <Entypo name="location-pin" size={20}></Entypo>
 
                 <Text
@@ -104,7 +106,7 @@ const ParkingLotModal = ({
             <AntDesign name="wifi" color="black" size={20}></AntDesign>
             <Text style={styles.txt}>Wifi miễn phí</Text>
 
-            {/* <Divider style={{marginLeft: 12}}></Divider>
+            <Divider style={{ marginLeft: 12 }}></Divider>
             <FontAwesome5 name="parking" color="black" size={20}></FontAwesome5>
             <Text style={styles.txt}>Có bãi đỗ xe</Text> */}
 
@@ -146,7 +148,8 @@ const ParkingLotModal = ({
       <Booking
         isVisible={isBookingVisible}
         onClose={() => setIsBookingVisible(false)}
-        route={{params: {parkingslot}}}
+        route={{ params: { parkingslot } }}
+        
       />
     </>
   );

@@ -85,6 +85,8 @@ android {
              manifestPlaceholders = [
                     API_KEY: "\"${System.getenv('API_KEY')}\""
                 ]
+        missingDimensionStrategy 'react-native-camera', 'general'
+        multiDexEnabled true
                 
     }
     signingConfigs {

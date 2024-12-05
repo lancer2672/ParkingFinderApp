@@ -1,17 +1,23 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Button } from 'react-native';
-import { parkingslotsMock } from '@src/mock/mock'; // Ensure correct import
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { parkingslotsMock } from '@src/mock/mock';
 import Slider from '@react-native-community/slider';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import ReactNativeModal from 'react-native-modal';
 import QRCode from 'react-native-qrcode-svg';
-
+import LoadingModal from '@src/components/LoadingModal/LoadingModal';
+import { useNavigation } from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import ButtonComponent from '@src/components/Button';
+import { generalColor } from '@src/theme/color';
 const Booking = ({ route, isVisible, onClose }) => {
   const { parkingslot } = route.params || {};
   const [duration, setDuration] = useState(0);
   const [checkinTime, setCheckinTime] = useState(new Date());
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [showQRCode, setShowQRCode] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const navigation = useNavigation();
 
   const onTimeChange = (event, selectedTime) => {
     const currentTime = selectedTime || checkinTime;
@@ -20,7 +26,16 @@ const Booking = ({ route, isVisible, onClose }) => {
   };
 
   const handleBooking = () => {
-    setShowQRCode(true);
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      const qrData = JSON.stringify({
+        parkingslot,
+        duration,
+        checkinTime: checkinTime.toISOString(),
+      });
+      navigation.navigate('QrcodeScreen', { qrData });
+    }, 2000);
   };
 
   if (!parkingslot) {
@@ -43,8 +58,10 @@ const Booking = ({ route, isVisible, onClose }) => {
       style={styles.modal}
     >
       <View style={styles.modalContainer}>
-        <Text style={styles.title}>{parkingslot.name}</Text>
-        <Text style={styles.address}>{parkingslot.address}</Text>
+        <View style={styles.floatingContainer}>
+          <Text style={styles.title}>{parkingslot.name}</Text>
+          <Text style={styles.address}>{parkingslot.address}</Text>
+        </View>
         <View style={styles.floatingContainer}>
           <View style={styles.sliderContainer}>
             <Text style={styles.sliderLabel}>Estimation Duration Time: {duration} hours</Text>
@@ -63,7 +80,9 @@ const Booking = ({ route, isVisible, onClose }) => {
 
           <View style={styles.timePickerContainer}>
             <Text style={styles.timePickerLabel}>Check-in Time: {checkinTime.toLocaleTimeString()}</Text>
-            <Button title="Select Check-in Time" onPress={() => setShowTimePicker(true)} />
+            <TouchableOpacity onPress={() => setShowTimePicker(true)}>
+              <Icon name="edit" size={30} color="#1EB1FC" />
+            </TouchableOpacity>
             {showTimePicker && (
               <DateTimePicker
                 value={checkinTime}
@@ -74,7 +93,13 @@ const Booking = ({ route, isVisible, onClose }) => {
             )}
           </View>
         </View>
-        <Button title="Booking" onPress={handleBooking} />
+        <ButtonComponent
+          onPress={handleBooking}
+          color={generalColor.other.bluepurple}
+          style={{ marginVertical: 24, marginTop: 40, borderRadius: 12 }}
+          text={'Booking'}
+        />
+        {loading && <LoadingModal />}
         {showQRCode && (
           <View style={styles.qrCodeContainer}>
             <QRCode
@@ -87,7 +112,12 @@ const Booking = ({ route, isVisible, onClose }) => {
             />
           </View>
         )}
-        <Button title="Close" onPress={onClose} />
+        <ButtonComponent
+          onPress={onClose}
+          color={generalColor.other.bluepurple}
+          style={{ marginVertical: 24, marginTop: 40, borderRadius: 12 }}
+          text={'Close'}
+        />
       </View>
     </ReactNativeModal>
   );
@@ -100,8 +130,8 @@ const styles = StyleSheet.create({
     margin: 0,
   },
   modalContainer: {
-    width: 300,
-    height: 400,
+    width: 340,
+    height: 700,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 16,

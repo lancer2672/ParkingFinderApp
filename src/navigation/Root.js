@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import userAPI from '@src/api/user.api';
 import Onboarding from '@src/components/onboarding';
 import SplashScreen from '@src/components/splash';
@@ -14,11 +14,16 @@ import AddCardView from '@src/screens/Payment/AddCardView';
 import Review from '@src/screens/Review/Review';
 import SettingView from '@src/screens/Setting/SettingView';
 import useUserStore from '@src/store/userStore';
-import {UserID_Key} from '@src/utils/localStorage';
-import {useEffect, useState} from 'react';
-import {navigationRef} from './NavigationController';
-import {Tabs} from './NavigationTab';
-
+import { UserID_Key } from '@src/utils/localStorage';
+import { useEffect, useState } from 'react';
+import { navigationRef } from './NavigationController';
+import { Tabs } from './NavigationTab';
+import Booking from '@src/screens/ParkingLot/components/Booking';
+import ParkingHistory from '@src/screens/History/ParkingHistory';
+import QrcodeScreen from '@src/screens/ParkingLot/components/QrcodeScreen';
+import RidesScreen from '@src/screens/Security/RidesScreen';
+import SecurityDashboard from '@src/screens/Security/SecurityDashboard';
+import QrScan from '@src/screens/Security/QrScan';
 const screenOptions = {
   header: () => null,
   cardOverlayEnabled: true,
@@ -59,6 +64,10 @@ const MainStack = () => {
         <Stack.Screen name={'ParkingHistory'} component={ParkingHistory} />
         <Stack.Screen name={'AddCardView'} component={AddCardView} />
         <Stack.Screen name={'SettingView'} component={SettingView} />
+        <Stack.Screen name={'QrcodeScreen'} component={QrcodeScreen} />
+        <Stack.Screen name={'RidesScreen'} component={RidesScreen} />
+        <Stack.Screen name={'SecurityDashboard'} component={SecurityDashboard} />
+        <Stack.Screen name={'QrScan'} component={QrScan} />
       </Stack.Group>
     </Stack.Navigator>
   );
