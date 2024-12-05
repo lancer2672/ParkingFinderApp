@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 import io from 'socket.io-client';
 
 const SOCKET_SERVER = 'http://192.168.187.104:9092';

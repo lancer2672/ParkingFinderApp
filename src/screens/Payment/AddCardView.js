@@ -1,17 +1,19 @@
+import { goBack } from '@src/navigation/NavigationController';
+import { generalColor } from '@src/theme/color';
+import { useState } from 'react';
 import {
   StyleSheet,
-  View,
+  Switch,
   Text,
   TextInput,
   TouchableHighlight,
-  Switch,
-  Pressable,
+  TouchableOpacity,
+  View
 } from 'react-native';
 import Swiper from 'react-native-swiper';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import styled from 'styled-components';
 import CardComponent from './components/CardComponent';
-import React, {useState} from 'react';
-import Material from 'react-native-vector-icons/MaterialIcons';
-import {goBack} from '@src/navigation/NavigationController';
 
 const AddCardView = () => {
   const [isEnabled, setIsEnabled] = useState(false);
@@ -21,28 +23,25 @@ const AddCardView = () => {
       style={{
         flex: 1,
       }}>
-      <View
+          <View
         style={{
-          display: 'flex',
           flexDirection: 'row',
-          paddingVertical: 12,
-          marginBottom: 24,
           alignItems: 'center',
-          gap: 18,
-          paddingHorizontal: 12,
-          backgroundColor: 'white',
+          padding: 12,
+          borderBottomWidth: 2,
+          borderBottomColor: generalColor.primary,
         }}>
-        <Pressable onPress={() => goBack()}>
-          <Material name="arrow-back" size={24} />
-        </Pressable>
-        <Text
+        <TouchableOpacity
+          onPress={() => {
+            goBack();
+          }}
           style={{
-            fontSize: 28,
-            fontWeight: '600',
-            alignSelf: 'center',
+            paddingHorizontal: 8,
+            paddingVertical: 4,
           }}>
-          Phương thức thanh toán
-        </Text>
+          <AntDesign name="arrowleft" size={24} color={generalColor.primary} />
+        </TouchableOpacity>
+        <Heading style={{color: generalColor.primary}}>Phương thức thanh toán</Heading>
       </View>
 
       <View style={styles.container}>
@@ -196,3 +195,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+const Heading = styled(Text)`
+  font-weight: bold;
+  font-size: 24px;
+  color: black;
+`;

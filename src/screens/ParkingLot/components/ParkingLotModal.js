@@ -1,10 +1,10 @@
 import ButtonComponent from '@src/components/Button';
-import {parkingslotsMock} from '@src/mock/mock';
-import {navigate} from '@src/navigation/NavigationController';
-import {generalColor} from '@src/theme/color';
-import {center, row, rowCenter} from '@src/theme/style';
+import { parkingslotsMock } from '@src/mock/mock';
+import { navigate } from '@src/navigation/NavigationController';
+import { generalColor } from '@src/theme/color';
+import { center, row, rowCenter } from '@src/theme/style';
 import textStyle from '@src/theme/text';
-import {useState} from 'react';
+import { useState } from 'react';
 import {
   Image,
   Linking,
@@ -20,7 +20,6 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Booking from './Booking';
-import React, { useState } from 'react';
 
 const ParkingLotModal = ({
   parkingslot = parkingslotsMock[0],
@@ -107,8 +106,7 @@ const ParkingLotModal = ({
             <Text style={styles.txt}>Wifi miễn phí</Text>
 
             <Divider style={{ marginLeft: 12 }}></Divider>
-            <FontAwesome5 name="parking" color="black" size={20}></FontAwesome5>
-            <Text style={styles.txt}>Có bãi đỗ xe</Text> */}
+     
 
             <TouchableOpacity
               style={{

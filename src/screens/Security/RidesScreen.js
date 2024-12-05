@@ -1,6 +1,5 @@
-import * as React from "react";
-import { View, Image, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import { useNavigation } from '@react-navigation/native';
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Header } from "./Header";
 import { RideCard } from "./RideCard";
 

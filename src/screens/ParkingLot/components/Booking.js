@@ -1,15 +1,14 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { parkingslotsMock } from '@src/mock/mock';
-import Slider from '@react-native-community/slider';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import Slider from '@react-native-community/slider';
+import { useNavigation } from '@react-navigation/native';
+import ButtonComponent from '@src/components/Button';
+import LoadingModal from '@src/components/LoadingModal/LoadingModal';
+import { generalColor } from '@src/theme/color';
+import { useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import ReactNativeModal from 'react-native-modal';
 import QRCode from 'react-native-qrcode-svg';
-import LoadingModal from '@src/components/LoadingModal/LoadingModal';
-import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import ButtonComponent from '@src/components/Button';
-import { generalColor } from '@src/theme/color';
 const Booking = ({ route, isVisible, onClose }) => {
   const { parkingslot } = route.params || {};
   const [duration, setDuration] = useState(0);
@@ -93,12 +92,21 @@ const Booking = ({ route, isVisible, onClose }) => {
             )}
           </View>
         </View>
+        <View style={{flexDirection:"row",marginVertical: 24, marginTop: 40, justifyContent:"flex-end" }}>
+
+          <ButtonComponent
+           onPress={onClose}
+           color={generalColor.other.bluepurple}
+           style={{ borderRadius: 12 }}
+           text={'Close'}
+         />
         <ButtonComponent
           onPress={handleBooking}
           color={generalColor.other.bluepurple}
-          style={{ marginVertical: 24, marginTop: 40, borderRadius: 12 }}
+          style={{ marginLeft:12, borderRadius: 12 }}
           text={'Booking'}
         />
+        </View>
         {loading && <LoadingModal />}
         {showQRCode && (
           <View style={styles.qrCodeContainer}>
@@ -112,12 +120,7 @@ const Booking = ({ route, isVisible, onClose }) => {
             />
           </View>
         )}
-        <ButtonComponent
-          onPress={onClose}
-          color={generalColor.other.bluepurple}
-          style={{ marginVertical: 24, marginTop: 40, borderRadius: 12 }}
-          text={'Close'}
-        />
+      
       </View>
     </ReactNativeModal>
   );
@@ -131,9 +134,7 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     width: 340,
-    height: 700,
-    justifyContent: 'center',
-    alignItems: 'center',
+  
     padding: 16,
     backgroundColor: 'white',
     borderRadius: 8,

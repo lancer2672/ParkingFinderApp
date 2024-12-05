@@ -1,11 +1,11 @@
 import reviewAPI from '@src/api/review.api';
-import {goBack} from '@src/navigation/NavigationController';
+import { goBack } from '@src/navigation/NavigationController';
 import useParkingLotStore from '@src/store/useParkinglotStore';
-import {generalColor} from '@src/theme/color';
-import {row, rowCenter} from '@src/theme/style';
+import { generalColor } from '@src/theme/color';
+import { row, rowCenter } from '@src/theme/style';
 import textStyle from '@src/theme/text';
-import {useEffect, useState} from 'react';
-import {Image, Pressable, StyleSheet, Text, View} from 'react-native';
+import { useEffect, useState } from 'react';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FilterButton from './components/FilterButton';
 import ListReview from './components/ListReview';
