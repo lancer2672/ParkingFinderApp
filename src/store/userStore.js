@@ -1,11 +1,15 @@
 import { create } from 'zustand'
 
+const init = {
+  id: '',
+  name:'',
+  email: '',
+  phoneNumber: '',
+  role: '',
+  status:'',
+}
 const useUserStore = create((set) => ({
-  user: {
-    email: '',
-    phoneNumber: '',
-    role: '',
-  },
+  user:init,
   updateUser: (email, phoneNumber, role) => set((state) => ({
     user: {
       ...state.user,
@@ -14,7 +18,7 @@ const useUserStore = create((set) => ({
       role,
     },
   })),
-  resetUser: () => set({ user: { email: '', phoneNumber: '', role: '' } }),
-  setUser: (user) => set({ user }),
+  resetUser: () => set({ user: init }),
+  setUser: (user) => set({user}),
 }))
 export default useUserStore
