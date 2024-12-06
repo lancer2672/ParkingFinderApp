@@ -1,10 +1,11 @@
+import parkingLotAPI from '@src/api/parkingLot.api';
 import ButtonComponent from '@src/components/Button';
 import { parkingslotsMock } from '@src/mock/mock';
 import { navigate } from '@src/navigation/NavigationController';
 import { generalColor } from '@src/theme/color';
 import { center, row, rowCenter } from '@src/theme/style';
 import textStyle from '@src/theme/text';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Image,
   Linking,
@@ -13,6 +14,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { showMessage } from 'react-native-flash-message';
 import ReactNativeModal from 'react-native-modal';
 import { Divider } from 'react-native-paper';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -24,25 +26,47 @@ import Booking from './Booking';
 const ParkingLotModal = ({
   parkingslot = parkingslotsMock[0],
   isVisible,
+  carType,
   handleContinue,
   onClose,
   navigation,
 }) => {
   const [isBookingVisible, setIsBookingVisible] = useState(false);
-
+  const [freeSlot, setFreeSlot] = useState(0);
   const callAgent = (phoneNumber = '0846303261') => {
     Linking.openURL(`tel:${parkingslot.agent?.phoneNumber}`);
   };
 
   const onContinue = () => {
     // onClose();
-
+    if(freeSlot == 0){
+      showMessage({
+        message: 'Không đủ chỗ trống',
+        type: 'error',
+      });
+      return
+    }
     handleContinue();
     setIsBookingVisible(true);
   };
 
+  const fetchFreeSlots = async () =>{
+    const data = await parkingLotAPI.getFreeSlots({
+      parkingLotId: parkingslot.id,
+      //checkInTime=2024-10-23T10:03:00
+      checkIn: new Date().toISOString(),
+      carType: carType,
+    })
+    if (data){
+      setFreeSlot(data);
+    }
+  }
   console.log('ParkingLotModal props:', { parkingslot, isVisible, navigation });
-
+  useEffect(() => {
+    if(isVisible){
+      fetchFreeSlots()
+    }
+  }, [isVisible]);
   return (
     <>
       <ReactNativeModal
@@ -74,7 +98,7 @@ const ParkingLotModal = ({
                   marginBottom: 8,
                   color: generalColor.primary,
                 }}>
-                {parkingslot.name}
+                {parkingslot.name} ({freeSlot} chỗ trống)
               </Text>
 
               <View style={{ ...row }}>

@@ -6,7 +6,7 @@ export const ROLE = {
     STAFF: "STAFF",
 }
 
-export const URL_API = '192.168.187.104:8080';
+export const URL_API = '172.16.0.79:8080';
 export const SCREEN_HEIGHT = Dimensions.get('window').height;
 export const SCREEN_WIDTH = Dimensions.get('window').width;
 

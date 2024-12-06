@@ -61,8 +61,9 @@ const reservationAPI = {
                         return response.data.reservations;
                 } catch (error) {
                         console.error('Error creating reservation:', error);
-                        throw error;
+                        // throw error;
                 }
         },
+   
 };
 export default reservationAPI;
