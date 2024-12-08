@@ -1,11 +1,14 @@
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import ParkingLotsMap from '@src/screens/ParkingLot/ParkingLotMap';
+import QrScan from '@src/screens/Security/QrScan';
 import SecurityDashboard from '@src/screens/Security/SecurityDashboard';
 import SettingView from '@src/screens/Setting/SettingView';
-import { Pressable, StyleSheet, View } from 'react-native';
+import Stats from '@src/screens/Stats/Stats';
+import {Pressable, StyleSheet, View} from 'react-native';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import { useTheme } from 'styled-components';
+import {useTheme} from 'styled-components';
 
 const Tab = createBottomTabNavigator();
 
@@ -85,6 +88,56 @@ export const Tabs = () => {
   );
 };
 
+export const StaffTabs = () => {
+  const theme = useTheme();
+
+  return (
+    <Tab.Navigator
+      initialRouteName="Stats"
+      screenOptions={({route}) => ({
+        tabBarShowLabel: false,
+        headerShown: false,
+        tabBarStyle: {
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          elevation: 0,
+          backgroundColor: '#ffffff',
+          borderRadius: 15,
+          height: 90,
+          ...styles.shadow,
+        },
+        tabBarIcon: ({focused}) => {
+          let iconName;
+          let color = focused ? '#4A55A2' : '#748c94';
+
+          if (route.name === 'Stats') {
+            return <Feather name="bar-chart" size={24} color={color} />;
+          } else if (route.name === 'QrScan') {
+            return <AntDesign name="qrcode" size={24} color="#ffffff" />;
+          } else if (route.name === 'Settings') {
+            return <Feather name="settings" size={24} color={color} />;
+          }
+        },
+      })}>
+      {/* <Tab.Screen name="Home" component={ParkingLotsMap} />
+      <Tab.Screen name="Wallet" component={SecurityDashboard} /> */}
+      <Tab.Screen name="Stats" component={Stats} />
+      <Tab.Screen
+        name="QrScan"
+        component={QrScan}
+        options={{
+          // tabBarIcon: ({focused}) => (
+          //   <AntDesign name="qrcode" size={24} color="#ffffff" />
+          // ),
+          tabBarButton: props => <CustomTabButton {...props} />,
+        }}
+      />
+      <Tab.Screen name="Settings" component={SettingView} />
+    </Tab.Navigator>
+  );
+};
 const styles = StyleSheet.create({
   shadow: {
     shadowColor: '#7F5DF0',

@@ -1,22 +1,22 @@
-import { useNavigation } from "@react-navigation/native";
-import { useState } from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { RNCamera } from "react-native-camera";
-import { launchImageLibrary } from "react-native-image-picker";
+import {useNavigation} from '@react-navigation/native';
+import {useState} from 'react';
+import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {RNCamera} from 'react-native-camera';
+import {launchImageLibrary} from 'react-native-image-picker';
 
 const QrScan = () => {
   const navigation = useNavigation();
   const [scanning, setScanning] = useState(false);
   const [qrData, setQrData] = useState(null);
 
-  const handleBarCodeRead = (e) => {
+  const handleBarCodeRead = e => {
     setScanning(false);
-    console.log("_>>>",e.data)
+    console.log('_>>>', e.data);
     setQrData(e.data);
   };
 
   const handleSelectImage = () => {
-    launchImageLibrary({ mediaType: 'photo' }, (response) => {
+    launchImageLibrary({mediaType: 'photo'}, response => {
       if (response.assets && response.assets.length > 0) {
         const selectedImage = response.assets[0];
         alert(`Selected image: ${selectedImage.uri}`);
@@ -37,18 +37,18 @@ const QrScan = () => {
           <Text style={styles.placeholderText}>Tap to Scan QR Code</Text>
           <TouchableOpacity
             style={styles.cameraButton}
-            onPress={() => setScanning(true)}
-          >
+            onPress={() => setScanning(true)}>
             <Image
-              source={require("../../assets/icons/photo-camera.png")}
+              source={require('../../assets/icons/photo-camera.png')}
               style={styles.cameraIcon}
             />
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.galleryButton}
-            onPress={handleSelectImage}
-          >
-            <Text style={styles.galleryButtonText}>Select Image from Gallery</Text>
+            onPress={handleSelectImage}>
+            <Text style={styles.galleryButtonText}>
+              Select Image from Gallery
+            </Text>
           </TouchableOpacity>
         </View>
       )}
@@ -64,30 +64,30 @@ const QrScan = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#fff",
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
   },
   camera: {
     flex: 1,
-    width: "100%",
+    width: '100%',
   },
   placeholder: {
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     borderWidth: 2,
-    borderColor: "#ccc",
+    borderColor: '#ccc',
     borderRadius: 10,
     width: 300,
     height: 300,
   },
   placeholderText: {
     fontSize: 18,
-    color: "#888",
+    color: '#888',
     marginBottom: 20,
   },
   cameraButton: {
-    position: "absolute",
+    position: 'absolute',
     bottom: 20,
     right: 20,
   },
@@ -98,24 +98,24 @@ const styles = StyleSheet.create({
   galleryButton: {
     marginTop: 20,
     padding: 10,
-    backgroundColor: "#007bff",
+    backgroundColor: '#007bff',
     borderRadius: 5,
   },
   galleryButtonText: {
-    color: "#fff",
+    color: '#fff',
     fontSize: 16,
   },
   qrDataContainer: {
     marginTop: 20,
     padding: 10,
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: '#ccc',
     borderRadius: 10,
-    backgroundColor: "#f9f9f9",
+    backgroundColor: '#f9f9f9',
   },
   qrDataText: {
     fontSize: 16,
-    color: "#333",
+    color: '#333',
   },
 });
 

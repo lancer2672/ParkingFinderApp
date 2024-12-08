@@ -22,7 +22,9 @@ import { ROLE } from '@src/utils/constant';
 import { UserID_Key } from '@src/utils/localStorage';
 import { useEffect, useState } from 'react';
 import { navigationRef } from './NavigationController';
-import { Tabs } from './NavigationTab';
+import useNotification from '@src/hooks/useNotification';
+import useSocket from '@src/hooks/useSocket';
+import { StaffTabs, Tabs } from './NavigationTab';
 const screenOptions = {
   header: () => null,
   cardOverlayEnabled: true,
@@ -75,10 +77,10 @@ const MainStack = () => {
 const StaffStack = () => {
   return (
     <Stack.Navigator
-      initialRouteName={'QrScan'}
+      initialRouteName={'StaffTabs'}
       screenOptions={{presentation: 'card', ...screenOptions}}>
       <Stack.Group screenOptions={screenOptions}>
-        <Stack.Screen name={'Tabs'} component={Tabs} />
+        <Stack.Screen name={'StaffTabs'} component={StaffTabs} />
         <Stack.Screen name={'Notification'} component={Notification} />
         <Stack.Screen name={'SettingView'} component={SettingView} />
         <Stack.Screen name={'QrcodeScreen'} component={QrcodeScreen} />
@@ -111,14 +113,41 @@ const Root = () => {
     fetchUser();
   }, []);
 
-  const getMainStackByUserRole = (user) => {
-      if (user.role === ROLE.USER) {
-        return <MainStack />;
-      } else{
-        return <StaffStack />;
+ 
+  const {on} = useSocket();
+
+  useEffect(() => {
+    // Lắng nghe tin nhắn từ server
+    on('payment', message => {
+      console.log('_>>>> SERVER MESSAGE', message);
+     
+    });
+    on('cancel-reservation', async message => {
+      if(user && user.id ==message.userId){
+        await addItem(getNotiKey(Date.now()), {
+            title: 'Đặt chỗ',
+            description: 'Chỗ của bạn đã bị hủy, mã đặt chỗ: ' + message.reservationId,
+            createdAt: Date.now(),
+            isSeen: false,
+        });
       }
-      
-  }
+      console.log('_>>>> SERVER CANCEL TICKET MESSAGE', message);
+    });
+    on('reservation-status', message => {
+      console.log('_>>>> SERVER RESERVATION MESSAGE', message);
+      if(message.status == RES){
+
+      }
+  });
+    // (async () => {
+    //   await addItem(getNotiKey(Date.now()), {
+    //     title: 'Đặt chỗ',
+    //     description: 'Bạn đã đặt chỗ thành công',
+    //     createdAt: Date.now(),
+    //     isSeen: false,
+    //   });
+    // })();
+  }, [on]);
   return (
     <NavigationContainer ref={navigationRef}>
       <Stack.Navigator screenOptions={screenOptions}>

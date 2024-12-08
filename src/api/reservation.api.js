@@ -1,25 +1,33 @@
 import axiosClient from './axiosClient';
 
 const reservationAPI = {
-        createReservation: async ({ userId, parkingLotId, startTime, vehicleType }) => {
-                try {
-                        console.log("userId", userId, "parkingLotId", parkingLotId, "startTime", startTime,"vehicleType", vehicleType);
-                        const response = await axiosClient.post('/api/reservations', {
-                                userId,
-                                parkingLotId,
-                                startTime,
-                               
-                                vehicleType,
-                                
-                        });
-                        return response.data;
-                } catch (error) {
-                        console.error('Error creating reservation:', error);
-                        throw error;
-                }
-        },
+  createReservation: async ({userId, parkingLotId, startTime, vehicleType}) => {
+    try {
+      console.log(
+        'userId',
+        userId,
+        'parkingLotId',
+        parkingLotId,
+        'startTime',
+        startTime,
+        'vehicleType',
+        vehicleType,
+      );
+      const response = await axiosClient.post('/api/reservations', {
+        userId,
+        parkingLotId,
+        startTime,
 
-        /**
+        vehicleType,
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error creating reservation:', error);
+      throw error;
+    }
+  },
+
+  /**
          {
             "id": 19,
             "userId": 6,
@@ -54,16 +62,28 @@ const reservationAPI = {
             }
         },
          */
-        getUserRevations: async ({ userId,page = 0,limit = 10000}) => {
-                try {
-                        const response = await axiosClient.get(`/api/reservations/user/${userId}?page=${page}&limit=${limit}`);
-                        console.log("reservations",response.data)
-                        return response.data.reservations;
-                } catch (error) {
-                        console.error('Error creating reservation:', error);
-                        // throw error;
-                }
-        },
-   
+  getUserRevations: async ({userId, page = 0, limit = 10000}) => {
+    try {
+      const response = await axiosClient.get(
+        `/api/reservations/user/${userId}?page=${page}&limit=${limit}`,
+      );
+      console.log('reservations', response.data);
+      return response.data.reservations;
+    } catch (error) {
+      console.error('Error creating reservation:', error);
+      // throw error;
+    }
+  },
+  updateUserReservation: async ({reservationId, status}) => {
+    try {
+      const response = await axiosClient.put(
+        `/api/reservations/${reservationId}?status=${status}`,
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Error updating reservation:', error);
+      throw error;
+    }
+  },
 };
 export default reservationAPI;

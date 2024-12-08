@@ -66,7 +66,7 @@ const ParkingHistory = () => {
       endTime: reservation.status === 'PENDING' ? null : reservation.endTime,
       totalCost: reservation.totalPrice || 0,
       status: reservation.status,
-      paymentMethod: reservation.payment?.paymentMethod || null,
+      payment: reservation.payment,
       paymentStatus: reservation.payment?.paymentStatus || 'UNPAID',
       vehicleType: reservation.vehicleType || 'Unknown'
     }));
@@ -78,10 +78,10 @@ const ParkingHistory = () => {
       {
         isLoading && <LoadingModal visible={true} onClose={()=>{}}></LoadingModal>
       }
-      {
+      { 
         !isLoading  &&
         (
- <>
+      <>
       {/* <SafeAreaView style={{height:250}}>
       <Text
               style={{
@@ -112,7 +112,6 @@ const ParkingHistory = () => {
               {/* Bãi xe đã đỗ */}
             </Text>
         <FlatList
-         
           ItemSeparatorComponent={() => <View style={{height: 6}} />}
           data={parkingHistoryItem}
           renderItem={({item}) => <ParkingHistoryItem {...item} />}
