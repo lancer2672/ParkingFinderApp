@@ -7,8 +7,8 @@ import { showMessage } from 'react-native-flash-message';
 import QRCode from 'react-native-qrcode-svg';
 const QrcodeScreen = ({ route }) => {
   const { qrData } = route.params;
-  console.log("->>> qrData",qrData)
-  const { parkingslot, duration, checkinTime } = JSON.parse(qrData);
+  const { parkingslot, reservation, duration, checkinTime } = JSON.parse(qrData);
+  console.log("->>> qrData",checkinTime)
   const navigation = useNavigation();
   const handleBackToParkingLot = () => {
     navigation.navigate('Tabs');
@@ -34,10 +34,12 @@ const QrcodeScreen = ({ route }) => {
       />
       <View style={styles.floatingContainer}>
         <Text style={styles.infoLabel1}> Booking Detail</Text>
-        <Text style={styles.infoLabel}>Check-in Time: {new Date(checkinTime).toLocaleTimeString()}</Text>
-        <Text style={styles.infoLabel}>Duration: {duration} hours</Text>
+        <Text style={styles.infoLabel}>Check-in Time: {new Date(checkinTime).toLocaleString()}</Text>
+        {
+          duration > 0 && <Text style={styles.infoLabel}>Duration: {duration} minutes</Text>
+        }
       </View>
-      <ButtonComponent
+      <ButtonComponent 
         onPress={handleBackToParkingLot}
         color={generalColor.other.bluepurple}
         style={{ marginVertical: 24, marginTop: 40, borderRadius: 12 }}

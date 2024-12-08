@@ -6,6 +6,7 @@ import ButtonComponent from '@src/components/Button';
 import LoadingModal from '@src/components/LoadingModal/LoadingModal';
 import useUserStore from '@src/store/userStore';
 import { generalColor } from '@src/theme/color';
+import { convertToISOLocale } from '@src/utils/timeFormat';
 import { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
@@ -22,25 +23,29 @@ const Booking = ({ route, isVisible, onClose }) => {
   const navigation = useNavigation();
   const  user = useUserStore(state => state.user);
   const onTimeChange = (event, selectedTime) => {
+    console.log("selectedTime", selectedTime);
     const currentTime = selectedTime || checkinTime;
     setShowTimePicker(false);
     setCheckinTime(currentTime);
   };
 
-  
+    console.log("checkinTime",checkinTime.toLocaleString())
   const handleBooking =async () => {
     try{
-      //  userId, parkingLotId, startTime, vehicleType
+      let startTime = convertToISOLocale(checkinTime);
       setLoading(true);
       const res = await reservationAPI.createReservation({
         userId: user?.id ,
         parkingLotId: parkingslot.id,
-        startTime: checkinTime.toISOString(),
+        startTime,
         vehicleType: carType,
+        cancelMinute: duration,
       })
       const qrData = JSON.stringify({
         parkingslot,
         reservation: res,
+        duration,
+        checkinTime,
       });
       navigation.navigate('QrcodeScreen', { qrData });
     }
@@ -81,12 +86,12 @@ const Booking = ({ route, isVisible, onClose }) => {
         </View>
         <View style={styles.floatingContainer}>
           <View style={styles.sliderContainer}>
-            <Text style={styles.sliderLabel}>Estimation Duration Time: {duration} hours</Text>
+            <Text style={styles.sliderLabel}>Thời gian di chuyển: {duration} minutes</Text>
             <Slider
               style={styles.slider}
               minimumValue={0}
-              maximumValue={12}
-              step={0.5}
+              maximumValue={30}
+              step={1}
               value={duration}
               onValueChange={setDuration}
               minimumTrackTintColor="#1EB1FC"
@@ -96,7 +101,7 @@ const Booking = ({ route, isVisible, onClose }) => {
           </View>
 
           <View style={styles.timePickerContainer}>
-            <Text style={styles.timePickerLabel}>Check-in Time: {checkinTime.toLocaleTimeString()}</Text>
+            <Text style={styles.timePickerLabel}>Check-in Time: {checkinTime.toLocaleString()}</Text>
             <TouchableOpacity onPress={() => setShowTimePicker(true)}>
               <Icon name="edit" size={30} color="#1EB1FC" />
             </TouchableOpacity>
@@ -109,7 +114,11 @@ const Booking = ({ route, isVisible, onClose }) => {
               />
             )}
           </View>
-          <Text>*Lưu ý booking sẽ tự động hủy sau 30s </Text>
+          {
+            duration > 0 && (
+              <Text>*Chỗ của bạn sẽ tự động hủy sau {duration} phút </Text>
+            )
+          }
 
         </View>
         <View style={{flexDirection:"row",marginVertical: 24, marginTop: 40, justifyContent:"flex-end" }}>
@@ -134,7 +143,7 @@ const Booking = ({ route, isVisible, onClose }) => {
               value={JSON.stringify({
                 parkingslot,
                 duration,
-                checkinTime: checkinTime.toISOString(),
+                checkinTime,
               })}
               size={200}
             />
