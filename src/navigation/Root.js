@@ -75,7 +75,7 @@ const MainStack = () => {
 const StaffStack = () => {
   return (
     <Stack.Navigator
-      initialRouteName={'Tabs'}
+      initialRouteName={'QrScan'}
       screenOptions={{presentation: 'card', ...screenOptions}}>
       <Stack.Group screenOptions={screenOptions}>
         <Stack.Screen name={'Tabs'} component={Tabs} />

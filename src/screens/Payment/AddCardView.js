@@ -28,7 +28,7 @@ const AddCardView = () => {
           flexDirection: 'row',
           alignItems: 'center',
           padding: 12,
-          borderBottomWidth: 2,
+          // borderBottomWidth: 2,
           borderBottomColor: generalColor.primary,
         }}>
         <TouchableOpacity

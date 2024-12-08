@@ -1,40 +1,58 @@
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Slider from '@react-native-community/slider';
 import { useNavigation } from '@react-navigation/native';
+import reservationAPI from '@src/api/reservation.api';
 import ButtonComponent from '@src/components/Button';
 import LoadingModal from '@src/components/LoadingModal/LoadingModal';
+import useUserStore from '@src/store/userStore';
 import { generalColor } from '@src/theme/color';
 import { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { showMessage } from 'react-native-flash-message';
 import ReactNativeModal from 'react-native-modal';
 import QRCode from 'react-native-qrcode-svg';
 import Icon from 'react-native-vector-icons/FontAwesome';
 const Booking = ({ route, isVisible, onClose }) => {
-  const { parkingslot } = route.params || {};
+  const { parkingslot, carType } = route.params || {};
   const [duration, setDuration] = useState(0);
   const [checkinTime, setCheckinTime] = useState(new Date());
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [showQRCode, setShowQRCode] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
-
+  const  user = useUserStore(state => state.user);
   const onTimeChange = (event, selectedTime) => {
     const currentTime = selectedTime || checkinTime;
     setShowTimePicker(false);
     setCheckinTime(currentTime);
   };
 
-  const handleBooking = () => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+  
+  const handleBooking =async () => {
+    try{
+      //  userId, parkingLotId, startTime, vehicleType
+      setLoading(true);
+      const res = await reservationAPI.createReservation({
+        userId: user?.id ,
+        parkingLotId: parkingslot.id,
+        startTime: checkinTime.toISOString(),
+        vehicleType: carType,
+      })
       const qrData = JSON.stringify({
         parkingslot,
-        duration,
-        checkinTime: checkinTime.toISOString(),
+        reservation: res,
       });
       navigation.navigate('QrcodeScreen', { qrData });
-    }, 2000);
+    }
+    catch(er){
+       showMessage({
+        message: "Đã có lỗi xảy ra",
+
+        type: 'error',
+      });
+    } finally{
+      setLoading(false);
+    }
   };
 
   if (!parkingslot) {
@@ -91,6 +109,8 @@ const Booking = ({ route, isVisible, onClose }) => {
               />
             )}
           </View>
+          <Text>*Lưu ý booking sẽ tự động hủy sau 30s </Text>
+
         </View>
         <View style={{flexDirection:"row",marginVertical: 24, marginTop: 40, justifyContent:"flex-end" }}>
 

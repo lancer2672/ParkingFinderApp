@@ -1,14 +1,14 @@
 import axiosClient from './axiosClient';
 
 const reservationAPI = {
-        createReservation: async ({ userId, parkingLotId, startTime, endTime, vehicleType }) => {
+        createReservation: async ({ userId, parkingLotId, startTime, vehicleType }) => {
                 try {
-                        console.log("userId", userId, "parkingLotId", parkingLotId, "startTime", startTime, "endTime", endTime, "vehicleType", vehicleType);
+                        console.log("userId", userId, "parkingLotId", parkingLotId, "startTime", startTime,"vehicleType", vehicleType);
                         const response = await axiosClient.post('/api/reservations', {
                                 userId,
                                 parkingLotId,
                                 startTime,
-                                endTime,
+                               
                                 vehicleType,
                                 
                         });

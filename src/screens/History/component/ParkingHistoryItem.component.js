@@ -1,4 +1,5 @@
 import Divider from '@src/components/Divider';
+import { RES_STATUS } from '@src/utils/constant';
 import { StyleSheet, Text, View } from 'react-native';
 
 const ParkingHistoryItem = ({
@@ -11,15 +12,15 @@ const ParkingHistoryItem = ({
   totalCost,
   ...props
 }) => {
-  const parsedStartTime = startTime ? new Date(startTime) : new Date();
-  const parsedEndTime = endTime ? new Date(endTime) : new Date();
-
-  const timeBetween = parsedEndTime.getTime() - parsedStartTime.getTime();
-  const hourBetween = Math.floor(timeBetween / (3600 * 1000));
-  const minuteBetween = Math.floor(
-    (timeBetween - hourBetween * 3600 * 1000) / (60 * 1000),
-  );
-
+    const parsedEndTime = endTime
+      ? new Date(endTime)
+      : new Date();
+  const parsedStartTime = startTime
+      ? new Date(startTime)
+      : new Date();
+  const timeBetween = new Date(parsedEndTime).getTime() - new Date(parsedStartTime).getTime();
+  const minuteBetween = Math.floor(timeBetween / (60 * 1000));
+  console.log(">>>>>parsedEndTime",parsedEndTime, parsedStartTime,timeBetween,minuteBetween);
 
 
   const getPaymentStatusStyles = (status) => {
@@ -125,18 +126,16 @@ const ParkingHistoryItem = ({
       </View>
     );
   };
+
+  
   return (
     <View style={styles.container}>
       <View style={styles.mainInformation}>
-        <View
-          // style={{
-          //   backgroundColor: 'rgba(97, 62, 234, 1)',
-          //   height: 'fit-content',
-          //   padding: 4,
-          //   borderRadius: 6,
-          // }}>
-          style={getPaymentStatusStyles(props.paymentStatus)}>
+        {
+          props.payment &&
 
+        <View
+          style={getPaymentStatusStyles(props.paymentStatus)}>
           <Text
             style={[{
               // color: 'rgba(255, 255, 255, 1)',
@@ -144,11 +143,13 @@ const ParkingHistoryItem = ({
               fontWeight: '500',
              
             }, getTextPaymentStatusStyles(props.paymentStatus)]}>
-            {cost}k VND/giờ
+            {cost}k VND/g  iờ
           </Text>
         </View>
+        }
         <View
           style={{
+            marginLeft:"auto",
             alignItems: 'flex-end',
           }}>
           <Text
@@ -171,19 +172,24 @@ const ParkingHistoryItem = ({
       <View style={styles.personalInformation}>
         {active ? (
           <>
-            <Text style={styles.personalInformationSubText}>Đã đỗ xe</Text>
+            <Text style={styles.personalInformationSubText}>Đang đỗ xe</Text>
+     
             <Text style={styles.personalInformationMainText}>
-              {hourBetween} giờ : {minuteBetween} phút
+              {minuteBetween} phút
             </Text>
+          
           </>
         ) : (
           <>
             <Text style={styles.personalInformationSubText}>
-              {parsedEndTime.toLocaleDateString()}
+              {parsedStartTime.toLocaleString()}
             </Text>
-            <Text style={styles.personalInformationSubText}>
-              {hourBetween} giờ : {minuteBetween} phút
-            </Text>
+            {
+              props.status == RES_STATUS.CHECKED_OUT && (
+                <Text style={styles.personalInformationMainText}>
+                  {minuteBetween} phút
+                </Text>)
+            }
             <Text style={styles.personalInformationMainText}>
               {totalCost}k VNĐ
             </Text>

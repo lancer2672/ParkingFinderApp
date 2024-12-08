@@ -1,5 +1,6 @@
 import parkingLotAPI from '@src/api/parkingLot.api';
 import ButtonComponent from '@src/components/Button';
+import LoadingModal from '@src/components/LoadingModal/LoadingModal';
 import { parkingslotsMock } from '@src/mock/mock';
 import { navigate } from '@src/navigation/NavigationController';
 import { generalColor } from '@src/theme/color';
@@ -33,6 +34,7 @@ const ParkingLotModal = ({
 }) => {
   const [isBookingVisible, setIsBookingVisible] = useState(false);
   const [freeSlot, setFreeSlot] = useState(0);
+  const [loading,setIsLoading ] = useState(false);
   const callAgent = (phoneNumber = '0846303261') => {
     Linking.openURL(`tel:${parkingslot.agent?.phoneNumber}`);
   };
@@ -51,14 +53,26 @@ const ParkingLotModal = ({
   };
 
   const fetchFreeSlots = async () =>{
-    const data = await parkingLotAPI.getFreeSlots({
-      parkingLotId: parkingslot.id,
-      //checkInTime=2024-10-23T10:03:00
-      checkIn: new Date().toISOString(),
-      carType: carType,
-    })
-    if (data){
-      setFreeSlot(data);
+    try{
+      setIsLoading(true);
+      const data = await parkingLotAPI.getFreeSlots({
+        parkingLotId: parkingslot.id,// this is error typo
+        //checkInTime=2024-10-23T10:03:00
+        checkIn: new Date().toISOString(),
+        carType: carType,
+      })
+      if (data){
+        setFreeSlot(data);
+      }
+
+    }catch(er){
+      showMessage({
+        message: 'Đã có lỗi xảy ra',
+        type: 'error',
+      });
+    }
+    finally{
+      setIsLoading(false);
     }
   }
   console.log('ParkingLotModal props:', { parkingslot, isVisible, navigation });
@@ -67,6 +81,8 @@ const ParkingLotModal = ({
       fetchFreeSlots()
     }
   }, [isVisible]);
+
+
   return (
     <>
       <ReactNativeModal
@@ -79,6 +95,11 @@ const ParkingLotModal = ({
         onBackdropPress={onClose}
         style={{ margin: 0 }}>
         <View style={styles.container}>
+          {loading && <LoadingModal visible={true} onClose={()=>{}}></LoadingModal>}
+          {
+            !loading &&
+            <>
+        
           <View style={row}>
             <View>
               <Image
@@ -164,13 +185,17 @@ const ParkingLotModal = ({
             color={generalColor.other.bluepurple}
             style={{marginVertical: 24, marginTop: 0, borderRadius: 12}}
             text={'Tiếp tục'}></ButtonComponent>
+           </>
+          }
         </View>
+        
+
       </ReactNativeModal>
 
       <Booking
         isVisible={isBookingVisible}
         onClose={() => setIsBookingVisible(false)}
-        route={{ params: { parkingslot } }}
+        route={{ params: { parkingslot ,carType } }}
         
       />
     </>

@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
-import { RNCamera } from "react-native-camera";
 import { useNavigation } from "@react-navigation/native";
+import { useState } from "react";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { RNCamera } from "react-native-camera";
 import { launchImageLibrary } from "react-native-image-picker";
 
 const QrScan = () => {
@@ -11,6 +11,7 @@ const QrScan = () => {
 
   const handleBarCodeRead = (e) => {
     setScanning(false);
+    console.log("_>>>",e.data)
     setQrData(e.data);
   };
 

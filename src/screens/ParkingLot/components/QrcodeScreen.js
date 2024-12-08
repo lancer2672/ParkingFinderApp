@@ -1,16 +1,26 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import QRCode from 'react-native-qrcode-svg';
+import { useNavigation } from '@react-navigation/native';
 import ButtonComponent from '@src/components/Button';
 import { generalColor } from '@src/theme/color';
-import { useNavigation } from '@react-navigation/native';
+import { useEffect } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import { showMessage } from 'react-native-flash-message';
+import QRCode from 'react-native-qrcode-svg';
 const QrcodeScreen = ({ route }) => {
   const { qrData } = route.params;
+  console.log("->>> qrData",qrData)
   const { parkingslot, duration, checkinTime } = JSON.parse(qrData);
   const navigation = useNavigation();
   const handleBackToParkingLot = () => {
-    navigation.navigate('ParkingLotMap');
+    navigation.navigate('Tabs');
   };
+  useEffect(()=>{
+    if(qrData){
+       showMessage({
+        message: 'Đặt chỗ thành công',
+        type: 'success',
+       })
+    }
+  },[])
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Your QR Code</Text>

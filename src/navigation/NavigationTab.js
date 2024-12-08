@@ -1,16 +1,16 @@
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {StyleSheet, TouchableOpacity, View} from 'react-native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import ParkingLotsMap from '@src/screens/ParkingLot/ParkingLotMap';
+import SecurityDashboard from '@src/screens/Security/SecurityDashboard';
+import SettingView from '@src/screens/Setting/SettingView';
+import { Pressable, StyleSheet, View } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { useTheme } from 'styled-components';
-import SecurityDashboard from '@src/screens/Security/SecurityDashboard';
-import ParkingLotsMap from '@src/screens/ParkingLot/ParkingLotMap';
-import SettingView from '@src/screens/Setting/SettingView';
 
 const Tab = createBottomTabNavigator();
 
 const CustomTabButton = ({children, onPress}) => (
-  <TouchableOpacity
+  <Pressable
     style={{
       top: -30,
       justifyContent: 'center',
@@ -27,7 +27,7 @@ const CustomTabButton = ({children, onPress}) => (
       }}>
       {children}
     </View>
-  </TouchableOpacity>
+  </Pressable>
 );
 
 export const Tabs = () => {
