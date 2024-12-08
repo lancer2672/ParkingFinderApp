@@ -1,23 +1,20 @@
 import axiosClient from './axiosClient';
 
 const reservationAPI = {
-  createReservation: async ({userId, parkingLotId, startTime, vehicleType}) => {
+  createReservation: async ({
+    userId,
+    parkingLotId,
+    startTime,
+    cancelMinute,
+    vehicleType,
+  }) => {
     try {
-      console.log(
-        'userId',
-        userId,
-        'parkingLotId',
-        parkingLotId,
-        'startTime',
-        startTime,
-        'vehicleType',
-        vehicleType,
-      );
+      console.log('vehicleType', cancelMinute);
       const response = await axiosClient.post('/api/reservations', {
         userId,
         parkingLotId,
         startTime,
-
+        cancelMinute,
         vehicleType,
       });
       return response.data;

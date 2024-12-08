@@ -1,26 +1,26 @@
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import ButtonComponent from '@src/components/Button';
-import { generalColor } from '@src/theme/color';
-import { useEffect } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { showMessage } from 'react-native-flash-message';
+import {generalColor} from '@src/theme/color';
+import {useEffect} from 'react';
+import {StyleSheet, Text, View} from 'react-native';
+import {showMessage} from 'react-native-flash-message';
 import QRCode from 'react-native-qrcode-svg';
-const QrcodeScreen = ({ route }) => {
-  const { qrData } = route.params;
-  const { parkingslot, reservation, duration, checkinTime } = JSON.parse(qrData);
-  console.log("->>> qrData",checkinTime)
+const QrcodeScreen = ({route}) => {
+  const {qrData} = route.params;
+  const {parkingslot, reservation, duration, checkinTime} = JSON.parse(qrData);
+  console.log('->>> qrData', qrData);
   const navigation = useNavigation();
   const handleBackToParkingLot = () => {
     navigation.navigate('Tabs');
   };
-  useEffect(()=>{
-    if(qrData){
-       showMessage({
+  useEffect(() => {
+    if (qrData) {
+      showMessage({
         message: 'Đặt chỗ thành công',
         type: 'success',
-       })
+      });
     }
-  },[])
+  }, []);
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Your QR Code</Text>
@@ -28,21 +28,20 @@ const QrcodeScreen = ({ route }) => {
         <Text style={styles.name}>{parkingslot.name}</Text>
         <Text style={styles.address}>{parkingslot.address}</Text>
       </View>
-      <QRCode
-        value={qrData}
-        size={200}
-      />
+      <QRCode value={qrData} size={200} />
       <View style={styles.floatingContainer}>
         <Text style={styles.infoLabel1}> Booking Detail</Text>
-        <Text style={styles.infoLabel}>Check-in Time: {new Date(checkinTime).toLocaleString()}</Text>
-        {
-          duration > 0 && <Text style={styles.infoLabel}>Duration: {duration} minutes</Text>
-        }
+        <Text style={styles.infoLabel}>
+          Check-in Time: {new Date(checkinTime).toLocaleString()}
+        </Text>
+        {duration > 0 && (
+          <Text style={styles.infoLabel}>Duration: {duration} minutes</Text>
+        )}
       </View>
-      <ButtonComponent 
+      <ButtonComponent
         onPress={handleBackToParkingLot}
         color={generalColor.other.bluepurple}
-        style={{ marginVertical: 24, marginTop: 40, borderRadius: 12 }}
+        style={{marginVertical: 24, marginTop: 40, borderRadius: 12}}
         text={'Back to Parking Lot'}
       />
     </View>

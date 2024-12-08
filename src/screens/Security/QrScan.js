@@ -1,10 +1,33 @@
 import {useNavigation} from '@react-navigation/native';
-import {useState} from 'react';
-import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {RNCamera} from 'react-native-camera';
+import {expandAnimation} from '@src/animation';
+import {useEffect, useState} from 'react';
+import {LayoutAnimation, StyleSheet, Text, View} from 'react-native';
 import {launchImageLibrary} from 'react-native-image-picker';
+import {
+  Camera,
+  useCameraDevice,
+  useCameraPermission,
+  useCodeScanner,
+} from 'react-native-vision-camera';
 
 const QrScan = () => {
+  const device = useCameraDevice('back');
+  const [show, setShow] = useState(true);
+  const codeScanner = useCodeScanner({
+    codeTypes: ['qr', 'ean-13'],
+    onCodeScanned: codes => {
+      console.log(`Scanned ${codes.length} codes!`, codes);
+      if (codes.length > 0) {
+        setShow(() => false);
+        const data = JSON.parse(codes[0].value);
+        console.log('QR DATA', data);
+        setQrData(data);
+      } else {
+        setShow(() => true);
+      }
+    },
+  });
+  const {hasPermission, requestPermission} = useCameraPermission();
   const navigation = useNavigation();
   const [scanning, setScanning] = useState(false);
   const [qrData, setQrData] = useState(null);
@@ -23,38 +46,56 @@ const QrScan = () => {
       }
     });
   };
-
+  useEffect(() => {
+    setShow(true);
+  }, []);
+  useEffect(() => {
+    if (!hasPermission) {
+      requestPermission().then(() => {
+        Alert.alert('Error, permission denied');
+        navigate('HomeStaff');
+      });
+    }
+  }, []);
+  useEffect(() => {
+    LayoutAnimation.configureNext(expandAnimation);
+  }, [show]);
   return (
     <View style={styles.container}>
-      {scanning ? (
-        <RNCamera
-          style={styles.camera}
-          onBarCodeRead={handleBarCodeRead}
-          captureAudio={false}
-        />
-      ) : (
-        <View style={styles.placeholder}>
-          <Text style={styles.placeholderText}>Tap to Scan QR Code</Text>
-          <TouchableOpacity
-            style={styles.cameraButton}
-            onPress={() => setScanning(true)}>
-            <Image
-              source={require('../../assets/icons/photo-camera.png')}
-              style={styles.cameraIcon}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.galleryButton}
-            onPress={handleSelectImage}>
-            <Text style={styles.galleryButtonText}>
-              Select Image from Gallery
-            </Text>
-          </TouchableOpacity>
+      {show && (
+        <View style={{flex: 1}}>
+          <Camera
+            style={{backgroundColor: 'red', flex: 1}}
+            device={device}
+            codeScanner={codeScanner}
+            isActive={true}
+          />
         </View>
       )}
+      {/* <View style={styles.placeholder}>
+        <Text style={styles.placeholderText}>Tap to Scan QR Code</Text>
+        <TouchableOpacity
+          style={styles.cameraButton}
+          onPress={() => setScanning(true)}>
+          <Image
+            source={require('../../assets/icons/photo-camera.png')}
+            style={styles.cameraIcon}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.galleryButton}
+          onPress={handleSelectImage}>
+          <Text style={styles.galleryButtonText}>
+            Select Image from Gallery
+          </Text>
+        </TouchableOpacity>
+      </View> */}
+
       {qrData && (
         <View style={styles.qrDataContainer}>
-          <Text style={styles.qrDataText}>QR Code Data: {qrData}</Text>
+          <Text style={styles.qrDataText}>
+            QR Code Data: {qrData.checkinTime}
+          </Text>
         </View>
       )}
     </View>
@@ -64,8 +105,7 @@ const QrScan = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+
     backgroundColor: '#fff',
   },
   camera: {
