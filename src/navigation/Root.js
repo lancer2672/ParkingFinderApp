@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import userAPI from '@src/api/user.api';
 import Onboarding from '@src/components/onboarding';
 import SplashScreen from '@src/components/splash';
@@ -18,13 +18,11 @@ import RidesScreen from '@src/screens/Security/RidesScreen';
 import SecurityDashboard from '@src/screens/Security/SecurityDashboard';
 import SettingView from '@src/screens/Setting/SettingView';
 import useUserStore from '@src/store/userStore';
-import { ROLE } from '@src/utils/constant';
-import { UserID_Key } from '@src/utils/localStorage';
-import { useEffect, useState } from 'react';
-import { navigationRef } from './NavigationController';
-import useNotification from '@src/hooks/useNotification';
-import useSocket from '@src/hooks/useSocket';
-import { StaffTabs, Tabs } from './NavigationTab';
+import {ROLE} from '@src/utils/constant';
+import {UserID_Key} from '@src/utils/localStorage';
+import {useEffect, useState} from 'react';
+import {navigationRef} from './NavigationController';
+import {StaffTabs, Tabs} from './NavigationTab';
 const screenOptions = {
   header: () => null,
   cardOverlayEnabled: true,
@@ -67,7 +65,10 @@ const MainStack = () => {
         <Stack.Screen name={'SettingView'} component={SettingView} />
         <Stack.Screen name={'QrcodeScreen'} component={QrcodeScreen} />
         <Stack.Screen name={'RidesScreen'} component={RidesScreen} />
-        <Stack.Screen name={'SecurityDashboard'} component={SecurityDashboard} />
+        <Stack.Screen
+          name={'SecurityDashboard'}
+          component={SecurityDashboard}
+        />
         <Stack.Screen name={'QrScan'} component={QrScan} />
       </Stack.Group>
     </Stack.Navigator>
@@ -85,12 +86,15 @@ const StaffStack = () => {
         <Stack.Screen name={'SettingView'} component={SettingView} />
         <Stack.Screen name={'QrcodeScreen'} component={QrcodeScreen} />
         <Stack.Screen name={'RidesScreen'} component={RidesScreen} />
-        <Stack.Screen name={'SecurityDashboard'} component={SecurityDashboard} />
+        <Stack.Screen
+          name={'SecurityDashboard'}
+          component={SecurityDashboard}
+        />
         <Stack.Screen name={'QrScan'} component={QrScan} />
       </Stack.Group>
     </Stack.Navigator>
   );
-}
+};
 const Root = () => {
   const [isLoading, setIsloading] = useState(false);
   const user = useUserStore(state => state.user);
@@ -101,9 +105,9 @@ const Root = () => {
         const userId = await AsyncStorage.getItem(UserID_Key);
         if (userId != null) {
           userRes = await userAPI.getUserByID(userId);
-          const role = userRes.role.name
+          const role = userRes.role.name;
           console.log('userRes', userRes);
-          setUser({...userRes,role});
+          setUser({...userRes, role});
         }
       } catch (error) {
         console.error('Error fetching user ID:', error);
@@ -113,47 +117,12 @@ const Root = () => {
     fetchUser();
   }, []);
 
- 
-  const {on} = useSocket();
-
-  useEffect(() => {
-    // Lắng nghe tin nhắn từ server
-    on('payment', message => {
-      console.log('_>>>> SERVER MESSAGE', message);
-     
-    });
-    on('cancel-reservation', async message => {
-      if(user && user.id ==message.userId){
-        await addItem(getNotiKey(Date.now()), {
-            title: 'Đặt chỗ',
-            description: 'Chỗ của bạn đã bị hủy, mã đặt chỗ: ' + message.reservationId,
-            createdAt: Date.now(),
-            isSeen: false,
-        });
-      }
-      console.log('_>>>> SERVER CANCEL TICKET MESSAGE', message);
-    });
-    on('reservation-status', message => {
-      console.log('_>>>> SERVER RESERVATION MESSAGE', message);
-      if(message.status == RES){
-
-      }
-  });
-    // (async () => {
-    //   await addItem(getNotiKey(Date.now()), {
-    //     title: 'Đặt chỗ',
-    //     description: 'Bạn đã đặt chỗ thành công',
-    //     createdAt: Date.now(),
-    //     isSeen: false,
-    //   });
-    // })();
-  }, [on]);
   return (
     <NavigationContainer ref={navigationRef}>
       <Stack.Navigator screenOptions={screenOptions}>
         {user?.phoneNumber ? (
-          user.role  === ROLE.USER ? (
-            <Stack.Screen name="MainStack"  component={MainStack}/>
+          user.role === ROLE.USER ? (
+            <Stack.Screen name="MainStack" component={MainStack} />
           ) : (
             <Stack.Screen name="StaffStack" component={StaffStack} />
           )

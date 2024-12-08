@@ -73,12 +73,24 @@ const reservationAPI = {
   },
   updateUserReservation: async ({reservationId, status}) => {
     try {
-      const response = await axiosClient.put(
+      console.log('Update res', reservationId, status);
+      const response = await axiosClient.patch(
         `/api/reservations/${reservationId}?status=${status}`,
       );
       return response.data;
     } catch (error) {
       console.error('Error updating reservation:', error);
+      throw error;
+    }
+  },
+  getByID: async reservationId => {
+    try {
+      const response = await axiosClient.get(
+        `/api/reservations/${reservationId}`,
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Error get reservation:', error);
       throw error;
     }
   },
