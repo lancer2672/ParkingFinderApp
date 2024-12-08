@@ -46,14 +46,14 @@ function App() {
       if (message.status == RES) {
       }
     });
-    // (async () => {
-    //   await addItem(getNotiKey(Date.now()), {
-    //     title: 'Đặt chỗ',
-    //     description: 'Bạn đã đặt chỗ thành công',
-    //     createdAt: Date.now(),
-    //     isSeen: false,
-    //   });
-    // })();
+    (async () => {
+      await addItem(getNotiKey(Date.now()), {
+        title: 'Đặt chỗ',
+        description: 'Bạn đã đặt chỗ thành công',
+        createdAt: Date.now(),
+        isSeen: false,
+      });
+    })();
   }, [on, user]);
   useEffect(() => {
     displayNotification({title: 'Thanh toán thành công', body: 'TEST'});
