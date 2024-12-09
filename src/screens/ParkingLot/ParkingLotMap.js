@@ -1,16 +1,17 @@
 import Geolocation from '@react-native-community/geolocation';
 import parkingLotAPI from '@src/api/parkingLot.api';
+import LoadingModal from '@src/components/LoadingModal/LoadingModal';
 import useParkingLotStore from '@src/store/useParkinglotStore';
 import { generalColor } from '@src/theme/color';
 import textStyle from '@src/theme/text';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
-    Alert,
-    Image,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Alert,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { API_KEY } from 'react-native-dotenv';
 import { SelectCountry } from 'react-native-element-dropdown';
@@ -40,6 +41,7 @@ const local_data = [
 const ParkingLotsMap = ({initialLocation, navigation}) => {
   const [parkingslots, setParkingslots] = useState([]);
   const [markerPosition, setMarkerPosition] = useState(null);
+  const [loading,setLoading] = useState(false);
   const [selectedParkingslot, setSelectedParkingslot] = useState(null);
   const [isMapMoved, setIsMapMoved] = useState(false);
   const [vehicleType, setVehicleType] = useState('CAR');
@@ -55,6 +57,7 @@ const ParkingLotsMap = ({initialLocation, navigation}) => {
 
   const fetchParkingLots = useCallback(
     async (latitude, longitude, type) => {
+      setLoading(true)
       if (fetchError) return;
       try {
         const response = await parkingLotAPI.getParkingLotsInRegion({
@@ -69,8 +72,11 @@ const ParkingLotsMap = ({initialLocation, navigation}) => {
         console.error('Error fetching parking slots:', error);
         setFetchError(true);
         Alert.alert('Lỗi', 'Không thể tải dữ liệu bãi đỗ xe');
+      } finally {
+        setLoading(false);
       }
     },
+  
     [fetchError],
   );
 
@@ -138,25 +144,26 @@ const ParkingLotsMap = ({initialLocation, navigation}) => {
   }
 
   const handleRegionChange = (newRegion, details) => {
-    if (!details.isGesture) {
-      return;
-    }
-    if (
-      Math.abs(newRegion.latitude - currentRegion.latitude) < 0.0001 &&
-      Math.abs(newRegion.longitude - currentRegion.longitude) < 0.0001
-    ) {
-      return;
-    }
-    console.log('selected parkingslot', selectedParkingslot == null);
-    if (selectedParkingslot == null) {
-      return;
-    }
-    setCurrentRegion(() => newRegion);
-    setIsMapMoved(true);
+    // if (!details.isGesture) {
+    //   return;
+    // }
+    // if (
+    //   Math.abs(newRegion.latitude - currentRegion.latitude) < 0.0001 &&
+    //   Math.abs(newRegion.longitude - currentRegion.longitude) < 0.0001
+    // ) {
+    //   return;
+    // }
+    // console.log('selected parkingslot', selectedParkingslot == null);
+    // if (selectedParkingslot == null) {
+    //   return;
+    // }
+    // setCurrentRegion(() => newRegion);
+    // setIsMapMoved(true);
   };
   console.log('parkingslots', selectedParkingslot == null);
   return (
     <View style={styles.container}>
+       {loading && <LoadingModal />}
       <MapView
         provider={PROVIDER_GOOGLE}
         ref={mapRef}

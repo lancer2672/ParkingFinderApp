@@ -5,6 +5,16 @@ export const ROLE = {
     USER: "USER",
     STAFF: "STAFF",
 }
+export const PAYMENT_STAT = {
+    PENDING: "PENDING",
+    COMPLETED: "COMPLETED",
+    FAILED: "FAILED", 
+    CANCELLED: "CANCELLED"
+}
+export const PAY_METHOD = {
+    CASH: "CASH",
+    BANK_TRANSFER: "BANK_TRANSFER"
+}
 export const REVIEW_TEXT = [
     '',
     'Trải nghiệm tệ',

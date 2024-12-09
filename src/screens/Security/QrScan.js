@@ -1,11 +1,11 @@
-import {useNavigation} from '@react-navigation/native';
-import {expandAnimation} from '@src/animation';
+import { useNavigation } from '@react-navigation/native';
+import { expandAnimation } from '@src/animation';
 import reservationAPI from '@src/api/reservation.api';
 import ButtonComponent from '@src/components/Button';
 import LoadingModal from '@src/components/LoadingModal/LoadingModal';
-import {generalColor} from '@src/theme/color';
-import {RES_STATUS} from '@src/utils/constant';
-import {useEffect, useState} from 'react';
+import { generalColor } from '@src/theme/color';
+import { RES_STATUS } from '@src/utils/constant';
+import { useEffect, useState } from 'react';
 import {
   Image,
   LayoutAnimation,
@@ -14,9 +14,9 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {RNCamera} from 'react-native-camera';
-import {showMessage} from 'react-native-flash-message';
-import {launchImageLibrary} from 'react-native-image-picker';
+import { RNCamera } from 'react-native-camera';
+import { showMessage } from 'react-native-flash-message';
+import { launchImageLibrary } from 'react-native-image-picker';
 
 const QrScan = () => {
   const navigation = useNavigation();
@@ -120,6 +120,7 @@ const QrScan = () => {
     LayoutAnimation.configureNext(expandAnimation);
 
     //temporary used this
+    // Nếu là checkout thì phải gọi thêm api lấy payment info để lấy số tiền
     fetchResById('73');
   }, [scanning]);
   return (

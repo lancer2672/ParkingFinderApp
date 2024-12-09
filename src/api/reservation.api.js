@@ -94,5 +94,27 @@ const reservationAPI = {
       throw error;
     }
   },
+  /**
+   * {
+    "reservation_id":32,
+    "amount" :30000,
+    "userId":6,
+    "payment_method":"BANK_TRANSFER"
+}
+   */
+  createPayment: async ({reservation_id, amount, userId, payment_method}) => {
+    try {
+      const response = await axiosClient.post('/api/payments', {
+        reservation_id,
+        amount,
+        userId,
+        payment_method,
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error creating payment:', error);
+      throw error;
+    }
+  }
 };
 export default reservationAPI;
