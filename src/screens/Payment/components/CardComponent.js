@@ -1,31 +1,7 @@
-import { Image, StyleSheet, Text, View } from 'react-native';
+import {Image, StyleSheet, Text, View} from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 
-const CardComponent = () => {
-  const mockCards = [
-    {
-      id: 1,
-      cardNumber: '**** **** **** 8104',
-      cardHolder: 'NGUYEN DUC PHUONG',
-      expiryDate: '08/21',
-      type: 'visa'
-    },
-    {
-      id: 2, 
-      cardNumber: '**** **** **** 4582',
-      cardHolder: 'NGUYEN DUC PHUONG',
-      expiryDate: '12/24',
-      type: 'visa'
-    },
-    {
-      id: 3,
-      cardNumber: '**** **** **** 9231',
-      cardHolder: 'NGUYEN DUC PHUONG', 
-      expiryDate: '03/23',
-      type: 'visa'
-    }
-  ];
-
+const CardComponent = ({card}) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -35,16 +11,16 @@ const CardComponent = () => {
         />
         <Feather name="more-horizontal" color={'#FFFFFF'} size={18} />
       </View>
-      <Text style={styles.cardNumber}>{mockCards[0].cardNumber}</Text>
+      <Text style={styles.cardNumber}>{card.cardNumber}</Text>
       <View style={styles.information}>
         <View style={styles.cardHolder}>
           <Text style={styles.subTitle}>Tên chủ thẻ</Text>
-          <Text style={styles.content}>{mockCards[0].cardHolder}</Text>
+          <Text style={styles.content}>{card.cardHolder}</Text>
         </View>
 
         <View style={styles.expires}>
           <Text style={styles.subTitle}>Ngày hết hạn</Text>
-          <Text style={styles.content}>{mockCards[0].expiryDate}</Text>
+          <Text style={styles.content}>{card.expiryDate}</Text>
         </View>
       </View>
     </View>

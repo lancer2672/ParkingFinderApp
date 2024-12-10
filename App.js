@@ -3,7 +3,7 @@ import useNotification from '@src/hooks/useNotification';
 import useSocket from '@src/hooks/useSocket';
 import { navigate } from '@src/navigation/NavigationController';
 import Root from '@src/navigation/Root';
-import { addItem, getItem, getNotiKey } from '@src/screens/Notification/components/as';
+import { addItem, getNotiKey } from '@src/screens/Notification/components/as';
 import VNPayModal from '@src/screens/VNPayModal/VNPayModal';
 import useUserStore from '@src/store/userStore';
 import ThemeProviderComponent from '@src/theme/context';
@@ -27,7 +27,7 @@ function App() {
         if(message.paymentStatus == PAYMENT_STAT.PENDING){
           try{
 
-            const cardInfo  =  getItem(Card_Key);
+            const cardInfo  =  user?.cardInfo;
             if (cardInfo) {
                 const res = await reservationAPI.createPayment({
                   reservation_id: message.reservationId,
