@@ -1,3 +1,4 @@
+import paymentAPI from '@src/api/payment.api';
 import reservationAPI from '@src/api/reservation.api';
 import useNotification from '@src/hooks/useNotification';
 import useSocket from '@src/hooks/useSocket';
@@ -26,7 +27,7 @@ function App() {
       if (user && user.id == message.userId) {
         if(message.paymentStatus == PAYMENT_STAT.PENDING){
           try{
-
+            
             const cardInfo  =  user?.cardInfo;
             if (cardInfo) {
                 const res = await reservationAPI.createPayment({
@@ -37,7 +38,11 @@ function App() {
                 })
                 
             } else {
-              
+              const res = await paymentAPI.vnPay({
+                amount: message.amount,
+              })
+              console.log("CALL API")
+              setPaymentUrl(res.paymentUrl);
             }
           }
           catch(er){
@@ -141,7 +146,10 @@ function App() {
                   paymentUrl={paymentUrl}
                   onPaymentFailure={() => {}}
                   onPaymentSuccess={() => {
-                    Alert.alert('Thành công', 'Thanh toán thành công');
+                    showMessage({
+                      message: 'Thanh toán thành công',
+                      type: 'success',
+                    })
                   }}
                   onClose={() => {
                     console.log(':D');
