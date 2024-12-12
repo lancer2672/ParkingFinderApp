@@ -16,4 +16,3 @@ const parkingLotAPI = {
 };
 
 export default parkingLotAPI;
-

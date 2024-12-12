@@ -18,8 +18,6 @@ import { UserID_Key } from '@src/utils/localStorage';
 import { useEffect, useState } from 'react';
 import { navigationRef } from './NavigationController';
 import { Tabs } from './NavigationTab';
-import Booking from '@src/screens/ParkingLot/components/Booking';
-import ParkingHistory from '@src/screens/History/ParkingHistory';
 import QrcodeScreen from '@src/screens/ParkingLot/components/QrcodeScreen';
 import RidesScreen from '@src/screens/Security/RidesScreen';
 import SecurityDashboard from '@src/screens/Security/SecurityDashboard';
@@ -53,8 +51,8 @@ const AuthenticationStack = () => {
 const MainStack = () => {
   return (
     <Stack.Navigator
-      initialRouteName={'Notification'}
-      screenOptions={{presentation: 'card', ...screenOptions}}>
+      initialRouteName={'Tabs'}
+      screenOptions={{ presentation: 'card', ...screenOptions }}>
       <Stack.Group screenOptions={screenOptions}>
         <Stack.Screen name={'Tabs'} component={Tabs} />
         <Stack.Screen name={'ParkingLotMap'} component={ParkingLotsMap} />
@@ -97,7 +95,7 @@ const Root = () => {
   return (
     <NavigationContainer ref={navigationRef}>
       <Stack.Navigator screenOptions={screenOptions}>
-        {true ? (
+        {user.phoneNumber ? (
           <Stack.Screen name="MainStack" component={MainStack} />
         ) : (
           <Stack.Screen

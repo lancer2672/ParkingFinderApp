@@ -1,10 +1,9 @@
 import ButtonComponent from '@src/components/Button';
-import {parkingslotsMock} from '@src/mock/mock';
-import {navigate} from '@src/navigation/NavigationController';
-import {generalColor} from '@src/theme/color';
-import {center, row, rowCenter} from '@src/theme/style';
+import { parkingslotsMock } from '@src/mock/mock';
+import { navigate } from '@src/navigation/NavigationController';
+import { generalColor } from '@src/theme/color';
+import { center, row, rowCenter } from '@src/theme/style';
 import textStyle from '@src/theme/text';
-import {useState} from 'react';
 import {
   Image,
   Linking,
@@ -18,9 +17,11 @@ import { Divider } from 'react-native-paper';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Feather from 'react-native-vector-icons/Feather';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Booking from './Booking';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import reservationAPI from '@src/api/reservation.api';
 
 const ParkingLotModal = ({
   parkingslot = parkingslotsMock[0],
@@ -30,16 +31,51 @@ const ParkingLotModal = ({
   navigation,
 }) => {
   const [isBookingVisible, setIsBookingVisible] = useState(false);
+  const [bookingSuccess, setBookingSuccess] = useState(false);
+  const [qrData, setQrData] = useState(null);
+  const [existingReservation, setExistingReservation] = useState(null);
+
+  const userId = 6; 
+
+  useEffect(() => {
+    const checkExistingReservation = async () => {
+      try {
+        const response = await reservationAPI.getReservationsByUserId(userId);
+        const reservation = response.find(
+          (res) => res.parkingLotId === parkingslot.id && res.status === 'PENDING'
+        );
+        if (reservation) {
+          setExistingReservation(reservation);
+          setBookingSuccess(true);
+          setQrData(JSON.stringify(reservation));
+        }
+      } catch (error) {
+        console.error('Error checking existing reservation:', error);
+      }
+    };
+
+    if (isVisible) {
+      checkExistingReservation();
+    }
+  }, [isVisible, parkingslot.id, userId]);
 
   const callAgent = (phoneNumber = '0846303261') => {
     Linking.openURL(`tel:${parkingslot.agent?.phoneNumber}`);
   };
 
   const onContinue = () => {
-    // onClose();
-
     handleContinue();
     setIsBookingVisible(true);
+  };
+
+  const handleBookingSuccess = (qrData) => {
+    setIsBookingVisible(false);
+    setBookingSuccess(true);
+    setQrData(qrData);
+  };
+
+  const goToQRScreen = () => {
+    navigation.navigate('QrcodeScreen', { qrData });
   };
 
   console.log('ParkingLotModal props:', { parkingslot, isVisible, navigation });
@@ -108,7 +144,7 @@ const ParkingLotModal = ({
 
             <Divider style={{ marginLeft: 12 }}></Divider>
             <FontAwesome5 name="parking" color="black" size={20}></FontAwesome5>
-            <Text style={styles.txt}>Có bãi đỗ xe</Text> */}
+            <Text style={styles.txt}>Có bãi đỗ xe</Text>
 
             <TouchableOpacity
               style={{
@@ -135,13 +171,13 @@ const ParkingLotModal = ({
               onClose();
             }}
             color={generalColor.other.bluepurple}
-            style={{marginVertical: 24, marginTop: 40, borderRadius: 12}}
+            style={{ marginVertical: 24, marginTop: 40, borderRadius: 12 }}
             text={'Xem đánh giá'}></ButtonComponent>
           <ButtonComponent
-            onPress={onContinue}
+            onPress={bookingSuccess ? goToQRScreen : onContinue}
             color={generalColor.other.bluepurple}
-            style={{marginVertical: 24, marginTop: 0, borderRadius: 12}}
-            text={'Tiếp tục'}></ButtonComponent>
+            style={{ marginVertical: 24, marginTop: 0, borderRadius: 12 }}
+            text={bookingSuccess ? 'View Details' : 'Tiếp tục'}></ButtonComponent>
         </View>
       </ReactNativeModal>
 
@@ -149,7 +185,7 @@ const ParkingLotModal = ({
         isVisible={isBookingVisible}
         onClose={() => setIsBookingVisible(false)}
         route={{ params: { parkingslot } }}
-        
+        onBookingSuccess={handleBookingSuccess}
       />
     </>
   );
