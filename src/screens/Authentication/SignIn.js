@@ -50,8 +50,9 @@ const SignIn = () => {
       // Assuming there's an API to fetch user by ID
       const data = await userAPI.getUserByID(userId);
       console.log('Fetched user:', data);
+      const role = data.role.name
       // Set the user in zustandStorage
-      setUser(data);
+      setUser({...data,role});
     } catch (error) {
       console.error('Error fetching user:', error);
       throw error;

@@ -1,9 +1,12 @@
+import parkingLotAPI from '@src/api/parkingLot.api';
 import ButtonComponent from '@src/components/Button';
+import LoadingModal from '@src/components/LoadingModal/LoadingModal';
 import { parkingslotsMock } from '@src/mock/mock';
 import { navigate } from '@src/navigation/NavigationController';
 import { generalColor } from '@src/theme/color';
 import { center, row, rowCenter } from '@src/theme/style';
 import textStyle from '@src/theme/text';
+
 import {
   Image,
   Linking,
@@ -12,20 +15,23 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { showMessage } from 'react-native-flash-message';
 import ReactNativeModal from 'react-native-modal';
 import { Divider } from 'react-native-paper';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import Booking from './Booking';
+
 import React, { useState, useEffect } from 'react';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import reservationAPI from '@src/api/reservation.api';
+import Booking from './Booking';
 
 const ParkingLotModal = ({
   parkingslot = parkingslotsMock[0],
   isVisible,
+  carType,
   handleContinue,
   onClose,
   navigation,
@@ -59,26 +65,55 @@ const ParkingLotModal = ({
     }
   }, [isVisible, parkingslot.id, userId]);
 
+  const [freeSlot, setFreeSlot] = useState(0);
+  const [loading,setIsLoading ] = useState(false);
   const callAgent = (phoneNumber = '0846303261') => {
     Linking.openURL(`tel:${parkingslot.agent?.phoneNumber}`);
   };
 
   const onContinue = () => {
+    // onClose();
+    if(freeSlot == 0){
+      showMessage({
+        message: 'Không đủ chỗ trống',
+        type: 'error',
+      });
+      return
+    }
     handleContinue();
     setIsBookingVisible(true);
   };
 
-  const handleBookingSuccess = (qrData) => {
-    setIsBookingVisible(false);
-    setBookingSuccess(true);
-    setQrData(qrData);
-  };
+  const fetchFreeSlots = async () =>{
+    try{
+      setIsLoading(true);
+      const data = await parkingLotAPI.getFreeSlots({
+        parkingLotId: parkingslot.id,// this is error typo
+        //checkInTime=2024-10-23T10:03:00
+        checkIn: new Date().toISOString(),
+        carType: carType,
+      })
+      if (data){
+        setFreeSlot(data);
+      }
 
-  const goToQRScreen = () => {
-    navigation.navigate('QrcodeScreen', { qrData });
-  };
-
+    }catch(er){
+      showMessage({
+        message: 'Đã có lỗi xảy ra',
+        type: 'error',
+      });
+    }
+    finally{
+      setIsLoading(false);
+    }
+  }
   console.log('ParkingLotModal props:', { parkingslot, isVisible, navigation });
+  useEffect(() => {
+    if(isVisible){
+      fetchFreeSlots()
+    }
+  }, [isVisible]);
+
 
   return (
     <>
@@ -92,6 +127,11 @@ const ParkingLotModal = ({
         onBackdropPress={onClose}
         style={{ margin: 0 }}>
         <View style={styles.container}>
+          {loading && <LoadingModal visible={true} onClose={()=>{}}></LoadingModal>}
+          {
+            !loading &&
+            <>
+        
           <View style={row}>
             <View>
               <Image
@@ -111,7 +151,7 @@ const ParkingLotModal = ({
                   marginBottom: 8,
                   color: generalColor.primary,
                 }}>
-                {parkingslot.name}
+                {parkingslot.name} ({freeSlot} chỗ trống)
               </Text>
 
               <View style={{ ...row }}>
@@ -145,6 +185,7 @@ const ParkingLotModal = ({
             <Divider style={{ marginLeft: 12 }}></Divider>
             <FontAwesome5 name="parking" color="black" size={20}></FontAwesome5>
             <Text style={styles.txt}>Có bãi đỗ xe</Text>
+     
 
             <TouchableOpacity
               style={{
@@ -176,16 +217,20 @@ const ParkingLotModal = ({
           <ButtonComponent
             onPress={bookingSuccess ? goToQRScreen : onContinue}
             color={generalColor.other.bluepurple}
-            style={{ marginVertical: 24, marginTop: 0, borderRadius: 12 }}
-            text={bookingSuccess ? 'View Details' : 'Tiếp tục'}></ButtonComponent>
+            style={{marginVertical: 24, marginTop: 0, borderRadius: 12}}
+            text={'Tiếp tục'}></ButtonComponent>
+           </>
+          }
         </View>
+        
+
       </ReactNativeModal>
 
       <Booking
         isVisible={isBookingVisible}
         onClose={() => setIsBookingVisible(false)}
-        route={{ params: { parkingslot } }}
-        onBookingSuccess={handleBookingSuccess}
+        route={{ params: { parkingslot ,carType } }}
+        
       />
     </>
   );

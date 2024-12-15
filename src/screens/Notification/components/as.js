@@ -1,16 +1,11 @@
 // storage.js :)), replace by calling api
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-//TODO: Clean code -> this is hotel not room
-export const getKey = (hotelId, id) => {
-  return `room/${hotelId}/${id}`;
-};
 
 /*
  {
-      title: 'Đặt phòng',
-
-      description: 'Bạn đã huỷ phòng thành công',
+      title: 'Đặt chỗ ',
+      description: 'Bạn đã huỷ  thành công',
       createdAt: Date.now(),
       isSeen: false,
     }
@@ -18,6 +13,7 @@ export const getKey = (hotelId, id) => {
 export const getNotiKey = notiId => {
   return `noti/${notiId}`;
 };
+
 export const addItem = async (key, value) => {
   try {
     console.log('KeyV', key, value);

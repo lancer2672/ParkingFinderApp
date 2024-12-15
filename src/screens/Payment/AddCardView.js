@@ -1,21 +1,58 @@
+import { goBack } from '@src/navigation/NavigationController';
+import useUserStore from '@src/store/userStore';
+import { generalColor } from '@src/theme/color';
+import { useState } from 'react';
 import {
   StyleSheet,
-  View,
+  Switch,
   Text,
   TextInput,
   TouchableHighlight,
-  Switch,
-  Pressable,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import Swiper from 'react-native-swiper';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import styled from 'styled-components';
 import CardComponent from './components/CardComponent';
-import React, {useState} from 'react';
-import Material from 'react-native-vector-icons/MaterialIcons';
-import {goBack} from '@src/navigation/NavigationController';
+
+const mockCards = [
+  {
+    id: 1,
+    cardNumber: '**** **** **** 8104',
+    cardHolder: 'NGUYEN DUC PHUONG',
+    expiryDate: '08/21',
+    type: 'visa',
+  },
+  {
+    id: 2,
+    cardNumber: '**** **** **** 4582',
+    cardHolder: 'NGUYEN DUC PHUONG',
+    expiryDate: '12/24',
+    type: 'visa',
+  },
+  {
+    id: 3,
+    cardNumber: '**** **** **** 9231',
+    cardHolder: 'NGUYEN DUC PHUONG',
+    expiryDate: '03/23',
+    type: 'visa',
+  },
+];
 
 const AddCardView = () => {
-  const [isEnabled, setIsEnabled] = useState(false);
-  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+  const user = useUserStore((state) => state.user);
+  const setUser  = useUserStore((state) => state.setUser);
+  const [selectedCard, setSelectedCard] = useState(mockCards[0]);
+  const [isEnabled, setIsEnabled] = useState(user?.cardInfo?.id == selectedCard.id);
+  const toggleSwitch = () => {
+    setIsEnabled((previousState) => !previousState);
+    setUser({
+      ...user,
+      cardInfo: isEnabled ? null : selectedCard,
+    });
+  }
+
   return (
     <View
       style={{
@@ -23,38 +60,42 @@ const AddCardView = () => {
       }}>
       <View
         style={{
-          display: 'flex',
           flexDirection: 'row',
-          paddingVertical: 12,
-          marginBottom: 24,
           alignItems: 'center',
-          gap: 18,
-          paddingHorizontal: 12,
-          backgroundColor: 'white',
+          padding: 12,
+          // borderBottomWidth: 2,
+          borderBottomColor: generalColor.primary,
         }}>
-        <Pressable onPress={() => goBack()}>
-          <Material name="arrow-back" size={24} />
-        </Pressable>
-        <Text
+        <TouchableOpacity
+          onPress={() => {
+            goBack();
+          }}
           style={{
-            fontSize: 28,
-            fontWeight: '600',
-            alignSelf: 'center',
+            paddingHorizontal: 8,
+            paddingVertical: 4,
           }}>
+          <AntDesign name="arrowleft" size={24} color={generalColor.primary} />
+        </TouchableOpacity>
+        <Heading style={{color: generalColor.primary}}>
           Phương thức thanh toán
-        </Text>
+        </Heading>
       </View>
 
       <View style={styles.container}>
-        <Swiper style={styles.wrapper} showsButtons={true}>
+        <Swiper 
+          style={styles.wrapper} 
+
+          showsButtons={true}
+          onIndexChanged={(index) => setSelectedCard(mockCards[index])}
+        >
           <View style={styles.slide1}>
-            <CardComponent />
+            <CardComponent card={mockCards[0]} />
           </View>
           <View style={styles.slide2}>
-            <CardComponent />
+            <CardComponent card={mockCards[1]} />
           </View>
           <View style={styles.slide3}>
-            <CardComponent />
+            <CardComponent card={mockCards[2]} />
           </View>
         </Swiper>
       </View>
@@ -97,7 +138,7 @@ const AddCardView = () => {
             }}>
             <Text>Mã thẻ</Text>
             <TextInput
-              value="**** **** **** 8104"
+              value={selectedCard.cardNumber}
               editable={false}
               style={{
                 flex: 1,
@@ -118,7 +159,7 @@ const AddCardView = () => {
               }}>
               <Text>Ngày hết hạn</Text>
               <TextInput
-                value="09/25"
+                value={selectedCard.expiryDate}
                 editable={false}
                 style={{
                   flex: 1,
@@ -196,3 +237,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+const Heading = styled(Text)`
+  font-weight: bold;
+  font-size: 24px;
+  color: black;
+`;

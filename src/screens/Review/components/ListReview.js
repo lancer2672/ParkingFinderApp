@@ -1,9 +1,10 @@
-import {expandAnimation} from '@src/animation';
+import { expandAnimation } from '@src/animation';
 import replyAPI from '@src/api/reply.api';
-import {generalColor} from '@src/theme/color';
-import {row, rowCenter} from '@src/theme/style';
+import ImageGallery from '@src/components/ImageGallery';
+import { generalColor } from '@src/theme/color';
+import { row, rowCenter } from '@src/theme/style';
 import textStyle from '@src/theme/text';
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 import {
   FlatList,
   LayoutAnimation,
@@ -12,7 +13,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import {Avatar} from 'react-native-paper';
+import { Avatar } from 'react-native-paper';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
 const reviewBookingMock = [
@@ -120,6 +121,9 @@ const ListReview = ({hotel, reviews, style = {}}) => {
             })}
           </Text>
           <Text style={styles.content}>{item.comment}</Text>
+           <ImageGallery 
+          images={item?.imagesUrls?.split(",") || []} 
+        />
           <View style={rowCenter}>
             <AntDesign
               name="like2"
