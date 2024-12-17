@@ -107,6 +107,14 @@ const ParkingLotModal = ({
       setIsLoading(false);
     }
   }
+  const goToQRScreen = () => {
+    navigation.navigate('QrcodeScreen', { qrData });
+  };
+  const handleBookingSuccess = (qrData) => {
+    setBookingSuccess(true);
+    setQrData(qrData);
+    setIsBookingVisible(false);
+  };
   console.log('ParkingLotModal props:', { parkingslot, isVisible, navigation });
   useEffect(() => {
     if(isVisible){
@@ -215,11 +223,12 @@ const ParkingLotModal = ({
             style={{ marginVertical: 24, marginTop: 40, borderRadius: 12 }}
             text={'Xem đánh giá'}></ButtonComponent>
           <ButtonComponent
-            onPress={bookingSuccess ? goToQRScreen : onContinue}
-            color={generalColor.other.bluepurple}
-            style={{marginVertical: 24, marginTop: 0, borderRadius: 12}}
-            text={'Tiếp tục'}></ButtonComponent>
-           </>
+                onPress={bookingSuccess ? goToQRScreen : onContinue}
+                color={generalColor.other.bluepurple}
+                style={{ marginVertical: 24, marginTop: 0, borderRadius: 12 }}
+                text={bookingSuccess ? 'Xem chi tiết' : 'Tiếp tục'}
+              />
+            </>
           }
         </View>
         
