@@ -7,7 +7,6 @@ import textStyle from '@src/theme/text';
 import { useEffect, useState } from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import CreateReviewModal from './components/CreateReview';
 import FilterButton from './components/FilterButton';
 import ListReview from './components/ListReview';
 import SortModal from './components/SortModal';
@@ -135,9 +134,9 @@ const Review = () => {
         onClose={() => {
           setStarModalVisible(false);
         }}></StarModal>
-      <CreateReviewModal
+      {/* <CreateReviewModal
         isVisible={true}
-        onClose={() => {}}></CreateReviewModal>
+        onClose={() => {}}></CreateReviewModal> */}
     </View>
   );
 };

@@ -69,7 +69,7 @@ const CreateReviewModal = ({parkingLotId, isVisible, onClose}) => {
     try {
       const uploadPromises = images.map((image, index) => {
         const formData = new FormData();
-        formData.append('files', {
+        formData.append('file', {
           uri: image,
           type: 'image/jpeg', 
           name: `image${index}.jpg`
