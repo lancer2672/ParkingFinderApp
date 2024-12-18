@@ -85,7 +85,7 @@ const ParkingLotsMap = ({initialLocation, navigation}) => {
       Geolocation.getCurrentPosition(
         position => {
           const {latitude, longitude} = position.coords;
-          resolve({latitude: 10.87061180891543, longitude: 106.8022367824454});
+          resolve({latitude: 10.872953282716372, longitude: 106.8001702313811});
         },
         error => reject(error),
         {enableHighAccuracy: false, timeout: 20000},

@@ -15,7 +15,7 @@ import AddCardView from '@src/screens/Payment/AddCardView';
 import Review from '@src/screens/Review/Review';
 
 import { navigationRef } from './NavigationController';
-
+import DetailQr from '@src/screens/ParkingLot/components/DetailQr';
 import RidesScreen from '@src/screens/Security/RidesScreen';
 import SecurityDashboard from '@src/screens/Security/SecurityDashboard';
 import SettingView from '@src/screens/Setting/SettingView';
@@ -67,6 +67,7 @@ const MainStack = () => {
         <Stack.Screen name={'SettingView'} component={SettingView} />
         <Stack.Screen name={'QrcodeScreen'} component={QrcodeScreen} />
         <Stack.Screen name={'RidesScreen'} component={RidesScreen} />
+        <Stack.Screen name={'DetailQr'} component={DetailQr} />
         <Stack.Screen
           name={'SecurityDashboard'}
           component={SecurityDashboard}

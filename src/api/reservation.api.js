@@ -28,12 +28,12 @@ const reservationAPI = {
       throw error;
     }
   },
-  getReservationsByUserId: async ({ userId, page = 1, limit = 10000 }) => {
+  getReservationsByUserId: async (userId) => {
     try {
-      console.log('Fetching reservations for user ID:', userId, 'Page:', page, 'Limit:', limit);
-      const response = await axiosClient.get(`/api/reservations/user/${userId}?page=${page}&limit=${limit}`);
+      // console.log('Fetching reservations for user ID:', userId, 'Page:', page, 'Limit:', limit);
+      const response = await axiosClient.get(`/api/reservations/user/${userId}`);
       console.log('Reservations fetched:', response.data);
-      return response.data.reservations;
+      return response.data.reservations || [];
     } catch (error) {
       console.error('Error fetching reservations:', error);
       throw error;
