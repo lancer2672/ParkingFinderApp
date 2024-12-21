@@ -13,7 +13,18 @@ const parkingLotAPI = {
       throw error;
     }
   },
+  getFreeSlots: async ({parkingLotId, checkIn, carType}) => {
+    try {
+      console.log("{parkingLotId, checkInTime, carType}",{parkingLotId, checkIn, carType});
+      const response = await axiosClient.get('/api/parking-lots/free-slot', {
+        params: {parkingLotId, checkIn, type:carType},
+      });
+      return response.data.free_slot;
+    } catch (error) {
+      console.error('Error fetching parking lots:', error);
+      // throw error;
+    }
+  }
 };
 
 export default parkingLotAPI;
-

@@ -1,9 +1,10 @@
 import Geolocation from '@react-native-community/geolocation';
 import parkingLotAPI from '@src/api/parkingLot.api';
+import LoadingModal from '@src/components/LoadingModal/LoadingModal';
 import useParkingLotStore from '@src/store/useParkinglotStore';
-import {generalColor} from '@src/theme/color';
+import { generalColor } from '@src/theme/color';
 import textStyle from '@src/theme/text';
-import {useCallback, useEffect, useRef, useState} from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Alert,
   Image,
@@ -12,13 +13,13 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {API_KEY} from 'react-native-dotenv';
-import {SelectCountry} from 'react-native-element-dropdown';
-import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
-import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
+import { API_KEY } from 'react-native-dotenv';
+import { SelectCountry } from 'react-native-element-dropdown';
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 import ParkingLotModal from './components/ParkingLotModal';
-
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 Geolocation.setRNConfiguration({
   skipPermissionRequests: false,
 });
@@ -40,6 +41,7 @@ const local_data = [
 const ParkingLotsMap = ({initialLocation, navigation}) => {
   const [parkingslots, setParkingslots] = useState([]);
   const [markerPosition, setMarkerPosition] = useState(null);
+  const [loading,setLoading] = useState(false);
   const [selectedParkingslot, setSelectedParkingslot] = useState(null);
   const [isMapMoved, setIsMapMoved] = useState(false);
   const [vehicleType, setVehicleType] = useState('CAR');
@@ -51,10 +53,11 @@ const ParkingLotsMap = ({initialLocation, navigation}) => {
   const setParkingLot = useParkingLotStore(state => state.setParkingLot);
 
   const paymentUrl =
-    'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?vnp_Amount=23700000&vnp_BankCode=NCB&vnp_Command=pay&vnp_CreateDate=20241118002952&vnp_CurrCode=VND&vnp_ExpireDate=20241118004452&vnp_IpAddr=0%3A0%3A0%3A0%3A0%3A0%3A0%3A1&vnp_Locale=vn&vnp_OrderInfo=Thanh+toan+don+hang%3A44246705&vnp_OrderType=other&vnp_ReturnUrl=http%3A%2F%2Flocalhost%3A8080%2Fapi%2Fv1%2Fpayment%2Fvn-pay-callback&vnp_TmnCode=58X4B4HP&vnp_TxnRef=62075358&vnp_Version=2.1.0&vnp_SecureHash=637d369f7eb2e2e21f5aa0b0c9d98e07b0f87323687121291038b7594a2b0b4ac0f40e134f3cd565eb1eb321ea123869b2be1d4bdf9bb6e778be2250be4d868f';
+    'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?vnp_Amount=23700000&vnp_BankCode=NCB&vnp_Command=pay&vnp_CreateDate=20241118002952&vnp_CurrCode=VND&vnp_ExpireDate=20241118004452&vnp_IpAddr=0%3A0%3A0%3A0%3A0%3A0%3A0%3A1&vnp_Locale=vn&vnp_OrderInfo=Thanh+toan+don+hang%3A44246705&vnp_OrderType=other&vnp_ReturnUrl=http%3A%2F%2F192.168.150.104%3A8080%2Fapi%2Fv1%2Fpayment%2Fvn-pay-callback&vnp_TmnCode=58X4B4HP&vnp_TxnRef=62075358&vnp_Version=2.1.0&vnp_SecureHash=637d369f7eb2e2e21f5aa0b0c9d98e07b0f87323687121291038b7594a2b0b4ac0f40e134f3cd565eb1eb321ea123869b2be1d4bdf9bb6e778be2250be4d868f';
 
   const fetchParkingLots = useCallback(
     async (latitude, longitude, type) => {
+      setLoading(true)
       if (fetchError) return;
       try {
         const response = await parkingLotAPI.getParkingLotsInRegion({
@@ -69,8 +72,11 @@ const ParkingLotsMap = ({initialLocation, navigation}) => {
         console.error('Error fetching parking slots:', error);
         setFetchError(true);
         Alert.alert('Lỗi', 'Không thể tải dữ liệu bãi đỗ xe');
+      } finally {
+        setLoading(false);
       }
     },
+  
     [fetchError],
   );
 
@@ -79,7 +85,7 @@ const ParkingLotsMap = ({initialLocation, navigation}) => {
       Geolocation.getCurrentPosition(
         position => {
           const {latitude, longitude} = position.coords;
-          resolve({latitude: 10.87061180891543, longitude: 106.8022367824454});
+          resolve({latitude: 10.872953282716372, longitude: 106.8001702313811});
         },
         error => reject(error),
         {enableHighAccuracy: false, timeout: 20000},
@@ -138,25 +144,26 @@ const ParkingLotsMap = ({initialLocation, navigation}) => {
   }
 
   const handleRegionChange = (newRegion, details) => {
-    if (!details.isGesture) {
-      return;
-    }
-    if (
-      Math.abs(newRegion.latitude - currentRegion.latitude) < 0.0001 &&
-      Math.abs(newRegion.longitude - currentRegion.longitude) < 0.0001
-    ) {
-      return;
-    }
-    console.log('selected parkingslot', selectedParkingslot == null);
-    if (selectedParkingslot == null) {
-      return;
-    }
-    setCurrentRegion(() => newRegion);
-    setIsMapMoved(true);
+    // if (!details.isGesture) {
+    //   return;
+    // }
+    // if (
+    //   Math.abs(newRegion.latitude - currentRegion.latitude) < 0.0001 &&
+    //   Math.abs(newRegion.longitude - currentRegion.longitude) < 0.0001
+    // ) {
+    //   return;
+    // }
+    // console.log('selected parkingslot', selectedParkingslot == null);
+    // if (selectedParkingslot == null) {
+    //   return;
+    // }
+    // setCurrentRegion(() => newRegion);
+    // setIsMapMoved(true);
   };
   console.log('parkingslots', selectedParkingslot == null);
   return (
     <View style={styles.container}>
+       {loading && <LoadingModal />}
       <MapView
         provider={PROVIDER_GOOGLE}
         ref={mapRef}
@@ -285,6 +292,7 @@ const ParkingLotsMap = ({initialLocation, navigation}) => {
       {selectedParkingslot && (
         <ParkingLotModal
           parkingslot={selectedParkingslot}
+          carType={vehicleType}
           handleContinue={() => {}}
           isVisible={selectedParkingslot != null}
           onClose={() => {

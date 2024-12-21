@@ -1,10 +1,10 @@
 import ButtonComponent from '@src/components/Button';
 import TextInputComponent from '@src/components/TextInputComponent';
-import {generalColor} from '@src/theme/color';
-import {rowCenter} from '@src/theme/style';
+import { generalColor } from '@src/theme/color';
+import { rowCenter } from '@src/theme/style';
 import textStyle from '@src/theme/text';
-import {REVIEW_TEXT, SCREEN_HEIGHT} from '@src/utils/constant';
-import {useState} from 'react';
+import { REVIEW_TEXT, SCREEN_HEIGHT } from '@src/utils/constant';
+import { useState } from 'react';
 import {
   FlatList,
   Image,
@@ -18,13 +18,17 @@ import {
 } from 'react-native';
 import StarRating from 'react-native-star-rating';
 
-import {showMessage} from 'react-native-flash-message';
-import {launchImageLibrary} from 'react-native-image-picker';
-import {Avatar} from 'react-native-paper';
+import fileAPI from '@src/api/file.api';
+import useUserStore from '@src/store/userStore';
+import { showMessage } from 'react-native-flash-message';
+import { launchImageLibrary } from 'react-native-image-picker';
+import { Avatar } from 'react-native-paper';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-const CreateReviewModal = ({bookingHistory, isVisible, onClose}) => {
+const CreateReviewModal = ({parkingLotId, isVisible, onClose}) => {
   const [images, setImages] = useState([]);
+  const user = useUserStore(state => state.user);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [content, setContent] = useState('');
   const [rating, setRating] = useState(0);
   const selectImages = () => {
     const options = {
@@ -40,12 +44,58 @@ const CreateReviewModal = ({bookingHistory, isVisible, onClose}) => {
       }
     });
   };
-  const handleCreateReview = () => {
-    showMessage({
-      message: 'Đánh giá của bạn đã được tạo',
-      type: 'success',
-    });
-    onClose();
+  const handleCreateReview = async () => {
+    if (!rating) {
+      showMessage({
+        message: 'Vui lòng chọn số sao',
+        type: 'danger',
+      });
+      return;
+    }
+    if (!content) {
+      showMessage({
+        message: 'Vui lòng nhập nội dung đánh giá',
+        type: 'danger',
+      });
+      return;
+    }
+    if (parkingLotId == null) {
+      showMessage({
+        message: 'Vui lòng chọn bãi đỗ xe',
+        type: 'danger',
+      });
+      return;
+    }
+    try {
+      const uploadPromises = images.map((image, index) => {
+        const formData = new FormData();
+        formData.append('file', {
+          uri: image,
+          type: 'image/jpeg', 
+          name: `image${index}.jpg`
+        });
+        return fileAPI.upload(formData);
+      });
+      const res = await Promise.all(uploadPromises);
+      const imageUrls = res.join(',');
+      console.log('upload res', imageUrls);
+      const createReviewRes  = await reviewAPI.create({
+        parkingLotId,
+        rating,
+        userId: user.id,
+        comment: content,
+        imageId:imageUrls,
+      })
+      console.log('createReviewRes', createReviewRes);
+      showMessage({
+        message: 'Đánh giá của bạn đã được tạo',
+        type: 'success',
+      });
+      onClose();
+    }
+    catch(er){
+
+    }
   };
   return (
     <Modal transparent visible={isVisible} onRequestClose={onClose}>
@@ -92,8 +142,10 @@ const CreateReviewModal = ({bookingHistory, isVisible, onClose}) => {
             <View style={styles.row}>
               <StarRating
                 disabled={false}
+                starStyle = {{color:generalColor.primary}}
                 maxStars={5}
                 rating={rating}
+                
                 selectedStar={value => setRating(value)}
                 starSize={30}
               />
@@ -108,9 +160,13 @@ const CreateReviewModal = ({bookingHistory, isVisible, onClose}) => {
 
             <TextInputComponent
               placeholder="Viết đánh giá"
-              placeholderColor="black"
-              multiline
-              styleTextInput={{color: 'black'}}
+              placeholderColor="white"
+              multiline 
+              value = {content}
+              onChangeText={text => {
+               setContent(text);
+              }}
+              styleTextInput={{color: 'white'}}
             />
             {images.length != 0 && (
               <View style={{height: 120, paddingVertical: 12, width: '100%'}}>
@@ -121,7 +177,7 @@ const CreateReviewModal = ({bookingHistory, isVisible, onClose}) => {
                   renderItem={({item}) => (
                     <TouchableOpacity onPress={() => setSelectedImage(item)}>
                       <Image
-                        source={{uri: 'https://picsum.photos/200'}}
+                        source={{uri: item}}
                         style={styles.image}
                       />
                     </TouchableOpacity>
@@ -132,7 +188,7 @@ const CreateReviewModal = ({bookingHistory, isVisible, onClose}) => {
                   visible={!!selectedImage}
                   onRequestClose={() => setSelectedImage(null)}>
                   <Image
-                    source={{uri: 'https://picsum.photos/200'}}
+                    source={{uri: selectedImage}}
                     // source={{uri: selectedImage}}
                     resizeMode="contain"
                     style={styles.fullImage}
@@ -140,18 +196,17 @@ const CreateReviewModal = ({bookingHistory, isVisible, onClose}) => {
                 </Modal>
               </View>
             )}
+          </ScrollView>
             <ButtonComponent
               text="Thêm ảnh"
               onPress={selectImages}
               style={{
                 backgroundColor: undefined,
                 borderColor: generalColor.primary,
-                borderWidth: 2,
-                marginBottom: 12,
+                borderWidth: 2
               }}
               txtStyle={{color: generalColor.primary}}
             />
-          </ScrollView>
           <ButtonComponent
             style={{marginTop: 12, backgroundColor: generalColor.primary}}
             text="Gửi"

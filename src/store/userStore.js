@@ -1,20 +1,26 @@
-import { create } from 'zustand'
+import {create} from 'zustand';
 
-const useUserStore = create((set) => ({
-  user: {
-    email: '',
-    phoneNumber: '',
-    role: '',
-  },
-  updateUser: (email, phoneNumber, role) => set((state) => ({
-    user: {
-      ...state.user,
-      email,
-      phoneNumber,
-      role,
-    },
-  })),
-  resetUser: () => set({ user: { email: '', phoneNumber: '', role: '' } }),
-  setUser: (user) => set({ user }),
-}))
-export default useUserStore
+const init = {
+  id: '',
+  name: '',
+  email: '',
+  phoneNumber: '',
+  role: '',
+  status: '',
+  cardInfo: null,
+};
+const useUserStore = create(set => ({
+  user: init,
+  updateUser: (email, phoneNumber, role) =>
+    set(state => ({
+      user: {
+        ...state.user,
+        email,
+        phoneNumber,
+        role,
+      },
+    })),
+  resetUser: () => set({user: init}),
+  setUser: user => set({user}),
+}));
+export default useUserStore;

@@ -1,9 +1,42 @@
-import {FlatList, SafeAreaView, View, Text, Pressable} from 'react-native';
+import reservationAPI from '@src/api/reservation.api';
+import LoadingModal from '@src/components/LoadingModal/LoadingModal';
+import Header from '@src/components/ModalHeader';
+import useUserStore from '@src/store/userStore';
+import { RES_STATUS } from '@src/utils/constant';
+import { useEffect, useState } from 'react';
+import { FlatList, SafeAreaView, Text, View } from 'react-native';
 import ParkingHistoryItem from './component/ParkingHistoryItem.component';
-import Material from 'react-native-vector-icons/MaterialIcons';
-import {goBack} from '@src/navigation/NavigationController';
 
 const ParkingHistory = () => {
+  const user = useUserStore(state => state.user);
+  const [isLoading, setIsLoading] = useState(false);
+  const [parkingHistoryItem, setParkingHistoryItem] = useState([]);
+  const [parkingActiveHistoryItem, setActiveParkingHistoryItem] = useState([]);
+
+  const fetchHistory = async(userId )=>{
+    setIsLoading(true);
+    const data =await reservationAPI.getUserRevations({userId});
+    
+    console.log("data",data);
+      const mappedHistoryItems = mapReservationsToHistoryItems(data);
+      const activeData = mappedHistoryItems.filter(
+        item => item.status === RES_STATUS.CHECKED_IN|| item.endTime === null
+      );
+    console.log("activeData",activeData);
+      
+      const completedData = mappedHistoryItems.filter(
+        item => item.status !== RES_STATUS.CHECKED_IN && item.endTime !== null
+      );
+      setActiveParkingHistoryItem(activeData)
+      setParkingHistoryItem(mappedHistoryItems)
+      setIsLoading(false);
+  }
+  console.log("useR",user);
+  useEffect(()=>{
+    if (user){
+      fetchHistory(user.id);
+    }
+  },[user])
   const activeData = [
     {
       parkingName: 'Abc',
@@ -21,38 +54,36 @@ const ParkingHistory = () => {
     endTime: new Date('2003-05-10T07:12:05.000Z').toISOString(),
     totalCost: 12 * 24,
   });
-
+  const mapReservationsToHistoryItems = (reservations) => {
+    if (!reservations || !Array.isArray(reservations)) return [];
+  
+    return reservations.map(reservation => ({
+      id: reservation.id,
+      parkingName: reservation.parkingLot?.name || 'Unknown Parking Lot',
+      cost: reservation.totalPrice || 0,
+      address: reservation.parkingLot?.address || 'Unknown Address',
+      startTime: reservation.startTime,
+      endTime: reservation.status === 'PENDING' ? null : reservation.endTime,
+      totalCost: reservation.totalPrice || 0,
+      status: reservation.status,
+      payment: reservation.payment,
+      paymentStatus: reservation.payment?.paymentStatus || 'UNPAID',
+      vehicleType: reservation.vehicleType || 'Unknown'
+    }));
+  };
   return (
     <View>
-      <View
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          paddingVertical: 12,
-          marginBottom: 24,
-          alignItems: 'center',
-          gap: 18,
-          paddingHorizontal: 12,
-          backgroundColor: 'white',
-        }}>
-        <Pressable onPress={() => goBack()}>
-          <Material name="arrow-back" size={24} />
-        </Pressable>
-        <Text
-          style={{
-            fontSize: 28,
-            fontWeight: '600',
-            alignSelf: 'center',
-          }}>
-          Lịch sử đỗ xe
-        </Text>
-      </View>
+      <Header title={"Lịch sử đỗ xe"}></Header>
 
-      <SafeAreaView>
-        <FlatList
-          data={activeData}
-          ListHeaderComponent={() => (
-            <Text
+      {
+        isLoading && <LoadingModal visible={true} onClose={()=>{}}></LoadingModal>
+      }
+      { 
+        !isLoading  &&
+        (
+      <>
+      {/* <SafeAreaView style={{height:250}}>
+      <Text
               style={{
                 paddingHorizontal: 8,
                 color: 'rgba(117, 127, 140, 1)',
@@ -61,32 +92,35 @@ const ParkingHistory = () => {
               }}>
               Bãi xe đang đỗ
             </Text>
-          )}
+        <FlatList
+        nestedScrollEnabled
+          data={parkingActiveHistoryItem}
           ItemSeparatorComponent={() => <View style={{height: 12}} />}
           renderItem={({item}) => <ParkingHistoryItem active {...item} />}
           keyExtractor={(item, index) => index}
           ListFooterComponent={() => <View style={{height: 22}} />}
         />
-      </SafeAreaView>
+      </SafeAreaView> */}
       <SafeAreaView>
-        <FlatList
-          ListHeaderComponent={() => (
-            <Text
+      <Text
               style={{
                 paddingHorizontal: 8,
                 color: 'rgba(117, 127, 140, 1)',
                 fontSize: 24,
                 fontWeight: '600',
               }}>
-              Bãi xe đã đỗ
+              {/* Bãi xe đã đỗ */}
             </Text>
-          )}
-          ItemSeparatorComponent={() => <View style={{height: 12}} />}
-          data={completedData}
+        <FlatList
+          ItemSeparatorComponent={() => <View style={{height: 6}} />}
+          data={parkingHistoryItem}
           renderItem={({item}) => <ParkingHistoryItem {...item} />}
           keyExtractor={(item, index) => index}
         />
       </SafeAreaView>
+ </>
+        )
+      }
     </View>
   );
 };

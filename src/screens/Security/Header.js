@@ -1,14 +1,17 @@
 import * as React from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
+import { View, Text, Image, StyleSheet, Pressable } from "react-native";
+import { goBack } from '@src/navigation/NavigationController';
+import Material from 'react-native-vector-icons/MaterialIcons';
 
 export const Header = () => {
   return (
     <View style={styles.headerContainer}>
-      <View style={styles.statusBar}>
-        </View>
+      <View style={styles.statusBar}></View>
       <View style={styles.navigationBar}>
-
         <View style={styles.titleContainer}>
+          <Pressable onPress={() => goBack()}>
+            <Material name="arrow-back" size={30} />
+          </Pressable>
           <View style={styles.titleText}>
             <Text style={styles.title}>Incoming Rides</Text>
           </View>
@@ -27,15 +30,15 @@ const styles = StyleSheet.create({
   headerContainer: {
     display: "flex",
     flexDirection: "column",
-    paddingVertical: 0, 
-    backgroundColor: "#f8f8f8", 
+    paddingVertical: 0,
+    backgroundColor: "#f8f8f8",
   },
   statusBar: {
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingVertical: 5, 
+    paddingVertical: 5,
     fontFamily: "SF Pro Text, sans-serif",
     fontSize: 15,
     color: "rgba(0, 0, 0, 1)",
@@ -44,7 +47,6 @@ const styles = StyleSheet.create({
     letterSpacing: -0.24,
     lineHeight: 1,
   },
-
   statusIcon: {
     width: 14,
     aspectRatio: 1,
@@ -57,15 +59,9 @@ const styles = StyleSheet.create({
   navigationBar: {
     flexDirection: "column",
     alignItems: "stretch",
-    marginTop: 20, // Adjust margin as needed
+    marginTop: 20,
   },
-  iconGroup: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingVertical: 5, // Adjust padding as needed
-  },
+
   navIcon: {
     width: 21,
     aspectRatio: 1.5,
@@ -74,7 +70,7 @@ const styles = StyleSheet.create({
     marginTop: 42,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center", // Center the title text
+    justifyContent: "space-between",
     fontFamily: "Open Sans, sans-serif",
     fontSize: 18,
     color: "rgba(59, 65, 75, 1)",
@@ -82,10 +78,11 @@ const styles = StyleSheet.create({
     textAlign: "center",
     letterSpacing: 0.1,
     lineHeight: 1,
+    paddingHorizontal: 10, 
   },
   titleText: {
-    marginTop: "auto",
-    marginBottom: "auto",
+    flex: 1,
+    alignItems: 'center',
   },
   title: {
     fontSize: 18,
@@ -95,6 +92,5 @@ const styles = StyleSheet.create({
   titleIcon: {
     width: 32,
     aspectRatio: 1,
-    marginLeft: 20  , 
   },
 });

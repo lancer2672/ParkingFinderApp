@@ -1,41 +1,62 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { parkingslotsMock } from '@src/mock/mock';
-import Slider from '@react-native-community/slider';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import Slider from '@react-native-community/slider';
+import {useNavigation} from '@react-navigation/native';
+import reservationAPI from '@src/api/reservation.api';
+import ButtonComponent from '@src/components/Button';
+import LoadingModal from '@src/components/LoadingModal/LoadingModal';
+import useUserStore from '@src/store/userStore';
+import {generalColor} from '@src/theme/color';
+import {convertToISOLocale} from '@src/utils/timeFormat';
+import {useState} from 'react';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {showMessage} from 'react-native-flash-message';
 import ReactNativeModal from 'react-native-modal';
 import QRCode from 'react-native-qrcode-svg';
-import LoadingModal from '@src/components/LoadingModal/LoadingModal';
-import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import ButtonComponent from '@src/components/Button';
-import { generalColor } from '@src/theme/color';
-const Booking = ({ route, isVisible, onClose }) => {
-  const { parkingslot } = route.params || {};
+const Booking = ({route, isVisible, onClose}) => {
+  const {parkingslot, carType} = route.params || {};
   const [duration, setDuration] = useState(0);
   const [checkinTime, setCheckinTime] = useState(new Date());
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [showQRCode, setShowQRCode] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
-
+  const user = useUserStore(state => state.user);
   const onTimeChange = (event, selectedTime) => {
+    console.log('selectedTime', selectedTime);
     const currentTime = selectedTime || checkinTime;
     setShowTimePicker(false);
     setCheckinTime(currentTime);
   };
 
-  const handleBooking = () => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+  console.log('checkinTime', checkinTime.toLocaleString());
+  const handleBooking = async () => {
+    try {
+      let startTime = convertToISOLocale(checkinTime);
+      setLoading(true);
+      const res = await reservationAPI.createReservation({
+        userId: user?.id,
+        parkingLotId: parkingslot.id,
+        startTime,
+        vehicleType: carType,
+        cancelMinute: duration || 0,
+      });
       const qrData = JSON.stringify({
         parkingslot,
+        reservation: res,
         duration,
-        checkinTime: checkinTime.toISOString(),
+        checkinTime,
       });
-      navigation.navigate('QrcodeScreen', { qrData });
-    }, 2000);
+      navigation.navigate('QrcodeScreen', {qrData});
+    } catch (er) {
+      showMessage({
+        message: 'Đã có lỗi xảy ra',
+
+        type: 'error',
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (!parkingslot) {
@@ -55,8 +76,7 @@ const Booking = ({ route, isVisible, onClose }) => {
       animationOut="slideOutDown"
       onBackButtonPress={onClose}
       onBackdropPress={onClose}
-      style={styles.modal}
-    >
+      style={styles.modal}>
       <View style={styles.modalContainer}>
         <View style={styles.floatingContainer}>
           <Text style={styles.title}>{parkingslot.name}</Text>
@@ -64,12 +84,14 @@ const Booking = ({ route, isVisible, onClose }) => {
         </View>
         <View style={styles.floatingContainer}>
           <View style={styles.sliderContainer}>
-            <Text style={styles.sliderLabel}>Estimation Duration Time: {duration} hours</Text>
+            <Text style={styles.sliderLabel}>
+              Thời gian di chuyển: {duration} minutes
+            </Text>
             <Slider
               style={styles.slider}
               minimumValue={0}
-              maximumValue={12}
-              step={0.5}
+              maximumValue={30}
+              step={1}
               value={duration}
               onValueChange={setDuration}
               minimumTrackTintColor="#1EB1FC"
@@ -79,7 +101,9 @@ const Booking = ({ route, isVisible, onClose }) => {
           </View>
 
           <View style={styles.timePickerContainer}>
-            <Text style={styles.timePickerLabel}>Check-in Time: {checkinTime.toLocaleTimeString()}</Text>
+            <Text style={styles.timePickerLabel}>
+              Check-in Time: {checkinTime.toLocaleString()}
+            </Text>
             <TouchableOpacity onPress={() => setShowTimePicker(true)}>
               <Icon name="edit" size={30} color="#1EB1FC" />
             </TouchableOpacity>
@@ -92,13 +116,30 @@ const Booking = ({ route, isVisible, onClose }) => {
               />
             )}
           </View>
+          {duration > 0 && (
+            <Text>*Chỗ của bạn sẽ tự động hủy sau {duration} phút </Text>
+          )}
         </View>
-        <ButtonComponent
-          onPress={handleBooking}
-          color={generalColor.other.bluepurple}
-          style={{ marginVertical: 24, marginTop: 40, borderRadius: 12 }}
-          text={'Booking'}
-        />
+        <View
+          style={{
+            flexDirection: 'row',
+            marginVertical: 24,
+            marginTop: 40,
+            justifyContent: 'flex-end',
+          }}>
+          <ButtonComponent
+            onPress={onClose}
+            color={generalColor.other.bluepurple}
+            style={{borderRadius: 12}}
+            text={'Close'}
+          />
+          <ButtonComponent
+            onPress={handleBooking}
+            color={generalColor.other.bluepurple}
+            style={{marginLeft: 12, borderRadius: 12}}
+            text={'Booking'}
+          />
+        </View>
         {loading && <LoadingModal />}
         {showQRCode && (
           <View style={styles.qrCodeContainer}>
@@ -106,18 +147,12 @@ const Booking = ({ route, isVisible, onClose }) => {
               value={JSON.stringify({
                 parkingslot,
                 duration,
-                checkinTime: checkinTime.toISOString(),
+                checkinTime,
               })}
               size={200}
             />
           </View>
         )}
-        <ButtonComponent
-          onPress={onClose}
-          color={generalColor.other.bluepurple}
-          style={{ marginVertical: 24, marginTop: 40, borderRadius: 12 }}
-          text={'Close'}
-        />
       </View>
     </ReactNativeModal>
   );
@@ -131,9 +166,7 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     width: 340,
-    height: 700,
-    justifyContent: 'center',
-    alignItems: 'center',
+
     padding: 16,
     backgroundColor: 'white',
     borderRadius: 8,

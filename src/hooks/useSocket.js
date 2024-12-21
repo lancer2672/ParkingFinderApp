@@ -1,13 +1,13 @@
+import {serverURL} from '@src/api/axiosClient';
 import {useEffect, useState} from 'react';
 import io from 'socket.io-client';
 
-const SOCKET_SERVER = 'http://192.168.187.104:9092';
 const useSocket = () => {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
     console.log('Trying to connect socket......');
-    const newSocket = io(SOCKET_SERVER, {
+    const newSocket = io(`${serverURL}/socketio`, {
       transports: ['websocket'],
       //   forceNew: true,
     });
@@ -25,7 +25,7 @@ const useSocket = () => {
     return () => {
       newSocket.disconnect();
     };
-  }, [SOCKET_SERVER]);
+  }, [serverURL]);
 
   const emit = (event, data) => {
     if (socket) {

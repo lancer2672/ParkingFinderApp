@@ -1,8 +1,18 @@
-import {navigate} from '@src/navigation/NavigationController';
-import {Text, View, Image, TouchableHighlight} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { navigate } from '@src/navigation/NavigationController';
+import useUserStore from '@src/store/userStore';
+import { UserID_Key } from '@src/utils/localStorage';
+import { Image, Text, TouchableHighlight, View } from 'react-native';
 import Material from 'react-native-vector-icons/MaterialIcons';
 
 const SettingView = () => {
+  const resetUser = useUserStore(state => state.resetUser);
+  const handleLogout = async () =>{
+    await AsyncStorage.removeItem('accessToken');
+    await AsyncStorage.removeItem(UserID_Key);
+    resetUser();
+  }
+  const user =  useUserStore(state => state.user);
   return (
     <View
       style={{
@@ -30,7 +40,7 @@ const SettingView = () => {
           fontWeight: '600',
           alignSelf: 'center',
         }}>
-        Nguyễn Văn A
+        {user?.name}
       </Text>
       <View
         style={{
@@ -100,7 +110,7 @@ const SettingView = () => {
         </TouchableHighlight>
 
         <TouchableHighlight
-          onPress={() => {}}
+          onPress={handleLogout}
           style={{
             borderRadius: 6,
           }}

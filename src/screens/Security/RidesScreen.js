@@ -1,9 +1,10 @@
 import * as React from "react";
-import { View, Image, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
+import { View, Image, Text, StyleSheet, TouchableOpacity, ScrollView, Pressable } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import { Header } from "./Header";
 import { RideCard } from "./RideCard";
-
+import { goBack } from '@src/navigation/NavigationController';
+import Material from 'react-native-vector-icons/MaterialIcons';
 const rideData = [
   {
     name: "Amanda Chase",
@@ -29,7 +30,9 @@ const RidesScreen = () => {
   return (
     <ScrollView contentContainerStyle={styles.screenContainer}>
       <View style={styles.contentWrapper}>
+     
         <Header />
+      
         {rideData.map((ride, index) => (
           <View key={index} style={styles.floatContainer}>
             <View style={styles.rideCardWrapper}>
@@ -48,7 +51,7 @@ const RidesScreen = () => {
             </View>
             <TouchableOpacity
               style={styles.homeButtonContainer}
-              onPress={() => navigation.navigate('SecurityDashboard')} 
+              onPress={() => navigation.navigate('SecurityDashboard')}
             >
               <Text style={styles.homeButtonText}>Go Back to Home Screen</Text>
             </TouchableOpacity>
@@ -137,14 +140,14 @@ const styles = StyleSheet.create({
   homeButtonContainer: {
     alignSelf: "center",
     marginTop: "auto",
-    marginBottom: 0, 
+    marginBottom: 0,
     marginLeft: 20,
-    backgroundColor: "#613EEA", 
-    paddingVertical: 10, 
+    backgroundColor: "#613EEA",
+    paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 6,
     alignItems: "center",
-    justifyContent: "center", 
+    justifyContent: "center",
   },
   homeButtonText: {
     color: "#FFF",

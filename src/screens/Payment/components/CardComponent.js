@@ -1,7 +1,7 @@
-import {StyleSheet, View, Image, Text} from 'react-native';
+import {Image, StyleSheet, Text, View} from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 
-const CardComponent = () => {
+const CardComponent = ({card}) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -11,16 +11,16 @@ const CardComponent = () => {
         />
         <Feather name="more-horizontal" color={'#FFFFFF'} size={18} />
       </View>
-      <Text style={styles.cardNumber}>**** **** **** 8104</Text>
+      <Text style={styles.cardNumber}>{card.cardNumber}</Text>
       <View style={styles.information}>
         <View style={styles.cardHolder}>
           <Text style={styles.subTitle}>Tên chủ thẻ</Text>
-          <Text style={styles.content}>NGUYEN DUC PHUONG</Text>
+          <Text style={styles.content}>{card.cardHolder}</Text>
         </View>
 
         <View style={styles.expires}>
           <Text style={styles.subTitle}>Ngày hết hạn</Text>
-          <Text style={styles.content}>08/21</Text>
+          <Text style={styles.content}>{card.expiryDate}</Text>
         </View>
       </View>
     </View>
