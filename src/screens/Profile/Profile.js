@@ -64,7 +64,7 @@ const UserProfile = () => {
       icon: <FontAwesome5 name={'history'} size={20} color={'white'} />,
       backgroundIconColor: generalColor.primary,
       onClick: () => {
-        navigate('BookingHistory');
+        navigate('ParkingHistory');
       },
     },
     {

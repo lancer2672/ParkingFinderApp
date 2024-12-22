@@ -59,7 +59,7 @@ const Notification = ({navigation}) => {
     </View>
   );
 };
-const Heading = styled(Text)`
+export const Heading = styled(Text)`
   font-weight: bold;
   padding-top:12px;
   padding-left:4px;

@@ -63,7 +63,7 @@ const SettingView = () => {
 
         <TouchableHighlight
           onPress={() => {
-            navigate('ParkingHistory');
+            navigate('PaymentHistory');
           }}
           style={{
             borderRadius: 6,

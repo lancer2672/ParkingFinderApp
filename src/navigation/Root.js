@@ -12,6 +12,7 @@ import Booking from '@src/screens/ParkingLot/components/Booking';
 import QrcodeScreen from '@src/screens/ParkingLot/components/QrcodeScreen';
 import ParkingLotsMap from '@src/screens/ParkingLot/ParkingLotMap';
 import AddCardView from '@src/screens/Payment/AddCardView';
+import PaymentHistoryScreen from '@src/screens/PaymentHistory/PaymentHistory';
 import EditProfileUser from '@src/screens/Profile/EditProfile';
 import ResetPassword from '@src/screens/Profile/ResetPassword';
 import Review from '@src/screens/Review/Review';
@@ -60,6 +61,7 @@ const MainStack = () => {
         <Stack.Screen name={'Tabs'} component={Tabs} />
         <Stack.Screen name={'ParkingLotMap'} component={ParkingLotsMap} />
         <Stack.Screen name={'Review'} component={Review} />
+        <Stack.Screen name={'PaymentHistory'} component={PaymentHistoryScreen} />
         <Stack.Screen name={'Booking'} component={Booking} />
         <Stack.Screen name={'Notification'} component={Notification} />
         <Stack.Screen name={'ParkingHistory'} component={ParkingHistory} />
