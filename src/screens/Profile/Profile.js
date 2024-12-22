@@ -13,17 +13,20 @@ import useUserStore from '@src/store/userStore';
 import { generalColor } from '@src/theme/color';
 import { ThemeContext } from '@src/theme/context';
 import { ROLE } from '@src/utils/constant';
+import { UserID_Key } from '@src/utils/localStorage';
 import { Avatar, Divider } from 'react-native-paper';
 import SettingItem from './components/SettingItem';
 const UserProfile = () => {
-  const removeUser = useUserStore(state => state.setUser);
+  const resetUser = useUserStore(state => state.setUser);
   const user = useUserStore(state => state.user);
   const theme = useTheme();
   const {isDarkTheme, setIsDarkTheme} = useContext(ThemeContext);
   const handleLogout = async () => {
     try {
-    //   authApi.logoutUser();
-      removeUser();
+            await AsyncStorage.removeItem('accessToken');
+            await AsyncStorage.removeItem(UserID_Key);
+       
+          resetUser();
     } catch (er) {
       console.log('err', er);
     }
