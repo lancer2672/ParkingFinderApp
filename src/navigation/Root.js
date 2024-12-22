@@ -23,6 +23,7 @@ import {UserID_Key} from '@src/utils/localStorage';
 import {useEffect, useState} from 'react';
 import {navigationRef} from './NavigationController';
 import {StaffTabs, Tabs} from './NavigationTab';
+import DetailQr from '@src/screens/ParkingLot/components/DetailQr';
 const screenOptions = {
   header: () => null,
   cardOverlayEnabled: true,
@@ -65,6 +66,7 @@ const MainStack = () => {
         <Stack.Screen name={'SettingView'} component={SettingView} />
         <Stack.Screen name={'QrcodeScreen'} component={QrcodeScreen} />
         <Stack.Screen name={'RidesScreen'} component={RidesScreen} />
+        <Stack.Screen name = {'DetailQr'} component = {DetailQr} />
         <Stack.Screen
           name={'SecurityDashboard'}
           component={SecurityDashboard}
@@ -86,6 +88,7 @@ const StaffStack = () => {
         <Stack.Screen name={'SettingView'} component={SettingView} />
         <Stack.Screen name={'QrcodeScreen'} component={QrcodeScreen} />
         <Stack.Screen name={'RidesScreen'} component={RidesScreen} />
+       
         <Stack.Screen
           name={'SecurityDashboard'}
           component={SecurityDashboard}
@@ -124,7 +127,7 @@ const Root = () => {
           user.role === ROLE.USER ? (
             <Stack.Screen name="MainStack" component={MainStack} />
           ) : (
-            <Stack.Screen name="StaffStack" component={StaffStack} />
+            <Stack.Screen name="StaffStack" component={MainStack} />
           )
         ) : (
           <Stack.Screen

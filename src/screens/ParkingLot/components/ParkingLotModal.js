@@ -41,7 +41,7 @@ const ParkingLotModal = ({
   const [qrData, setQrData] = useState(null);
   const [existingReservation, setExistingReservation] = useState(null);
 
-  const userId = 6;
+  const userId = 5;
 
   useEffect(() => {
     const checkExistingReservation = async () => {
@@ -81,8 +81,6 @@ const ParkingLotModal = ({
   useEffect(() => {
     console.log('isVisible:', isVisible, 'bookingSuccess:', bookingSuccess);
   }, [isVisible, bookingSuccess]);
-
-
   const [freeSlot, setFreeSlot] = useState(0);
   const [loading, setIsLoading] = useState(false);
   const callAgent = (phoneNumber = '0846303261') => {

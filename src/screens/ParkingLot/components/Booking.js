@@ -41,12 +41,14 @@ const Booking = ({route, isVisible, onClose}) => {
         vehicleType: carType,
         cancelMinute: duration || 0,
       });
+      console.log('res', res);
       const qrData = JSON.stringify({
         parkingslot,
         reservation: res,
         duration,
         checkinTime,
       });
+      console.log('tạo thành công');
       navigation.navigate('QrcodeScreen', {qrData});
     } catch (er) {
       showMessage({

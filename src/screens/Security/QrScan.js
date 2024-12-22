@@ -16,6 +16,7 @@ import {
   Pressable,
   ImageBackground,
   BackHandler,
+  Modal,
 } from 'react-native';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import { showMessage } from 'react-native-flash-message';
@@ -28,10 +29,16 @@ const QrScan = () => {
   const [qrData, setQrData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [reservation, setReservation] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const handleBarCodeRead = e => {
     setScanning(false);
-    fetchResById(e.data);
+    const parsedData = JSON.parse(e.data);
+    console.log('Parsed data:', parsedData);
+    
+    setQrData(parsedData);
+    setModalVisible(true);
+    fetchResById(parsedData.reservation.id);
   };
 
   const isInValidResStatus = status => {
@@ -45,6 +52,7 @@ const QrScan = () => {
     setLoading(true);
     try {
       const res = await reservationAPI.getByID(id);
+      console.log('Fetched reservation:', res);
       if (isInValidResStatus(res.status)) {
         showMessage({
           message: 'Lỗi! Chỗ đã bị hủy hoặc người dùng đã checkout trước đó',
@@ -54,7 +62,7 @@ const QrScan = () => {
       }
       setReservation(res);
     } catch (error) {
-      console.error('Error fetching reservation:', error);
+      console.error('Error fetching:', error);
       showMessage({
         message: 'Lỗi khi lấy thông tin đặt chỗ',
         type: 'error',
@@ -65,10 +73,6 @@ const QrScan = () => {
   };
 
   const getNextStatus = status => {
-    if (status !== RES_STATUS.PENDING && status !== RES_STATUS.CHECKED_IN) {
-      return '';
-    }
-
     switch (status) {
       case RES_STATUS.PENDING:
         return RES_STATUS.CHECKED_IN;
@@ -89,12 +93,13 @@ const QrScan = () => {
         reservationId: reservation.id,
         status: nextStatus,
       });
-      console.log(' >>>>res', nextStatus, res);
-      if (nextStatus === RES_STATUS.CHECKED_IN) {
+      console.log('Updated reservation:', nextStatus, res);
+      if (nextStatus === RES_STATUS.CHECKED_IN || nextStatus === RES_STATUS.CHECKED_OUT) {
         showMessage({
           message: 'Cập nhật trạng thái thành công',
           type: 'success',
         });
+        setReservation(prev => ({ ...prev, status: nextStatus }));
       }
     } catch (error) {
       showMessage({
@@ -127,20 +132,14 @@ const QrScan = () => {
 
   useEffect(() => {
     LayoutAnimation.configureNext(expandAnimation);
-    fetchResById('108'); // Temporary used for testing
-  }, [scanning]);
+    if (qrData && qrData.reservation && qrData.reservation.id) {
+      fetchResById(qrData.reservation.id); // Use the scanned QR code data
+      console.log('Id park:', qrData.reservation.id);
+    }
+  }, [qrData]);
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => BackHandler.exitApp()}>
-          {/* <Image source={require('./assets/back.png')} style={{height: 36, width: 36}}></Image> */}
-        </TouchableOpacity>
-        <Pressable onPress={() => navigation.goBack()}>
-          <Material name="arrow-back" size={30} />
-        </Pressable>
-        <Text style={styles.textTitle}>Scan QR Code</Text>
-      </View>
       {loading && (
         <LoadingModal
           visible={loading}
@@ -149,54 +148,60 @@ const QrScan = () => {
           }}
         />
       )}
-      {scanning ? (
-        <QRCodeScanner
-          reactivate={true}
-          showMarker={true}
-          ref={(node) => { this.scanner = node }}
-          onRead={handleBarCodeRead}
-          topContent={
-            <Text style={styles.centerText}>
-              Please move your camera {"\n"} over the QR Code
-            </Text>
-          }
-          bottomContent={
-            <View>
-              <ImageBackground source={require('../../assets/icons/Background.png')} style={styles.bottomContent}>
-                <TouchableOpacity style={styles.buttonScan2}
-                  onPress={() => this.scanner.reactivate()}
-                  onLongPress={() => this.setState({ scan: false })}>
-                  <Image source={require('../../assets/icons/photo-camera.png')} style={{ height: 36, width: 36 }}></Image>
-                </TouchableOpacity>
-              </ImageBackground>
-            </View>
-          }
-        />
-      ) : (
-        <View style={styles.cardView}>
-          <Image source={require('../../assets/icons/photo-camera.png')} style={{ height: 36, width: 36 }} />
-          <Text numberOfLines={8} style={styles.descText}>Please move your camera {"\n"} over the QR Code</Text>
-          <Image source={require('../../assets/icons/qr-code.png')} style={{ margin: 20 }} />
-          <TouchableOpacity onPress={() => setScanning(true)} style={styles.buttonScan}>
-            <View style={styles.buttonWrapper}>
-              <Text style={{ ...styles.buttonTextStyle, color: '#2196f3' }}>Scan QR Code</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.galleryButton} onPress={handleSelectImage}>
-            <Text style={styles.galleryButtonText}>Select Image from Gallery</Text>
-          </TouchableOpacity>
-        </View>
-      )}
-      {qrData && (
-        <View style={styles.qrDataContainer}>
-          <Text style={styles.qrDataText}>QR Code Data: {qrData}</Text>
-        </View>
-      )}
-      <ButtonComponent
-        onPress={handleSubmit}
-        color={generalColor.other.bluepurple}
-        text={getBtnContentByStatus(reservation?.status)}
+
+      <QRCodeScanner
+        reactivate={true}
+        showMarker={true}
+        ref={(node) => { this.scanner = node }}
+        onRead={handleBarCodeRead}
+        topContent={
+          <Text style={styles.centerText}>
+            Please move your camera {"\n"} over the QR Code
+          </Text>
+        }
+        bottomContent={
+          <View>
+            <ImageBackground source={require('../../assets/icons/Background.png')} style={styles.bottomContent}>
+              <TouchableOpacity style={styles.buttonScan2}
+                onPress={() => this.scanner.reactivate()}
+                onLongPress={() => this.setState({ scan: false })}>
+                <Image source={require('../../assets/icons/photo-camera.png')} style={{ height: 36, width: 36 }}></Image>
+              </TouchableOpacity>
+            </ImageBackground>
+          </View>
+        }
       />
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(!modalVisible);
+        }}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>QR Code Information</Text>
+            <Text>ID: {reservation?.id}</Text>
+            <Text>Parking Lot ID: {reservation?.parkingLotId}</Text>
+            <Text>Start Time: {new Date(reservation?.startTime).toLocaleString()}</Text>
+            <Text>Check Out Time: {reservation?.checkOutTime ? new Date(reservation?.checkOutTime).toLocaleString() : 'N/A'}</Text>
+            <Text>Total Price: {reservation?.totalPrice}</Text>
+            <ButtonComponent
+              onPress={handleSubmit}
+              color={generalColor.other.bluepurple}
+              text={getBtnContentByStatus(reservation?.status)}
+            />
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setModalVisible(!modalVisible)}
+            >
+              <Text style={styles.textStyle}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -214,6 +219,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     padding: 10,
     backgroundColor: '#f8f8f8',
+  },
+  backButton: {
+    marginRight: 'auto',
   },
   textTitle: {
     fontSize: 20,
@@ -274,6 +282,45 @@ const styles = StyleSheet.create({
   qrDataText: {
     fontSize: 16,
     color: '#333',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  closeButton: {
+    backgroundColor: '#2196f3',
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+    marginTop: 20,
+  },
+  textStyle: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: 'center',
+    fontSize: 20,
+    fontWeight: 'bold',
   },
 });
 
