@@ -26,6 +26,7 @@ import {useEffect, useState} from 'react';
 import {navigationRef} from './NavigationController';
 import {StaffTabs, Tabs} from './NavigationTab';
 import DetailQr from '@src/screens/ParkingLot/components/DetailQr';
+import AddCardComonent from '@src/screens/Payment/components/AddCardComponet';
 const screenOptions = {
   header: () => null,
   cardOverlayEnabled: true,
@@ -71,6 +72,7 @@ const MainStack = () => {
         <Stack.Screen name={'QrcodeScreen'} component={QrcodeScreen} />
         <Stack.Screen name={'RidesScreen'} component={RidesScreen} />
         <Stack.Screen name = {'DetailQr'} component = {DetailQr} />
+        <Stack.Screen name = {'AddCardComonent'} component = {AddCardComonent} />
         <Stack.Screen
           name={'SecurityDashboard'}
           component={SecurityDashboard}
@@ -94,7 +96,7 @@ const StaffStack = () => {
         <Stack.Screen name={'ResetPassword'} component={ResetPassword} />
         <Stack.Screen name={'EditProfileUser'} component={EditProfileUser} />
         <Stack.Screen name={'RidesScreen'} component={RidesScreen} />
-       
+    
         <Stack.Screen
           name={'SecurityDashboard'}
           component={SecurityDashboard}
