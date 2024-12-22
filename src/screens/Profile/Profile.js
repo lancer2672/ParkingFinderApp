@@ -35,12 +35,6 @@ const UserProfile = () => {
   const viewRef = React.useRef(null);
   const settingOptions = [
     {
-      name: 'Thông báo',
-      icon: <Entypo name={'bell'} size={20} color={'#3da9fc'} />,
-      backgroundIconColor: '#a3d3f7',
-      onClick: openDeviceSetting,
-    },
-    {
       name: 'Đặt lại mật khẩu',
       icon: <Entypo name={'lock'} size={20} color={'#356e2a'} />,
       backgroundIconColor: '#60bf4d',
@@ -63,7 +57,7 @@ const UserProfile = () => {
   ];
   const settingOptions2 = [
     {
-      name: 'Lịch sử đặt phòng & thanh toán',
+      name: 'Lịch sử đặt chỗ',
       icon: <FontAwesome5 name={'history'} size={20} color={'white'} />,
       backgroundIconColor: generalColor.primary,
       onClick: () => {
@@ -71,11 +65,11 @@ const UserProfile = () => {
       },
     },
     {
-      name: 'Danh sách yêu thích',
+      name: 'Trợ giúp và hỗ trợ',
       icon: <AntDesign name={'heart'} size={20} color={'white'} />,
       backgroundIconColor: generalColor.primary,
       onClick: () => {
-        navigate('FavouriteRooms');
+        // navigate('FavouriteRooms');
       },
     },
   ];
@@ -119,7 +113,7 @@ const UserProfile = () => {
             </IconContainer>
           </TouchableOpacity>
 
-          <SettingCategory>Hồ sơ</SettingCategory>
+          <SettingCategory>Cài đặt chung</SettingCategory>
           <FlatList
             data={settingOptions}
             renderItem={({item}) => <SettingItem {...item} />}

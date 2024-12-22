@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import userAPI from '@src/api/user.api';
 import Onboarding from '@src/components/onboarding';
 import SplashScreen from '@src/components/splash';
@@ -12,17 +12,19 @@ import Booking from '@src/screens/ParkingLot/components/Booking';
 import QrcodeScreen from '@src/screens/ParkingLot/components/QrcodeScreen';
 import ParkingLotsMap from '@src/screens/ParkingLot/ParkingLotMap';
 import AddCardView from '@src/screens/Payment/AddCardView';
+import EditProfileUser from '@src/screens/Profile/EditProfile';
+import ResetPassword from '@src/screens/Profile/ResetPassword';
 import Review from '@src/screens/Review/Review';
 import QrScan from '@src/screens/Security/QrScan';
 import RidesScreen from '@src/screens/Security/RidesScreen';
 import SecurityDashboard from '@src/screens/Security/SecurityDashboard';
 import SettingView from '@src/screens/Setting/SettingView';
 import useUserStore from '@src/store/userStore';
-import {ROLE} from '@src/utils/constant';
-import {UserID_Key} from '@src/utils/localStorage';
-import {useEffect, useState} from 'react';
-import {navigationRef} from './NavigationController';
-import {StaffTabs, Tabs} from './NavigationTab';
+import { ROLE } from '@src/utils/constant';
+import { UserID_Key } from '@src/utils/localStorage';
+import { useEffect, useState } from 'react';
+import { navigationRef } from './NavigationController';
+import { StaffTabs, Tabs } from './NavigationTab';
 const screenOptions = {
   header: () => null,
   cardOverlayEnabled: true,
@@ -62,7 +64,9 @@ const MainStack = () => {
         <Stack.Screen name={'Notification'} component={Notification} />
         <Stack.Screen name={'ParkingHistory'} component={ParkingHistory} />
         <Stack.Screen name={'AddCardView'} component={AddCardView} />
+        <Stack.Screen name={'ResetPassword'} component={ResetPassword} />
         <Stack.Screen name={'SettingView'} component={SettingView} />
+        <Stack.Screen name={'EditProfileUser'} component={EditProfileUser} />
         <Stack.Screen name={'QrcodeScreen'} component={QrcodeScreen} />
         <Stack.Screen name={'RidesScreen'} component={RidesScreen} />
         <Stack.Screen
@@ -85,6 +89,8 @@ const StaffStack = () => {
         <Stack.Screen name={'Notification'} component={Notification} />
         <Stack.Screen name={'SettingView'} component={SettingView} />
         <Stack.Screen name={'QrcodeScreen'} component={QrcodeScreen} />
+        <Stack.Screen name={'ResetPassword'} component={ResetPassword} />
+        <Stack.Screen name={'EditProfileUser'} component={EditProfileUser} />
         <Stack.Screen name={'RidesScreen'} component={RidesScreen} />
         <Stack.Screen
           name={'SecurityDashboard'}
