@@ -1,8 +1,8 @@
 import useUserStore from '@src/store/userStore';
-import {useState} from 'react';
-import {Dimensions, FlatList, StyleSheet, Text, View} from 'react-native';
-import {LineChart} from 'react-native-chart-kit';
-import {Card} from 'react-native-paper';
+import { useState } from 'react';
+import { Dimensions, FlatList, StyleSheet, Text, View } from 'react-native';
+import { LineChart } from 'react-native-chart-kit';
+import { Card } from 'react-native-paper';
 const Stats = () => {
   const user = useUserStore(store => store.user);
   // Sample data - you would replace this with actual data from your backend
@@ -29,7 +29,7 @@ const Stats = () => {
       <Card style={styles.card} mode="elevated" elevation={4}>
         {/* <Card.Title title="Xin chào"></Card.Title> */}
         <Card.Content>
-          <Text style={styles.title}>Doanh Thu Hằng Ngày</Text>
+          <Text style={styles.title}>Doanh Thu Hằng Ngày Của Bạn</Text>
 
           <View style={styles.chartContainer}>
             <LineChart

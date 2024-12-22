@@ -119,8 +119,8 @@ export const StaffTabs = () => {
             return <Feather name="bar-chart" size={24} color={color} />;
           } else if (route.name === 'QrScan') {
             return <AntDesign name="qrcode" size={24} color="#ffffff" />;
-          } else if (route.name === 'Settings') {
-            return <Feather name="settings" size={24} color={color} />;
+          } else if (route.name === 'Profile') {
+            return <FontAwesome name="user" size={24} color={color} />;
           }
         },
       })}>
@@ -137,7 +137,8 @@ export const StaffTabs = () => {
           tabBarButton: props => <CustomTabButton {...props} />,
         }}
       />
-      <Tab.Screen name="Settings" component={SettingView} />
+           <Tab.Screen name="Profile" component={UserProfile} />
+
     </Tab.Navigator>
   );
 };

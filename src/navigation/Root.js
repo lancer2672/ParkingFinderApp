@@ -14,6 +14,7 @@ import ParkingLotsMap from '@src/screens/ParkingLot/ParkingLotMap';
 import AddCardView from '@src/screens/Payment/AddCardView';
 import PaymentHistoryScreen from '@src/screens/PaymentHistory/PaymentHistory';
 import EditProfileUser from '@src/screens/Profile/EditProfile';
+import UserProfile from '@src/screens/Profile/Profile';
 import ResetPassword from '@src/screens/Profile/ResetPassword';
 import Review from '@src/screens/Review/Review';
 import QrScan from '@src/screens/Security/QrScan';
@@ -90,6 +91,7 @@ const StaffStack = () => {
         <Stack.Screen name={'StaffTabs'} component={StaffTabs} />
         <Stack.Screen name={'Notification'} component={Notification} />
         <Stack.Screen name={'SettingView'} component={SettingView} />
+        <Stack.Screen name={'Profile'} component={UserProfile} />
         <Stack.Screen name={'QrcodeScreen'} component={QrcodeScreen} />
         <Stack.Screen name={'ResetPassword'} component={ResetPassword} />
         <Stack.Screen name={'EditProfileUser'} component={EditProfileUser} />

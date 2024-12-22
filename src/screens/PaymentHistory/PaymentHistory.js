@@ -49,6 +49,62 @@ const mockPayments = [
     },
   ];
   
+
+  const formatDateTime = (dateString) => {
+    return format(new Date(dateString), 'dd/MM/yyyy HH:mm');
+};
+
+const formatPrice = (price) => {
+    return new Intl.NumberFormat('vi-VN', {
+        style: 'currency',
+        currency: 'VND'
+    }).format(price);
+};
+
+const getStatusColor = (status) => {
+    switch (status) {
+        case PAYMENT_STAT.PENDING: return '#FFA500';
+        case PAYMENT_STAT.COMPLETED: return '#4CAF50';
+        case PAYMENT_STAT.FAILED: return '#F44336';
+        case PAYMENT_STAT.CANCELLED: return '#757575';
+        default: return '#757575';
+    }
+};
+
+const getStatusIcon = (status) => {
+    switch (status) {
+        case PAYMENT_STAT.PENDING: return 'clock-outline';
+        case PAYMENT_STAT.COMPLETED: return 'check-circle-outline';
+        case PAYMENT_STAT.FAILED: return 'alert-circle-outline';
+        case PAYMENT_STAT.CANCELLED: return 'close-circle-outline';
+        default: return 'help-circle-outline';
+    }
+};
+
+const getPaymentMethodIcon = (method) => {
+    switch (method) {
+        case PAY_METHOD.CASH: return 'cash';
+        case PAY_METHOD.BANK_TRANSFER: return 'bank-transfer';
+        default: return 'help-circle-outline';
+    }
+};
+
+const getPaymentMethodLabel = (method) => {
+    switch (method) {
+        case PAY_METHOD.CASH: return 'Tiền mặt';
+        case PAY_METHOD.BANK_TRANSFER: return 'Chuyển khoản';
+        default: return method;
+    }
+};
+const getStatusText = (status) => {
+    switch (status) {
+        case PAYMENT_STAT.PENDING: return 'Đang chờ xử lý';
+        case PAYMENT_STAT.COMPLETED: return 'Đã thanh toán';
+        case PAYMENT_STAT.FAILED: return 'Thất bại';
+        case PAYMENT_STAT.CANCELLED: return 'Đã hủy';
+        default: return 'Trạng thái không xác định';
+    }
+};
 const PaymentHistoryScreen = () => {
     const [payments, setPayments] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -68,108 +124,9 @@ const PaymentHistoryScreen = () => {
     useEffect(() => {
         fetchPayments();
     }, []);
-    const formatDateTime = (dateString) => {
-        return format(new Date(dateString), 'dd/MM/yyyy HH:mm');
-    };
 
-    const formatPrice = (price) => {
-        return new Intl.NumberFormat('vi-VN', {
-            style: 'currency',
-            currency: 'VND'
-        }).format(price);
-    };
-
-    const getStatusColor = (status) => {
-        switch (status) {
-            case PAYMENT_STAT.PENDING: return '#FFA500';
-            case PAYMENT_STAT.COMPLETED: return '#4CAF50';
-            case PAYMENT_STAT.FAILED: return '#F44336';
-            case PAYMENT_STAT.CANCELLED: return '#757575';
-            default: return '#757575';
-        }
-    };
-
-    const getStatusIcon = (status) => {
-        switch (status) {
-            case PAYMENT_STAT.PENDING: return 'clock-outline';
-            case PAYMENT_STAT.COMPLETED: return 'check-circle-outline';
-            case PAYMENT_STAT.FAILED: return 'alert-circle-outline';
-            case PAYMENT_STAT.CANCELLED: return 'close-circle-outline';
-            default: return 'help-circle-outline';
-        }
-    };
-
-    const getPaymentMethodIcon = (method) => {
-        switch (method) {
-            case PAY_METHOD.CASH: return 'cash';
-            case PAY_METHOD.BANK_TRANSFER: return 'bank-transfer';
-            default: return 'help-circle-outline';
-        }
-    };
-
-    const getPaymentMethodLabel = (method) => {
-        switch (method) {
-            case PAY_METHOD.CASH: return 'Tiền mặt';
-            case PAY_METHOD.BANK_TRANSFER: return 'Chuyển khoản';
-            default: return method;
-        }
-    };
-    const getStatusText = (status) => {
-        switch (status) {
-            case PAYMENT_STAT.PENDING: return 'Đang chờ xử lý';
-            case PAYMENT_STAT.COMPLETED: return 'Đã thanh toán';
-            case PAYMENT_STAT.FAILED: return 'Thất bại';
-            case PAYMENT_STAT.CANCELLED: return 'Đã hủy';
-            default: return 'Trạng thái không xác định';
-        }
-    };
     const renderPaymentCard = (payment) => (
-        <Card key={payment.id} style={styles.card}>
-            <Card.Content>
-                <View style={styles.headerRow}>
-                    <View style={styles.row}>
-                        <Icon 
-                            name={getPaymentMethodIcon(payment.paymentMethod)} 
-                            size={24} 
-                            color="#091E3D" 
-                        />
-                        <Text style={styles.methodText}>
-                            {getPaymentMethodLabel(payment.paymentMethod)}
-                        </Text>
-                    </View>
-                    <View style={[styles.statusBadge, { backgroundColor: getStatusColor(payment.paymentStatus) }]}>
-                        <Icon name={getStatusIcon(payment.paymentStatus)} size={16} color="white" />
-                        <Text style={styles.statusText}>{getStatusText(payment.paymentStatus)}</Text>
-                    </View>
-                </View>
-
-                <Divider style={styles.divider} />
-
-                <View style={styles.detailsContainer}>
-                    <View style={styles.detailRow}>
-                        <Text style={styles.label}>Mã giao dịch:</Text>
-                        <Text style={styles.value}>#{payment.id}</Text>
-                    </View>
-
-                    <View style={styles.detailRow}>
-                        <Text style={styles.label}>Số tiền:</Text>
-                        <Text style={styles.amount}>{formatPrice(payment.amount)}</Text>
-                    </View>
-
-                    <View style={styles.detailRow}>
-                        <Text style={styles.label}>Thời gian:</Text>
-                        <Text style={styles.value}>{formatDateTime(payment.paymentDate)}</Text>
-                    </View>
-
-                    {payment.reservationId && (
-                        <View style={styles.detailRow}>
-                            <Text style={styles.label}>Mã đặt chỗ:</Text>
-                            <Text style={styles.value}>#{payment.reservationId}</Text>
-                        </View>
-                    )}
-                </View>
-            </Card.Content>
-        </Card>
+        <PaymentItem payment={payment}></PaymentItem>
     );
 
     return (
@@ -185,6 +142,55 @@ const PaymentHistoryScreen = () => {
     );
 };
 
+
+export const PaymentItem = ({payment}) => (
+    <Card key={payment.id} style={styles.card}>
+        <Card.Content>
+            <View style={styles.headerRow}>
+                <View style={styles.row}>
+                    <Icon 
+                        name={getPaymentMethodIcon(payment.paymentMethod)} 
+                        size={24} 
+                        color="#091E3D" 
+                    />
+                    <Text style={styles.methodText}>
+                        {getPaymentMethodLabel(payment.paymentMethod)}
+                    </Text>
+                </View>
+                <View style={[styles.statusBadge, { backgroundColor: getStatusColor(payment.paymentStatus) }]}>
+                    <Icon name={getStatusIcon(payment.paymentStatus)} size={16} color="white" />
+                    <Text style={styles.statusText}>{getStatusText(payment.paymentStatus)}</Text>
+                </View>
+            </View>
+
+            <Divider style={styles.divider} />
+
+            <View style={styles.detailsContainer}>
+                <View style={styles.detailRow}>
+                    <Text style={styles.label}>Mã giao dịch:</Text>
+                    <Text style={styles.value}>#{payment.id}</Text>
+                </View>
+
+                <View style={styles.detailRow}>
+                    <Text style={styles.label}>Số tiền:</Text>
+                    <Text style={styles.amount}>{formatPrice(payment.amount)}</Text>
+                </View>
+
+                <View style={styles.detailRow}>
+                    <Text style={styles.label}>Thời gian:</Text>
+                    <Text style={styles.value}>{formatDateTime(payment.paymentDate)}</Text>
+                </View>
+
+                {payment.reservationId && (
+                    <View style={styles.detailRow}>
+                        <Text style={styles.label}>Mã đặt chỗ:</Text>
+                        <Text style={styles.value}>#{payment.reservationId}</Text>
+                    </View>
+                )}
+            </View>
+        </Card.Content>
+    </Card>
+);
 const styles = StyleSheet.create({
     container: {
         flex: 1,
