@@ -2,6 +2,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import FAQScreen from '@src/screens/FAQ/FAQ';
 import Notification from '@src/screens/Notification/Notification';
 import ParkingLotsMap from '@src/screens/ParkingLot/ParkingLotMap';
+import UserProfile from '@src/screens/Profile/Profile';
 import QrScan from '@src/screens/Security/QrScan';
 import SettingView from '@src/screens/Setting/SettingView';
 import Stats from '@src/screens/Stats/Stats';
@@ -84,7 +85,7 @@ export const Tabs = () => {
           tabBarButton: props => <CustomTabButton {...props} />,
         }}
       />
-      <Tab.Screen name="Profile" component={SettingView} />
+      <Tab.Screen name="Profile" component={UserProfile} />
         <Tab.Screen name="FAQ" component={FAQScreen} />
     </Tab.Navigator>
   );

@@ -19,8 +19,7 @@ const slides = [
     title: 'Điều hướng dễ dàng',
     text: 'Đi đến chỗ đỗ xe của bạn một cách thuận tiện.',
     image: require('../../assets/icons/iconapp4.png'),
-  }
-  
+  }  
 ];
 
 const Onboarding = ({ navigation }) => {

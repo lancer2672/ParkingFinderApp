@@ -61,6 +61,8 @@ const Notification = ({navigation}) => {
 };
 const Heading = styled(Text)`
   font-weight: bold;
+  padding-top:12px;
+  padding-left:4px;
   font-size: 24px;
   color: black;
 `;
