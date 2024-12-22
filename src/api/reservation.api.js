@@ -17,11 +17,9 @@ const reservationAPI = {
       throw error;
     }
   },
-  getByID: async (reservationId) => {
+  getByID: async reservationId => {
     try {
-      console.log('Fetching reservation with ID:', reservationId);
       const response = await axiosClient.get(`/api/reservations/${reservationId}`);
-      console.log('Reservation fetched:', response.data);
       return response.data;
     } catch (error) {
       console.error('Error get reservation:', error);
@@ -42,7 +40,9 @@ const reservationAPI = {
   updateUserReservation: async ({ reservationId, status }) => {
     try {
       console.log('Update res', reservationId, status);
-      const response = await axiosClient.patch(`/api/reservations/${reservationId}?status=${status}`);
+      const response = await axiosClient.patch(
+        `/api/reservations/${reservationId}?status=${status}`,
+      );
       return response.data;
     } catch (error) {
       console.error('Error updating reservation:', error);

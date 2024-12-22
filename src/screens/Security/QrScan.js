@@ -18,7 +18,6 @@ import {
   BackHandler,
 } from 'react-native';
 import QRCodeScanner from 'react-native-qrcode-scanner';
-import { RNCamera } from 'react-native-camera';
 import { showMessage } from 'react-native-flash-message';
 import { launchImageLibrary } from 'react-native-image-picker';
 import Material from 'react-native-vector-icons/MaterialIcons';
@@ -28,17 +27,15 @@ const QrScan = () => {
   const [scanning, setScanning] = useState(false);
   const [qrData, setQrData] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [reservation, setRervation] = useState();
-
-  const mockReservationId = '73'; // Mocked reservation ID
+  const [reservation, setReservation] = useState(null);
 
   const handleBarCodeRead = e => {
     setScanning(false);
-    fetchResById(e.data?.reservation?.id || mockReservationId);
+    fetchResById(e.data);
   };
 
   const isInValidResStatus = status => {
-    return status == RES_STATUS.CANCELLED || status == RES_STATUS.CHECKED_OUT;
+    return status === RES_STATUS.CANCELLED || status === RES_STATUS.CHECKED_OUT;
   };
 
   const fetchResById = async id => {
@@ -47,7 +44,7 @@ const QrScan = () => {
     }
     setLoading(true);
     try {
-      let res = await reservationAPI.getByID(mockReservationId);
+      const res = await reservationAPI.getByID(id);
       if (isInValidResStatus(res.status)) {
         showMessage({
           message: 'Lỗi! Chỗ đã bị hủy hoặc người dùng đã checkout trước đó',
@@ -55,33 +52,35 @@ const QrScan = () => {
         });
         return;
       }
-      setRervation(res);
-    } catch (er) {
-      console.error('Error fetching reservation:', er);
+      setReservation(res);
+    } catch (error) {
+      console.error('Error fetching reservation:', error);
+      showMessage({
+        message: 'Lỗi khi lấy thông tin đặt chỗ',
+        type: 'error',
+      });
     } finally {
       setLoading(false);
     }
   };
 
   const getNextStatus = status => {
-    if (status != RES_STATUS.PENDING && status != RES_STATUS.CHECKED_IN) {
+    if (status !== RES_STATUS.PENDING && status !== RES_STATUS.CHECKED_IN) {
       return '';
     }
 
     switch (status) {
-      case RES_STATUS.PENDING: {
+      case RES_STATUS.PENDING:
         return RES_STATUS.CHECKED_IN;
-      }
-      case RES_STATUS.CHECKED_IN: {
+      case RES_STATUS.CHECKED_IN:
         return RES_STATUS.CHECKED_OUT;
-      }
       default:
         return '';
     }
   };
 
   const handleSubmit = async () => {
-    if (!reservation || getNextStatus(reservation.status) == '') {
+    if (!reservation || getNextStatus(reservation.status) === '') {
       return;
     }
     try {
@@ -91,18 +90,18 @@ const QrScan = () => {
         status: nextStatus,
       });
       console.log(' >>>>res', nextStatus, res);
-      if (nextStatus == RES_STATUS.CHECKED_IN) {
+      if (nextStatus === RES_STATUS.CHECKED_IN) {
         showMessage({
           message: 'Cập nhật trạng thái thành công',
           type: 'success',
         });
       }
-    } catch (er) {
+    } catch (error) {
       showMessage({
         message: 'Lỗi không xác định',
         type: 'error',
       });
-      console.log('er', er);
+      console.log('Error updating reservation:', error);
     }
   };
 
@@ -117,21 +116,18 @@ const QrScan = () => {
 
   const getBtnContentByStatus = status => {
     switch (status) {
-      case RES_STATUS.PENDING: {
+      case RES_STATUS.PENDING:
         return 'CHECK IN';
-      }
-      case RES_STATUS.CHECKED_IN: {
+      case RES_STATUS.CHECKED_IN:
         return 'CHECK OUT';
-      }
-      default: {
+      default:
         return '';
-      }
     }
   };
 
   useEffect(() => {
     LayoutAnimation.configureNext(expandAnimation);
-    fetchResById(mockReservationId);
+    fetchResById('108'); // Temporary used for testing
   }, [scanning]);
 
   return (
@@ -197,10 +193,7 @@ const QrScan = () => {
         </View>
       )}
       <ButtonComponent
-        onPress={() => {
-          console.log('press');
-          handleSubmit();
-        }}
+        onPress={handleSubmit}
         color={generalColor.other.bluepurple}
         text={getBtnContentByStatus(reservation?.status)}
       />

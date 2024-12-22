@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons'; // Nhớ cài package này
+import Icon from 'react-native-vector-icons/MaterialIcons'; 
 import {WebView} from 'react-native-webview';
 
 const VNPayModal = ({
