@@ -146,7 +146,7 @@ const ReservationHistoryScreen = ({ }) => {
             </View>
 
             <View style={styles.priceRow}>
-              <Text style={styles.price}>{formatPrice(pendingReservation.totalPrice)}</Text>
+           
 
               <View style={[styles.statusBadge, { backgroundColor: getStatusColor(pendingReservation.status) }]}>
                 <Icon name={getStatusIcon(pendingReservation.status)} size={16} color="white" />
@@ -205,7 +205,7 @@ const ReservationHistoryScreen = ({ }) => {
                     
                     {reservation.payment ? formatPrice(reservation.payment.amount) : "" }
                 </Text>
-                
+
                 <View style={[styles.statusBadge, { backgroundColor: getStatusColor(reservation.status) }]}>
                   <Icon name={getStatusIcon(reservation.status)} size={16} color="white" />
                   <Text style={styles.statusText}>{getStatusText(reservation.status)}</Text>
