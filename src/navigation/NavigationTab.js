@@ -1,14 +1,16 @@
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import FAQScreen from '@src/screens/FAQ/FAQ';
+import Notification from '@src/screens/Notification/Notification';
 import ParkingLotsMap from '@src/screens/ParkingLot/ParkingLotMap';
 import QrScan from '@src/screens/Security/QrScan';
-import SecurityDashboard from '@src/screens/Security/SecurityDashboard';
 import SettingView from '@src/screens/Setting/SettingView';
 import Stats from '@src/screens/Stats/Stats';
-import {Pressable, StyleSheet, View} from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import {useTheme} from 'styled-components';
+import Material from 'react-native-vector-icons/MaterialIcons';
+import { useTheme } from 'styled-components';
 
 const Tab = createBottomTabNavigator();
 
@@ -38,7 +40,7 @@ export const Tabs = () => {
 
   return (
     <Tab.Navigator
-      initialRouteName="Home"
+      initialRouteName="Navigation"
       screenOptions={({route}) => ({
         tabBarShowLabel: false,
         headerShown: false,
@@ -58,20 +60,20 @@ export const Tabs = () => {
           let color = focused ? '#4A55A2' : '#748c94';
 
           if (route.name === 'Home') {
-            return <Feather name="home" size={24} color={color} />;
-          } else if (route.name === 'Wallet') {
-            return <Feather name="folder" size={24} color={color} />;
+            return <Feather name="bell" size={24} color={color} />;
+          } else if (route.name === 'FAQ') {
+            return <AntDesign name="questioncircleo" size={24} color={color} />;
           } else if (route.name === 'Navigation') {
             return <Feather name="send" size={24} color="#ffffff" />;
-          } else if (route.name === 'Settings') {
-            return <Feather name="settings" size={24} color={color} />;
+          } else if (route.name === 'Wallet') {
+            return  <Material size={28} color={color}  name="payment" />
           } else if (route.name === 'Profile') {
             return <FontAwesome name="user" size={24} color={color} />;
           }
         },
       })}>
-      <Tab.Screen name="Home" component={ParkingLotsMap} />
-      <Tab.Screen name="Wallet" component={SecurityDashboard} />
+      <Tab.Screen name="Wallet" component={SettingView} />
+      <Tab.Screen name="Home" component={Notification} />
       <Tab.Screen
         name="Navigation"
         component={ParkingLotsMap}
@@ -82,8 +84,8 @@ export const Tabs = () => {
           tabBarButton: props => <CustomTabButton {...props} />,
         }}
       />
-      <Tab.Screen name="Settings" component={SettingView} />
-      <Tab.Screen name="Profile" component={ParkingLotsMap} />
+      <Tab.Screen name="Profile" component={SettingView} />
+        <Tab.Screen name="FAQ" component={FAQScreen} />
     </Tab.Navigator>
   );
 };
