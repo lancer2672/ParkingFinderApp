@@ -1,16 +1,16 @@
-import {generalColor} from '@src/theme/color';
-import {rowCenter} from '@src/theme/style';
+import { generalColor } from '@src/theme/color';
+import { rowCenter } from '@src/theme/style';
 import textStyle from '@src/theme/text';
-import {SCREEN_HEIGHT} from '@src/utils/constant';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import { SCREEN_HEIGHT } from '@src/utils/constant';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import ReactNativeModal from 'react-native-modal';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 
 const listStar = [1, 2, 3, 4, 5];
-const StarModal = ({isVisible, onPress, onClose}) => {
-  const handleItemClick = () => {
-    // onPress()
+const StarModal = ({isVisible, onPress, onClose, isSelectedIdx}) => {
+  const handleItemClick = (star,idx) => {
+    onPress(star,idx)
     onClose();
   };
   return (
@@ -25,9 +25,9 @@ const StarModal = ({isVisible, onPress, onClose}) => {
       <View style={styles.container}>
         <View style={styles.mark}></View>
 
-        {listStar.map(item => {
+        {listStar.map((item,i) => {
           return (
-            <Item onPress={handleItemClick} content={item} count={item}></Item>
+            <Item  isSelected={isSelectedIdx ==i } onPress={()=>handleItemClick(item,i)} content={item} count={item}></Item>
           );
         })}
       </View>
@@ -51,7 +51,7 @@ const Item = ({count, onPress, content, isSelected}) => {
           })}
         </View>
         <Text style={styles.content}></Text>
-        {true && <Entypo name="check" color={'white'} size={24}></Entypo>}
+        {isSelected && <Entypo name="check" color={'white'} size={24}></Entypo>}
       </View>
     </TouchableOpacity>
   );

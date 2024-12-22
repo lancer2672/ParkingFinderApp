@@ -186,7 +186,6 @@ const ListReview = ({hotel, reviews, style = {}}) => {
     }
   };
  
-  console.log('reviews', reviews);
   const renderItem = ({item}) => {
     return (
       <View

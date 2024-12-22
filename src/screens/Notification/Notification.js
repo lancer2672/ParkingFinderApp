@@ -1,12 +1,10 @@
-import AntDesign from 'react-native-vector-icons/AntDesign';
 
-import {goBack} from '@src/navigation/NavigationController';
-import {generalColor} from '@src/theme/color';
-import {useEffect, useState} from 'react';
-import {FlatList, Text, TouchableOpacity, View} from 'react-native';
+import { generalColor } from '@src/theme/color';
+import { useEffect, useState } from 'react';
+import { FlatList, Text, View } from 'react-native';
 import styled from 'styled-components/native';
 import NotificationItem from './components/NotificationItem';
-import {getAllValuesMatchingPattern} from './components/as';
+import { getAllValuesMatchingPattern } from './components/as';
 
 const Notification = ({navigation}) => {
   console.log('notification show', notifications);
@@ -28,7 +26,7 @@ const Notification = ({navigation}) => {
           // borderBottomWidth: 2,
           borderBottomColor: generalColor.primary,
         }}>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           onPress={() => {
             goBack();
           }}
@@ -37,7 +35,7 @@ const Notification = ({navigation}) => {
             paddingVertical: 4,
           }}>
           <AntDesign name="arrowleft" size={24} color={generalColor.primary} />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         <Heading style={{color: generalColor.primary}}>Thông báo</Heading>
       </View>
       <FlatList
@@ -63,6 +61,8 @@ const Notification = ({navigation}) => {
 };
 const Heading = styled(Text)`
   font-weight: bold;
+  padding-top:12px;
+  padding-left:4px;
   font-size: 24px;
   color: black;
 `;
