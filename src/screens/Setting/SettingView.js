@@ -1,20 +1,30 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import reservationAPI from '@src/api/reservation.api';
 import { navigate } from '@src/navigation/NavigationController';
 import useUserStore from '@src/store/userStore';
 import { generalColor } from '@src/theme/color';
-import { UserID_Key } from '@src/utils/localStorage';
+import { useEffect, useState } from 'react';
 import { Text, TouchableHighlight, View } from 'react-native';
 import Material from 'react-native-vector-icons/MaterialIcons';
 import styled from 'styled-components/native';
+import { PaymentItem } from '../PaymentHistory/PaymentHistory';
 
 const SettingView = () => {
   const resetUser = useUserStore(state => state.resetUser);
-  const handleLogout = async () =>{
-    await AsyncStorage.removeItem('accessToken');
-    await AsyncStorage.removeItem(UserID_Key);
-    resetUser();
-  }
-  const user =  useUserStore(state => state.user);
+  const [payments,setPayments ] = useState([]);
+  const user = useUserStore(state => state.user);
+  const fetchPayments = async () => {
+      try {
+          const reservations = await reservationAPI.getReservationsByUserId(user.id);
+          const payments = reservations.filter(t => t.payment != null).map(t => t.payment).slice(0, 3); // Limit to 3 payments
+          setPayments(payments);
+      } catch (error) {
+          console.error("Failed to fetch payments", error);
+      } 
+  };
+  useEffect(() => {
+      fetchPayments();
+  }, []);
+
   return (
     <View
       style={{
@@ -49,12 +59,13 @@ const SettingView = () => {
               backgroundColor: 'white',
               borderColor: '#333333',
             }}>
-            <Material size={28} name="payment" />
+            <Material size={28} name="payment" color={generalColor.primary} />
             <Text
               style={{
                 fontSize: 16,
                 textAlign: 'center',
                 fontWeight: '600',
+                color: generalColor.primary,
               }}>
               Phương thức thanh toán
             </Text>
@@ -63,10 +74,11 @@ const SettingView = () => {
 
         <TouchableHighlight
           onPress={() => {
-            navigate('ParkingHistory');
+            navigate('PaymentHistory');
           }}
           style={{
             borderRadius: 6,
+            marginBottom:12,
           }}
           underlayColor={'#4f4e4e'}>
           <View
@@ -80,17 +92,35 @@ const SettingView = () => {
               backgroundColor: 'white',
               borderColor: '#333333',
             }}>
-            <Material size={28} name="history" />
+            <Material size={28} name="history" color={generalColor.primary} />
             <Text
               style={{
                 fontSize: 16,
                 textAlign: 'center',
                 fontWeight: '600',
+                color: generalColor.primary,
               }}>
-              Lịch sử giao dịch
+              Lịch sử thanh toán
             </Text>
           </View>
         </TouchableHighlight>
+
+              <View>
+                <Text
+                style={{
+                  fontSize: 16,
+                  textAlign: 'left',
+                  paddingHorizontal: 12,
+                  paddingVertical: 8,
+                  fontWeight: '600',
+                  color: generalColor.primary,
+                }}>
+                Giao dịch gần đây
+              </Text>
+              </View>
+        {
+          payments.map((payment, index) => <PaymentItem key={index} payment={payment}> </PaymentItem>)
+        }
       </View>
     </View>
   );
