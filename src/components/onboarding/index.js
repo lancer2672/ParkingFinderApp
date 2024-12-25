@@ -1,27 +1,25 @@
-import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import AppIntroSlider from 'react-native-app-intro-slider';
+import { useState } from 'react';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const slides = [
   {
     key: 'slide1',
-    title: 'Welcome to ParkingFinder',
-    text: 'Find parking spots easily and quickly.',
+    title: 'Chào mừng đến với ParkingFinder',
+    text: 'Tìm chỗ đỗ xe một cách dễ dàng và nhanh chóng.',
     image: require('../../assets/icons/iconapp2.png'),
- 
   },
   {
     key: 'slide2',
-    title: 'Real-time Updates',
-    text: 'Get real-time updates on parking availability.',
+    title: 'Cập nhật theo thời gian thực',
+    text: 'Nhận thông tin cập nhật theo thời gian thực về tình trạng đỗ xe.',
     image: require('../../assets/icons/iconapp3.png'),
   },
   {
     key: 'slide3',
-    title: 'Easy Navigation',
-    text: 'Navigate to your parking spot with ease.',
+    title: 'Điều hướng dễ dàng',
+    text: 'Đi đến chỗ đỗ xe của bạn một cách thuận tiện.',
     image: require('../../assets/icons/iconapp4.png'),
-  }
+  }  
 ];
 
 const Onboarding = ({ navigation }) => {
@@ -70,17 +68,17 @@ const Onboarding = ({ navigation }) => {
       <View style={styles.buttonContainer}>
         {currentSlide === 0 && (
           <TouchableOpacity onPress={skipToSignIn}>
-            <Text style={styles.buttonText}>Skip</Text>
+            <Text style={styles.buttonText}>Bỏ qua</Text>
           </TouchableOpacity>
         )}
         {currentSlide > 0 && currentSlide < slides.length - 1 && (
           <TouchableOpacity onPress={prevSlide}>
-            <Text style={styles.buttonText}>Previous</Text>
+            <Text style={styles.buttonText}>Quay lại</Text>
           </TouchableOpacity>
         )}
         {currentSlide < slides.length - 1 && (
           <TouchableOpacity onPress={nextSlide}>
-            <Text style={styles.buttonText}>Next</Text>
+            <Text style={styles.buttonText}>Tiếp tục</Text>
           </TouchableOpacity>
         )}
        
@@ -88,7 +86,7 @@ const Onboarding = ({ navigation }) => {
       <View style={styles.buttonContainer2}>
       {currentSlide === slides.length - 1 && (
           <TouchableOpacity onPress={nextSlide} style={styles.getStartedButton}>
-            <Text style={styles.getStartedButtonText}>Get Started</Text>
+            <Text style={styles.getStartedButtonText}>Bắt đầu</Text>
           </TouchableOpacity>
         )}
          </View>
@@ -139,11 +137,11 @@ const styles = StyleSheet.create({
     marginTop: 50, 
   },
   buttonText: {
-    color: '#613EEA',
+    color: '#091E3D',
     fontSize: 18,
   },
   getStartedButton: {
-    backgroundColor: 'blue',
+    backgroundColor: '#091E3D',
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
@@ -164,7 +162,7 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: 'gray',
+    backgroundColor: '#091E3D',
     marginHorizontal: 5,
   },
   activeDot: {

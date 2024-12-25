@@ -1,9 +1,11 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { navigate } from '@src/navigation/NavigationController';
 import useUserStore from '@src/store/userStore';
+import { generalColor } from '@src/theme/color';
 import { UserID_Key } from '@src/utils/localStorage';
-import { Image, Text, TouchableHighlight, View } from 'react-native';
+import { Text, TouchableHighlight, View } from 'react-native';
 import Material from 'react-native-vector-icons/MaterialIcons';
+import styled from 'styled-components/native';
 
 const SettingView = () => {
   const resetUser = useUserStore(state => state.resetUser);
@@ -18,34 +20,15 @@ const SettingView = () => {
       style={{
         flex: 1,
         display: 'flex',
-        paddingTop: 100,
+        paddingTop: 8,
         gap: 8,
       }}>
-      <View
-        style={{
-          alignSelf: 'center',
-        }}>
-        <Image
-          source={require('../../assets/imgs/DefaultAvatar.png')}
-          style={{
-            width: 77,
-            height: 77,
-            borderRadius: 1000000,
-          }}
-        />
-      </View>
-      <Text
-        style={{
-          fontSize: 24,
-          fontWeight: '600',
-          alignSelf: 'center',
-        }}>
-        {user?.name}
-      </Text>
+                <Heading style={{color: generalColor.primary}}>Thanh toán</Heading>
+
       <View
         style={{
           flex: 1,
-          marginTop: 40,
+          marginTop: 12,
         }}>
         <TouchableHighlight
           onPress={() => {
@@ -108,39 +91,16 @@ const SettingView = () => {
             </Text>
           </View>
         </TouchableHighlight>
-
-        <TouchableHighlight
-          onPress={handleLogout}
-          style={{
-            borderRadius: 6,
-          }}
-          underlayColor={'#4f4e4e'}>
-          <View
-            style={{
-              padding: 12,
-              borderRadius: 6,
-              display: 'flex',
-              flexDirection: 'row',
-              gap: 8,
-              alignItems: 'center',
-              backgroundColor: 'white',
-              borderColor: '#333333',
-            }}>
-            <Material size={28} name="logout" color={'tomato'} />
-            <Text
-              style={{
-                fontSize: 16,
-                textAlign: 'center',
-                fontWeight: '600',
-                color: 'tomato',
-              }}>
-              Đăng xuất
-            </Text>
-          </View>
-        </TouchableHighlight>
       </View>
     </View>
   );
 };
 
 export default SettingView;
+const Heading = styled(Text)`
+  font-weight: bold;
+  padding-top:12px;
+  padding-left:12px;
+  font-size: 24px;
+  color: black;
+`;

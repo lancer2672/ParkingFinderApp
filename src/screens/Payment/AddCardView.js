@@ -15,6 +15,7 @@ import Swiper from 'react-native-swiper';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import styled from 'styled-components';
 import CardComponent from './components/CardComponent';
+import { navigate } from '@src/navigation/NavigationController';
 
 const mockCards = [
   {
@@ -42,16 +43,18 @@ const mockCards = [
 
 const AddCardView = () => {
   const user = useUserStore((state) => state.user);
-  const setUser  = useUserStore((state) => state.setUser);
+  const setUser = useUserStore((state) => state.setUser);
   const [selectedCard, setSelectedCard] = useState(mockCards[0]);
-  const [isEnabled, setIsEnabled] = useState(user?.cardInfo?.id == selectedCard.id);
+  const [isEnabled, setIsEnabled] = useState(user?.cardInfo?.id === selectedCard.id);
+
   const toggleSwitch = () => {
-    setIsEnabled((previousState) => !previousState);
+    const newIsEnabled = !isEnabled;
+    setIsEnabled(newIsEnabled);
     setUser({
       ...user,
-      cardInfo: isEnabled ? null : selectedCard,
+      cardInfo: newIsEnabled ? selectedCard : null,
     });
-  }
+  };
 
   return (
     <View
@@ -76,17 +79,19 @@ const AddCardView = () => {
           }}>
           <AntDesign name="arrowleft" size={24} color={generalColor.primary} />
         </TouchableOpacity>
-        <Heading style={{color: generalColor.primary}}>
+        <Heading style={{ color: generalColor.primary }}>
           Phương thức thanh toán
         </Heading>
       </View>
 
       <View style={styles.container}>
-        <Swiper 
-          style={styles.wrapper} 
-
+        <Swiper
+          style={styles.wrapper}
           showsButtons={true}
-          onIndexChanged={(index) => setSelectedCard(mockCards[index])}
+          onIndexChanged={(index) => {
+            setSelectedCard(mockCards[index]);
+            setIsEnabled(user?.cardInfo?.id === mockCards[index].id);
+          }}
         >
           <View style={styles.slide1}>
             <CardComponent card={mockCards[0]} />
@@ -123,7 +128,7 @@ const AddCardView = () => {
               gap: 8,
             }}>
             <Switch
-              trackColor={{false: '#767577', true: '#81b0ff'}}
+              trackColor={{ false: '#767577', true: '#81b0ff' }}
               ios_backgroundColor="#3e3e3e"
               thumbColor={'#f4f3f4'}
               onValueChange={toggleSwitch}
@@ -181,7 +186,7 @@ const AddCardView = () => {
             </View>
           </View>
           <TouchableHighlight
-            onPress={() => {}}
+            onPress={() => { }}
             style={{
               borderRadius: 6,
             }}
@@ -203,6 +208,32 @@ const AddCardView = () => {
             </View>
           </TouchableHighlight>
         </View>
+
+        <TouchableHighlight
+          onPress={() => {
+            navigate('AddCardComonent');
+          }}
+          style={{
+            borderRadius: 6,
+            marginTop: 20,
+          }}
+          underlayColor={'#cf0023'}>
+          <View
+            style={{
+              backgroundColor: '#613EEA',
+              padding: 12,
+              borderRadius: 6,
+            }}>
+            <Text
+              style={{
+                color: 'white',
+                fontSize: 16,
+                textAlign: 'center',
+              }}>
+              Thêm mới thẻ
+            </Text>
+          </View>
+        </TouchableHighlight>
       </View>
     </View>
   );

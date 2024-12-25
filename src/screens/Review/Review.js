@@ -9,34 +9,77 @@ import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FilterButton from './components/FilterButton';
 import ListReview from './components/ListReview';
-import SortModal from './components/SortModal';
+import SortModal, { ESort } from './components/SortModal';
 import StarModal from './components/StarModal';
 const Review = () => {
   const hotel = {
     name: 'Hilton',
-    rating: 4.5,
     avatar: 'https://picsum.photos/200',
   };
   const parkingLot = useParkingLotStore(state => state.parkingLot);
   const [sortModalVisible, setSortModalVisible] = useState(false);
   const [startModalVisible, setStarModalVisible] = useState(false);
-
+  const [sltStarIdx, setSltStarIdx] = useState(-1);
   const [reviews, setReviews] = useState([]);
-
+  const [filteredReviews, setFilteredReviews] = useState([]);
+  const [sltxSort, setSltSort] = useState();
   const fetchReviews = async () => {
     try {
       const response = await reviewAPI.getByParkingLotId(parkingLot.id);
 
       console.log('response', response);
       setReviews(response);
+      setFilteredReviews(response); // Initialize filteredReviews with all reviews
     } catch (error) {
       console.error('Error fetching reviews:', error);
       throw error;
     }
   };
+
+  const handleSort = (v) =>{
+    setSltSort(v);
+    console.log('sort', v);
+     switch (v) {
+        case ESort.MOST_VOTE:
+          // const sorted = [...filteredReviews].sort((a, b) => b.rating - a.rating);
+          // setFilteredReviews(sorted);
+          break;
+        case ESort.NEWEST:
+          console.log("1")
+          const sorted2 = [...filteredReviews].sort((a, b) =>{
+            return new Date(b.created) - new Date(a.created)
+          } );
+          setFilteredReviews(sorted2);
+          break;
+        case ESort.OLDEST:
+          console.log("2")
+          const sorted3 = [...filteredReviews].sort((a, b) => new Date(a.created) - new Date(b.created));
+          setFilteredReviews(sorted3);
+          break;
+        default:
+          break;
+     }
+  }
+  const handleFilterStar = (star,idx) => {
+    setSltStarIdx(idx);
+
+    console.log('star', star);
+    // Filter reviews based on the selected star rating
+    const filtered = reviews.filter(review => review.rating == star);
+    setFilteredReviews(filtered);
+  };
+
   useEffect(() => {
     fetchReviews();
   }, []);
+
+  // Calculate the average rating
+  const calculateAverageRating = () => {
+    if (reviews.length === 0) return 0;
+    const sum = reviews.reduce((acc, review) => acc + review.rating, 0);
+    return sum / reviews.length;
+  };
+
   return (
     <View style={{flex: 1, backgroundColor: 'white', paddingBottom: 12}}>
       <View style={{padding: 12, marginTop: 12, ...rowCenter}}>
@@ -50,7 +93,8 @@ const Review = () => {
       </View>
       <View style={rowCenter}>
         <Image
-          source={{uri: parkingLot.images[0] || 'https://picsum.photos/200'}}
+          source={{ uri: (parkingLot.images && parkingLot.images[0]) || 'https://picsum.photos/200' }}
+
           style={{width: 80, height: 80, margin: 12, borderRadius: 12}}></Image>
 
         <View
@@ -64,8 +108,8 @@ const Review = () => {
           <View>
             <Text style={styles.txt}>{parkingLot.name}</Text>
             <View style={rowCenter}>
-              <Text style={styles.rating}>{hotel.rating}</Text>
-              <Text>120 lượt đánh giá</Text>
+              <Text style={styles.rating}>{calculateAverageRating().toFixed(1)}</Text>
+              <Text>{reviews.length} lượt đánh giá</Text>
             </View>
           </View>
         </View>
@@ -122,14 +166,18 @@ const Review = () => {
       </View>
 
       <View style={{flex: 1, paddingHorizontal: 8}}>
-        <ListReview reviews={reviews}></ListReview>
+        <ListReview reviews={filteredReviews}></ListReview>
       </View>
       <SortModal
+        sltxSort={sltxSort}
+        onPress={handleSort}
         isVisible={sortModalVisible}
         onClose={() => {
           setSortModalVisible(false);
         }}></SortModal>
       <StarModal
+        isSelectedIdx={sltStarIdx}
+        onPress={handleFilterStar}
         isVisible={startModalVisible}
         onClose={() => {
           setStarModalVisible(false);

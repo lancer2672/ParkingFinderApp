@@ -1,16 +1,21 @@
-import {generalColor} from '@src/theme/color';
-import {rowCenter} from '@src/theme/style';
+import { generalColor } from '@src/theme/color';
+import { rowCenter } from '@src/theme/style';
 import textStyle from '@src/theme/text';
-import {SCREEN_HEIGHT} from '@src/utils/constant';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import { SCREEN_HEIGHT } from '@src/utils/constant';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import ReactNativeModal from 'react-native-modal';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
-const SortModal = ({isVisible, onPress, onClose}) => {
-  const handleItemClick = () => {
-    // onPress()
+export const ESort = {
+  NEWEST: 'NEWEST',
+  OLDEST: 'OLDEST',
+  MOST_VOTE: 'MOST_VOTE',
+}
+const SortModal = ({isVisible,sltxSort, onPress, onClose}) => {
+  const handleItemClick = (v) => {
+    onPress(v)
     onClose();
   };
   return (
@@ -28,16 +33,23 @@ const SortModal = ({isVisible, onPress, onClose}) => {
           Sắp xếp theo
         </Text>
         <Item
+          isSelected={sltxSort == ESort.NEWEST}
+          onPress={()=>handleItemClick(ESort.NEWEST)}
           content="Đánh giá mới nhất"
           icon={
             <AntDesign name="star" color={'white'} size={28}></AntDesign>
           }></Item>
         <Item
+          isSelected={sltxSort == ESort.OLDEST}
+          onPress={()=>handleItemClick(ESort.OLDEST)}
           content="Đánh giá cũ nhất"
+          
           icon={
             <FontAwesome name="dollar" color={'white'} size={28}></FontAwesome>
           }></Item>
         <Item
+          isSelected={sltxSort == ESort.MOST_VOTE}
+          onPress={()=>handleItemClick(ESort.MOST_VOTE)}
           content="Nhiều lượt vote nhất"
           icon={
             <FontAwesome name="dollar" color={'white'} size={28}></FontAwesome>
@@ -46,13 +58,13 @@ const SortModal = ({isVisible, onPress, onClose}) => {
     </ReactNativeModal>
   );
 };
-const Item = ({icon, content, isSelected}) => {
+const Item = ({icon, content, onPress,isSelected}) => {
   return (
-    <TouchableOpacity>
+    <TouchableOpacity onPress={onPress}>
       <View style={{...rowCenter, marginVertical: 8}}>
         {/* <View style={{minWidth: 30}}>{icon}</View> */}
         <Text style={styles.content}>{content}</Text>
-        {true && <Entypo name="check" color={'white'} size={24}></Entypo>}
+        {isSelected && <Entypo name="check" color={'white'} size={24}></Entypo>}
       </View>
     </TouchableOpacity>
   );
