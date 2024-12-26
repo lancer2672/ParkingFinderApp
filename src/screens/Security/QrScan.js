@@ -4,7 +4,7 @@ import reservationAPI from '@src/api/reservation.api';
 import ButtonComponent from '@src/components/Button';
 import LoadingModal from '@src/components/LoadingModal/LoadingModal';
 import { generalColor } from '@src/theme/color';
-import { RES_STATUS } from '@src/utils/constant';
+import { PAY_METHOD, RES_STATUS } from '@src/utils/constant';
 import { useEffect, useState } from 'react';
 import {
   Image,
@@ -97,6 +97,16 @@ const QrScan = () => {
           type: 'success',
         });
         setReservation(prev => ({ ...prev, status: nextStatus }));
+      }
+      // Cứ tạo request -> vì nếu người dùng đã thanh toán thì request này sẽ lỗi -> ignore 
+  
+      if (nextStatus === RES_STATUS.CHECKED_OUT) {
+        await reservationAPI.createPayment({
+          reservationId: reservation.id,
+          amount: reservation.price,
+          userId: reservation.userId,
+          paymentMethod: PAY_METHOD.BANK_TRANSFER,
+        });
       }
     } catch (error) {
       showMessage({
