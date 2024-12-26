@@ -21,10 +21,10 @@ Video Demo: [YouTube](https://www.youtube.com/watch?v=demo_video_link)
 
 ## 🛠️ Technologies Used:
 - **Frontend:**  
-  ![Next.js](https://img.shields.io/badge/React-Native-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)
+  ![React-Native](https://img.shields.io/badge/ReactNative-222222?style=for-the-badge&logo=React&logoColor=white)
 
 - **Backend:**  
-  ![NestJS](https://img.shields.io/badge/Spring-boot-E0234E?style=for-the-badge&logo=nestjs&logoColor=white)
+  ![Spring-boot](https://img.shields.io/badge/SpringBoot-6DB33F?style=flat-square&logo=Spring&logoColor=white)
 
 - **Database & Cloud:**  
   ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)  
