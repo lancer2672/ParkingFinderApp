@@ -196,7 +196,7 @@ const ListReview = ({hotel, reviews, style = {}}) => {
           flexDirection: 'row',
           ...style,
         }}>
-        <Avatar.Image size={40} source={{uri: 'https://picsum.photos/200'}} />
+        <Avatar.Image size={40} source={{uri: item.user?.avatar || 'https://picsum.photos/200'}} />
         <View style={{flex: 1, paddingLeft: 12}}>
           <View style={row}>
             <Text
@@ -283,7 +283,7 @@ const ChildrenReview = ({item}) => {
         paddingVertical: 8,
         flexDirection: 'row',
       }}>
-      <Avatar.Image size={40} source={{uri: 'https://picsum.photos/200'}} />
+      <Avatar.Image size={40} source={{uri:  item.user?.avatar || 'https://picsum.photos/200'}} />
       <View style={{flex: 1, paddingLeft: 12}}>
         <View style={row}>
           <Text

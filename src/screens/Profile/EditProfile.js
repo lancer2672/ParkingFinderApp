@@ -15,12 +15,12 @@ import CustomEditText from './components/EditText';
 const dayjs = require('dayjs');
 
 const EditProfileUser = ({navigation}) => {
+  const user = useUserStore(s => s.user);
   // const user = {
   //   name: 'username',
   //   email: 'email@gmail.com',
   //   phoneNumber: '012812384',
   // };
-  const user = useUserStore(s => s.user);
   const [nickname, setNickname] = useState(user.lastName + " "+user.firstName);
   const [dateOfBirth, setDateOfBirth] = useState(new Date(user.dateOfBirth));
   const [email, setEmail] = useState(user.email);
@@ -51,7 +51,7 @@ const EditProfileUser = ({navigation}) => {
       </Header>
 
       <Body>
-        <Avatar.Image size={80} source={{uri: 'https://picsum.photos/200'}} />
+        <Avatar.Image size={80} source={{uri: user.avatar || 'https://picsum.photos/200'}} />
 
         <Text
           style={{

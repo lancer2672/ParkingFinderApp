@@ -129,7 +129,7 @@ function App() {
         type: 'visa'
       }
       addItem(Card_Key, mockCard);
-    })();
+    });
   }, [on, user]);
   useEffect(() => {
     

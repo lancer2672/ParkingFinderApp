@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
-export const serverURL = 'https://parking-finder-latest.onrender.com';
+export const serverURL = 'http://172.16.0.79:8080';
 const axiosClient = axios.create({
   baseURL: serverURL,
 

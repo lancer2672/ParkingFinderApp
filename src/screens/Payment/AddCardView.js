@@ -1,7 +1,8 @@
-import { goBack } from '@src/navigation/NavigationController';
+import { goBack, navigate } from '@src/navigation/NavigationController';
 import useUserStore from '@src/store/userStore';
 import { generalColor } from '@src/theme/color';
-import { useState } from 'react';
+import { Card_Key } from '@src/utils/localStorage';
+import { useEffect, useState } from 'react';
 import {
   StyleSheet,
   Switch,
@@ -11,11 +12,10 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import Swiper from 'react-native-swiper';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import styled from 'styled-components';
-import CardComponent from './components/CardComponent';
-import { navigate } from '@src/navigation/NavigationController';
+import { getAllValuesMatchingPattern } from '../Notification/components/as';
+import { AdvancedCardSlider } from './components/CardCarousel';
 
 const mockCards = [
   {
@@ -46,13 +46,21 @@ const AddCardView = () => {
   const setUser = useUserStore((state) => state.setUser);
   const [selectedCard, setSelectedCard] = useState(mockCards[0]);
   const [isEnabled, setIsEnabled] = useState(user?.cardInfo?.id === selectedCard.id);
-
+  const [cards,setCards] = useState([]);
+  const [idx, setIdx] = useState(0);
+  useEffect(() => {
+    getAllValuesMatchingPattern(Card_Key).then(data => {
+      setCards(data);
+    });
+    return async () => {};
+  }, []);
+  console.log(">>>>>>>>>>>>>>>CARDS",cards);
   const toggleSwitch = () => {
     const newIsEnabled = !isEnabled;
     setIsEnabled(newIsEnabled);
     setUser({
       ...user,
-      cardInfo: newIsEnabled ? selectedCard : null,
+      cardInfo: newIsEnabled ? cards[idx] : null,
     });
   };
 
@@ -85,24 +93,10 @@ const AddCardView = () => {
       </View>
 
       <View style={styles.container}>
-        <Swiper
-          style={styles.wrapper}
-          showsButtons={true}
-          onIndexChanged={(index) => {
-            setSelectedCard(mockCards[index]);
-            setIsEnabled(user?.cardInfo?.id === mockCards[index].id);
-          }}
-        >
-          <View style={styles.slide1}>
-            <CardComponent card={mockCards[0]} />
-          </View>
-          <View style={styles.slide2}>
-            <CardComponent card={mockCards[1]} />
-          </View>
-          <View style={styles.slide3}>
-            <CardComponent card={mockCards[2]} />
-          </View>
-        </Swiper>
+        <AdvancedCardSlider
+          cards={cards}
+          initialIndex={idx}
+          onCardChange={setIdx}></AdvancedCardSlider>
       </View>
 
       <View
@@ -143,7 +137,7 @@ const AddCardView = () => {
             }}>
             <Text>Mã thẻ</Text>
             <TextInput
-              value={selectedCard.cardNumber}
+              value={cards[idx].cardNumber}
               editable={false}
               style={{
                 flex: 1,
@@ -164,7 +158,7 @@ const AddCardView = () => {
               }}>
               <Text>Ngày hết hạn</Text>
               <TextInput
-                value={selectedCard.expiryDate}
+                value={cards[idx].expiryDate}
                 editable={false}
                 style={{
                   flex: 1,
@@ -212,6 +206,7 @@ const AddCardView = () => {
         <TouchableHighlight
           onPress={() => {
             navigate('AddCardComonent');
+
           }}
           style={{
             borderRadius: 6,
@@ -220,7 +215,8 @@ const AddCardView = () => {
           underlayColor={'#cf0023'}>
           <View
             style={{
-              backgroundColor: '#613EEA',
+              backgroundColor: generalColor.other.bluepurple,
+         
               padding: 12,
               borderRadius: 6,
             }}>

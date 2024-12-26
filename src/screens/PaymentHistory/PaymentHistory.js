@@ -126,7 +126,7 @@ const PaymentHistoryScreen = () => {
     }, []);
 
     const renderPaymentCard = (payment) => (
-        <PaymentItem payment={payment}></PaymentItem>
+        <PaymentItem key={payment.id} payment={payment}></PaymentItem>
     );
 
     return (
