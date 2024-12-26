@@ -1,5 +1,5 @@
 // components/VNPayModal.js
-import {useRef, useState} from 'react';
+import { useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -10,8 +10,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons'; 
-import {WebView} from 'react-native-webview';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import { WebView } from 'react-native-webview';
 
 const VNPayModal = ({
   visible,
@@ -49,14 +49,14 @@ const VNPayModal = ({
       navState.url.includes('payment-success') ||
       navState.url.includes('vnp_ResponseCode=00')
     ) {
-      onPaymentSuccess?.();
       onClose();
+      onPaymentSuccess?.();
     } else if (
       navState.url.includes('payment-failed') ||
       navState.url.includes('vnp_ResponseCode=')
     ) {
-      onPaymentFailure?.();
       onClose();
+      onPaymentFailure?.();
     }
   };
 

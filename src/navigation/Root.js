@@ -9,9 +9,11 @@ import SignUp from '@src/screens/Authentication/SignUp';
 import ParkingHistory from '@src/screens/History/ParkingHistory';
 import Notification from '@src/screens/Notification/Notification';
 import Booking from '@src/screens/ParkingLot/components/Booking';
+import DetailQr from '@src/screens/ParkingLot/components/DetailQr';
 import QrcodeScreen from '@src/screens/ParkingLot/components/QrcodeScreen';
 import ParkingLotsMap from '@src/screens/ParkingLot/ParkingLotMap';
 import AddCardView from '@src/screens/Payment/AddCardView';
+import AddCardComonent from '@src/screens/Payment/components/AddCardComponet';
 import PaymentHistoryScreen from '@src/screens/PaymentHistory/PaymentHistory';
 import EditProfileUser from '@src/screens/Profile/EditProfile';
 import UserProfile from '@src/screens/Profile/Profile';
@@ -22,13 +24,11 @@ import RidesScreen from '@src/screens/Security/RidesScreen';
 import SecurityDashboard from '@src/screens/Security/SecurityDashboard';
 import SettingView from '@src/screens/Setting/SettingView';
 import useUserStore from '@src/store/userStore';
-import {ROLE} from '@src/utils/constant';
-import {UserID_Key} from '@src/utils/localStorage';
-import {useEffect, useState} from 'react';
-import {navigationRef} from './NavigationController';
-import {StaffTabs, Tabs} from './NavigationTab';
-import DetailQr from '@src/screens/ParkingLot/components/DetailQr';
-import AddCardComonent from '@src/screens/Payment/components/AddCardComponet';
+import { ROLE } from '@src/utils/constant';
+import { UserID_Key } from '@src/utils/localStorage';
+import { useEffect, useState } from 'react';
+import { navigationRef } from './NavigationController';
+import { StaffTabs, Tabs } from './NavigationTab';
 const screenOptions = {
   header: () => null,
   cardOverlayEnabled: true,
@@ -139,7 +139,7 @@ const Root = () => {
           user.role === ROLE.USER ? (
             <Stack.Screen name="MainStack" component={MainStack} />
           ) : (
-            <Stack.Screen name="StaffStack" component={MainStack} />
+            <Stack.Screen name="StaffStack" component={StaffStack} />
           )
         ) : (
           <Stack.Screen

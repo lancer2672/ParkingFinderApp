@@ -1,6 +1,7 @@
 
+import { useFocusEffect } from '@react-navigation/native';
 import { generalColor } from '@src/theme/color';
-import { useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { FlatList, Text, View } from 'react-native';
 import styled from 'styled-components/native';
 import NotificationItem from './components/NotificationItem';
@@ -10,12 +11,21 @@ const Notification = ({navigation}) => {
   console.log('notification show', notifications);
   const [notifications, setNotifications] = useState([]);
 
-  useEffect(() => {
-    getAllValuesMatchingPattern('noti').then(data => {
+
+  const fetchData = async () => {
+    try {
+      const data = await getAllValuesMatchingPattern('noti');
       setNotifications(data.sort((a, b) => b.createdAt - a.createdAt));
-    });
-    return async () => {};
-  }, []);
+    } catch (error) {
+      console.error('Error fetching notifications:', error);
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchData();
+    }, []) // Empty dependency array ensures this is triggered every time the tab is focused
+  );
   return (
     <View style={{flex: 1, backgroundColor: 'white'}}>
       <View

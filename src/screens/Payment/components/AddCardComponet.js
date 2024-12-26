@@ -44,7 +44,7 @@ const AddCardComonent = ({ navigation }) => {
                 const newCard = {
                         id: Date.now(),
                         cardNumber: selectedCard.cardNumber,
-                        cardHolder: selectedCard.cardHolder,
+                        cardHolder: selectedCard.cardHolder.toUpperCase(),
                         expiryDate: selectedCard.expiryDate,
                         type: selectedCard.type,
                 };

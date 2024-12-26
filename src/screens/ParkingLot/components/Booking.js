@@ -1,15 +1,15 @@
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Slider from '@react-native-community/slider';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import reservationAPI from '@src/api/reservation.api';
 import ButtonComponent from '@src/components/Button';
 import LoadingModal from '@src/components/LoadingModal/LoadingModal';
 import useUserStore from '@src/store/userStore';
-import {generalColor} from '@src/theme/color';
-import {convertToISOLocale} from '@src/utils/timeFormat';
-import {useState} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {showMessage} from 'react-native-flash-message';
+import { generalColor } from '@src/theme/color';
+import { convertToISOLocale } from '@src/utils/timeFormat';
+import { useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { showMessage } from 'react-native-flash-message';
 import ReactNativeModal from 'react-native-modal';
 import QRCode from 'react-native-qrcode-svg';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -50,6 +50,10 @@ const Booking = ({route, isVisible, onClose}) => {
       });
       console.log('tạo thành công');
       navigation.navigate('QrcodeScreen', {qrData});
+      showMessage({
+        message: 'Đặt chỗ thành công',
+        type: 'success',
+      });
     } catch (er) {
       showMessage({
         message: 'Đã có lỗi xảy ra',
@@ -87,7 +91,7 @@ const Booking = ({route, isVisible, onClose}) => {
         <View style={styles.floatingContainer}>
           <View style={styles.sliderContainer}>
             <Text style={styles.sliderLabel}>
-              Thời gian di chuyển: {duration} minutes
+              Thời gian di chuyển: {duration} phút
             </Text>
             <Slider
               style={styles.slider}
@@ -104,7 +108,7 @@ const Booking = ({route, isVisible, onClose}) => {
 
           <View style={styles.timePickerContainer}>
             <Text style={styles.timePickerLabel}>
-              Check-in Time: {checkinTime.toLocaleString()}
+              Thời gian đặt vé: {checkinTime.toLocaleString()}
             </Text>
             <TouchableOpacity onPress={() => setShowTimePicker(true)}>
               <Icon name="edit" size={30} color="#1EB1FC" />
@@ -133,13 +137,13 @@ const Booking = ({route, isVisible, onClose}) => {
             onPress={onClose}
             color={generalColor.other.bluepurple}
             style={{borderRadius: 12}}
-            text={'Close'}
+            text={'Đóng'}
           />
           <ButtonComponent
             onPress={handleBooking}
             color={generalColor.other.bluepurple}
             style={{marginLeft: 12, borderRadius: 12}}
-            text={'Booking'}
+            text={'Tiếp tục'}
           />
         </View>
         {loading && <LoadingModal />}
@@ -183,6 +187,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
+    color :'#091E3D',
     fontWeight: 'bold',
     marginBottom: 8,
   },
@@ -225,6 +230,8 @@ const styles = StyleSheet.create({
   },
   timePickerLabel: {
     fontSize: 16,
+    color :'#091E3D',
+
     marginBottom: 8,
   },
   qrCodeContainer: {

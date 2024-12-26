@@ -1,11 +1,11 @@
 import { useNavigation } from '@react-navigation/native';
+import reservationAPI from '@src/api/reservation.api';
 import ButtonComponent from '@src/components/Button';
 import { generalColor } from '@src/theme/color';
 import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
 import QRCode from 'react-native-qrcode-svg';
-import reservationAPI from '@src/api/reservation.api';
 
 const DetailQr = ({ route }) => {
   const userId = 6;
@@ -23,10 +23,7 @@ const DetailQr = ({ route }) => {
         );
         if (reservation) {
           setQrData(JSON.stringify(reservation));
-          showMessage({
-            message: 'Đặt chỗ thành công',
-            type: 'success',
-          });
+     
         } else {
           showMessage({
             message: 'No pending reservations found',
@@ -67,7 +64,7 @@ const DetailQr = ({ route }) => {
           onPress={handleBackToParkingLot}
           color={generalColor.other.bluepurple}
           style={{ marginVertical: 24, marginTop: 40, borderRadius: 12 }}
-          text={'Back to Parking Lot'}
+          text={'Quay về màn hình chính'}
         />
       </View>
     );
@@ -78,25 +75,25 @@ const DetailQr = ({ route }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Your QR Code</Text>
+      {/* <Text style={styles.title}>Mã QR Đặt Chỗ</Text> */}
       <View style={styles.floatingContainer}>
         <Text style={styles.name}>{parkingLot.name}</Text>
         <Text style={styles.address}>{parkingLot.address}</Text>
       </View>
       <QRCode value={qrData} size={200} />
       <View style={styles.floatingContainer}>
-        <Text style={styles.infoLabel1}> Booking Detail</Text>
+        <Text style={styles.infoLabel1}>Thông tin</Text>
         <Text style={styles.infoLabel}>
-          Check-in Time: {new Date(startTime).toLocaleString()}
+          Thời gian đặt vé: {new Date(startTime).toLocaleString()}
         </Text>
-        <Text style={styles.infoLabel}>Vehicle Type: {vehicleType}</Text>
-        <Text style={styles.infoLabel}>Total Price: {totalPrice}</Text>
+        <Text style={styles.infoLabel}>Loại xe: {vehicleType}</Text>
+        {/* <Text style={styles.infoLabel}>Total Price: {totalPrice}</Text> */}
       </View>
       <ButtonComponent
         onPress={handleBackToParkingLot}
         color={generalColor.other.bluepurple}
         style={{ marginVertical: 24, marginTop: 40, borderRadius: 12 }}
-        text={'Back to Parking Lot'}
+        text={'Quay về màn hình chính'}
       />
     </View>
   );
@@ -133,6 +130,7 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 20,
+    color:"#091E3D",
     fontWeight: 'bold',
     marginBottom: 8,
   },

@@ -1,7 +1,6 @@
 import parkingLotAPI from '@src/api/parkingLot.api';
 import ButtonComponent from '@src/components/Button';
 import LoadingModal from '@src/components/LoadingModal/LoadingModal';
-import { parkingslotsMock } from '@src/mock/mock';
 import { navigate } from '@src/navigation/NavigationController';
 import { generalColor } from '@src/theme/color';
 import { center, row, rowCenter } from '@src/theme/style';
@@ -17,19 +16,19 @@ import {
 } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
 import ReactNativeModal from 'react-native-modal';
-import { Divider } from 'react-native-paper';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
-import React, { useState, useEffect } from 'react';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import axiosClient from '@src/api/axiosClient';
 import reservationAPI from '@src/api/reservation.api';
+import useUserStore from '@src/store/userStore';
+import { useEffect, useState } from 'react';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Booking from './Booking';
 
 const ParkingLotModal = ({
-  parkingslot = parkingslotsMock[0],
+  parkingslot,
   isVisible,
   carType,
   handleContinue,
@@ -40,9 +39,24 @@ const ParkingLotModal = ({
   const [bookingSuccess, setBookingSuccess] = useState(false);
   const [qrData, setQrData] = useState(null);
   const [existingReservation, setExistingReservation] = useState(null);
+  const [vehicleInfo, setParkingLotVehicleInfo] = useState();
+  const user = useUserStore(state => state.user);
+  const userId = user.id
 
-  const userId = 5;
-
+  useEffect(() => {
+       ( ()=>{
+         axiosClient.get(`api/parking-lots/${parkingslot.id}/vehicles`).then((res)=>{
+           const data = res.data.find((item)=>item.type == carType)
+           if (data) {
+            setParkingLotVehicleInfo(data)
+           }
+        }).catch((err)=>{
+          console.log(err)
+        }
+        )
+       })() 
+    
+  },[])
   useEffect(() => {
     const checkExistingReservation = async () => {
       try {
@@ -131,7 +145,7 @@ const ParkingLotModal = ({
     setQrData(qrData);
     setIsBookingVisible(false);
   };
-  console.log('ParkingLotModal props:', { parkingslot, isVisible, navigation });
+  console.log('ParkingLotModal props:', parkingslot.imageUrls);
   useEffect(() => {
     if (isVisible) {
       fetchFreeSlots()
@@ -159,7 +173,7 @@ const ParkingLotModal = ({
               <View style={row}>
                 <View>
                   <Image
-                    source={{ uri: parkingslot.avatar }}
+                    source={{ uri: parkingslot.imageUrls }}
                     style={styles.img}></Image>
                 </View>
                 <View
@@ -191,25 +205,20 @@ const ParkingLotModal = ({
                       {parkingslot.address}
                     </Text>
                   </View>
-                  <Text
+                  {/* <Text
                     style={{
                       ...textStyle.content.small,
                       color: generalColor.strongprimary,
                       flex: 1,
                     }}>
                     4.3 (120 lượt đánh giá)
-                  </Text>
+                  </Text> */}
                 </View>
               </View>
 
               <View style={rowCenter}>
-                <AntDesign name="wifi" color="black" size={20}></AntDesign>
-                <Text style={styles.txt}>Wifi miễn phí</Text>
-
-                <Divider style={{ marginLeft: 12 }}></Divider>
-                <FontAwesome5 name="parking" color="black" size={20}></FontAwesome5>
-                <Text style={styles.txt}>Có bãi đỗ xe</Text>
-
+                <FontAwesome5 name="money-bill-wave" color="black" size={20}></FontAwesome5>
+                <Text style={styles.txt}>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(vehicleInfo?.price || 0)} / giờ</Text>
 
                 <TouchableOpacity
                   style={{

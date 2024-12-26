@@ -1,4 +1,5 @@
 import reviewAPI from '@src/api/review.api';
+import LoadingModal from '@src/components/LoadingModal/LoadingModal';
 import { goBack } from '@src/navigation/NavigationController';
 import useParkingLotStore from '@src/store/useParkinglotStore';
 import { generalColor } from '@src/theme/color';
@@ -20,11 +21,13 @@ const Review = () => {
   const [sortModalVisible, setSortModalVisible] = useState(false);
   const [startModalVisible, setStarModalVisible] = useState(false);
   const [sltStarIdx, setSltStarIdx] = useState(-1);
+  const [loading, setLoading] = useState(false);
   const [reviews, setReviews] = useState([]);
   const [filteredReviews, setFilteredReviews] = useState([]);
   const [sltxSort, setSltSort] = useState();
   const fetchReviews = async () => {
     try {
+      setLoading(true);
       const response = await reviewAPI.getByParkingLotId(parkingLot.id);
 
       console.log('response', response);
@@ -33,6 +36,8 @@ const Review = () => {
     } catch (error) {
       console.error('Error fetching reviews:', error);
       throw error;
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -82,6 +87,7 @@ const Review = () => {
 
   return (
     <View style={{flex: 1, backgroundColor: 'white', paddingBottom: 12}}>
+      <LoadingModal visible={loading} onClose={() => {}}></LoadingModal>
       <View style={{padding: 12, marginTop: 12, ...rowCenter}}>
         <Pressable onPress={goBack}>
           <AntDesign
@@ -93,7 +99,7 @@ const Review = () => {
       </View>
       <View style={rowCenter}>
         <Image
-          source={{ uri: (parkingLot.images && parkingLot.images[0]) || 'https://picsum.photos/200' }}
+          source={{ uri: parkingLot.imageUrls   || 'https://picsum.photos/200' }}
 
           style={{width: 80, height: 80, margin: 12, borderRadius: 12}}></Image>
 

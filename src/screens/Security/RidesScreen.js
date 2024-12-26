@@ -1,10 +1,7 @@
-import * as React from "react";
-import { View, Image, Text, StyleSheet, TouchableOpacity, ScrollView, Pressable } from "react-native";
 import { useNavigation } from '@react-navigation/native';
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Header } from "./Header";
 import { RideCard } from "./RideCard";
-import { goBack } from '@src/navigation/NavigationController';
-import Material from 'react-native-vector-icons/MaterialIcons';
 const rideData = [
   {
     name: "Amanda Chase",
@@ -53,7 +50,7 @@ const RidesScreen = () => {
               style={styles.homeButtonContainer}
               onPress={() => navigation.navigate('SecurityDashboard')}
             >
-              <Text style={styles.homeButtonText}>Go Back to Home Screen</Text>
+              <Text style={styles.homeButtonText}>Quay về màn hình chính</Text>
             </TouchableOpacity>
           </View>
         </View>

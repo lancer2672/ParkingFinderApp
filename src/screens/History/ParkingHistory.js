@@ -1,13 +1,13 @@
 
 import reservationAPI from '@src/api/reservation.api';
 import LoadingModal from '@src/components/LoadingModal/LoadingModal';
-import { goBack } from '@src/navigation/NavigationController';
+import { goBack, navigate } from '@src/navigation/NavigationController';
 import useUserStore from '@src/store/userStore';
 import { generalColor } from '@src/theme/color';
 import { RES_STATUS } from '@src/utils/constant';
 import { format } from 'date-fns';
 import { useEffect, useState } from 'react';
-import { Alert, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Alert, Pressable, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Card, IconButton, Surface, Text } from 'react-native-paper';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -16,8 +16,34 @@ import styled from 'styled-components/native';
 const ReservationHistoryScreen = ({ }) => {
   const [reservations, setReservations ]  = useState([])
   const [loading,setLoading] = useState(false);
+  const [qrData, setQrData] = useState(null);
+
   const user = useUserStore(state => state.user);
 
+  useEffect(() => {
+    const checkExistingReservation = async () => {
+      try {
+        console.log('Fetching reservations for user ID:', user.id);
+        const response = await reservationAPI.getReservationsByUserId(user.id);
+        console.log('Reservations fetched:', response);
+        const reservation = response.find(
+          (res) =>  res.status === 'PENDING'
+        );
+        if (reservation) {
+          console.log('Existing reservation found:', reservation);
+          setQrData(JSON.stringify(reservation));
+        } else {
+          console.log('No matching reservation found.');
+          setQrData(null);
+        }
+      } catch (error) {
+        console.error('Error checking existing reservation:', error);
+      }
+    };
+    checkExistingReservation();
+  }, [user.id]);
+
+  
   const fetchRes = async () =>{
     setLoading(true);
     try{
@@ -108,10 +134,20 @@ const ReservationHistoryScreen = ({ }) => {
       { cancelable: false }
     );
   }
+
+
+  const goToQRScreen = () => {
+    if (qrData){
+      // navigation.navigate('QrcodeScreen', {qrData});
+      navigate('DetailQr', { qrData,  });
+    }
+  };
   const renderPendingReservation = () => {
     if (!pendingReservation) return null;
 
     return (
+      <Pressable onPress={goToQRScreen}>
+
       <Surface style={styles.pendingSection} elevation={2}>
         <Text style={styles.sectionTitle}>Đang đặt chỗ</Text>
         <Card style={styles.pendingCard}>
@@ -156,6 +192,7 @@ const ReservationHistoryScreen = ({ }) => {
           </Card.Content>
         </Card>
       </Surface>
+      </Pressable>
     );
   };
 

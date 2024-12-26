@@ -1,8 +1,10 @@
+import { useFocusEffect } from '@react-navigation/native';
 import reservationAPI from '@src/api/reservation.api';
+import LoadingModal from '@src/components/LoadingModal/LoadingModal';
 import { navigate } from '@src/navigation/NavigationController';
 import useUserStore from '@src/store/userStore';
 import { generalColor } from '@src/theme/color';
-import { useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Text, TouchableHighlight, View } from 'react-native';
 import Material from 'react-native-vector-icons/MaterialIcons';
 import styled from 'styled-components/native';
@@ -11,19 +13,26 @@ import { PaymentItem } from '../PaymentHistory/PaymentHistory';
 const SettingView = () => {
   const resetUser = useUserStore(state => state.resetUser);
   const [payments,setPayments ] = useState([]);
+  const [loading, setLoading] = useState(false);
   const user = useUserStore(state => state.user);
   const fetchPayments = async () => {
+    // setLoading(true);
       try {
           const reservations = await reservationAPI.getReservationsByUserId(user.id);
           const payments = reservations.filter(t => t.payment != null).map(t => t.payment).slice(0, 3); // Limit to 3 payments
           setPayments(payments);
       } catch (error) {
           console.error("Failed to fetch payments", error);
-      } 
+      } finally {
+          // setLoading(false);
+      }
+      
   };
-  useEffect(() => {
+  useFocusEffect(
+    useCallback(() => {
       fetchPayments();
-  }, []);
+    }, [])
+  );
 
   return (
     <View
@@ -33,6 +42,7 @@ const SettingView = () => {
         paddingTop: 8,
         gap: 8,
       }}>
+        <LoadingModal visible={loading} onClose={()=>{}}></LoadingModal>
                 <Heading style={{color: generalColor.primary}}>Thanh toán</Heading>
 
       <View

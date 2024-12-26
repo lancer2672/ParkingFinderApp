@@ -2,6 +2,7 @@ import Geolocation from '@react-native-community/geolocation';
 import parkingLotAPI from '@src/api/parkingLot.api';
 import LoadingModal from '@src/components/LoadingModal/LoadingModal';
 import useParkingLotStore from '@src/store/useParkinglotStore';
+import useUserStore from '@src/store/userStore';
 import { generalColor } from '@src/theme/color';
 import textStyle from '@src/theme/text';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -19,7 +20,6 @@ import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplet
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 import ParkingLotModal from './components/ParkingLotModal';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 Geolocation.setRNConfiguration({
   skipPermissionRequests: false,
 });
@@ -39,6 +39,7 @@ const local_data = [
 ];
 
 const ParkingLotsMap = ({initialLocation, navigation}) => {
+  const user = useUserStore(state => state.user);
   const [parkingslots, setParkingslots] = useState([]);
   const [markerPosition, setMarkerPosition] = useState(null);
   const [loading,setLoading] = useState(false);
@@ -51,7 +52,7 @@ const ParkingLotsMap = ({initialLocation, navigation}) => {
   const [fetchError, setFetchError] = useState(false);
   const [showVNPay, setShowVNPay] = useState(false);
   const setParkingLot = useParkingLotStore(state => state.setParkingLot);
-
+  const [pendingRequest, setPendingRequest] = useState(null);
   const fetchParkingLots = useCallback(
     async (latitude, longitude, type) => {
       setLoading(true)
@@ -135,6 +136,23 @@ const ParkingLotsMap = ({initialLocation, navigation}) => {
     },
     [fetchError, fetchParkingLots],
   );
+  const fetchRes = async () =>{
+   
+    // try{
+    //   const res = await reservationAPI.getReservationsByUserId(user.id);
+    //   console.log(">>>>>>RES",res);
+    //   const pendingReq = res.find(e => e.status == 'PENDING');
+    //   if (pendingReq) {
+    //     setPendingRequest(pendingReq);
+    //   }
+    // }catch(er){
+    //   console.log('ERROR FETCH RESERVATION', er);
+    // }
+  }
+
+  useEffect(() => {
+    fetchRes();
+  }, []);
 
   if (!currentRegion || !markerPosition) {
     return null;
@@ -157,7 +175,7 @@ const ParkingLotsMap = ({initialLocation, navigation}) => {
     // setCurrentRegion(() => newRegion);
     // setIsMapMoved(true);
   };
-  console.log('parkingslots', selectedParkingslot == null);
+  console.log('pendingRequest', pendingRequest);
   return (
     <View style={styles.container}>
        {loading && <LoadingModal />}
@@ -224,7 +242,15 @@ const ParkingLotsMap = ({initialLocation, navigation}) => {
           />
         )}
       </MapView>
+      {/* {
+        pendingRequest &&
+         <View style={{position:"absolute", zIndex:99999, width:"100%"}}>
+          <ParkingInfo  parkingData={pendingRequest}></ParkingInfo>
 
+         </View>
+        
+      } */}
+         {/* <PendingModal pendingRequest={pendingRequest} isVisible={pendingRequest!= null} onClose={()=>{}}/> */}
       <View
         style={[
           styles.searchContainer,
@@ -298,24 +324,65 @@ const ParkingLotsMap = ({initialLocation, navigation}) => {
           navigation={navigation}></ParkingLotModal>
       )}
 
-      {/* <VNPayModal
-        visible={showVNPay}
-        paymentUrl={paymentUrl}
-        onPaymentFailure={() => {}}
-        onPaymentSuccess={() => {
-          Alert.alert('Thành công', 'Thanh toán thành công');
-        }}
-        onClose={() => {
-          console.log(':D');
-          setShowVNPay(false);
-        }}></VNPayModal> */}
     </View>
   );
 };
-
 export default ParkingLotsMap;
 
 const styles = StyleSheet.create({
+  container1: {
+    position: 'absolute',
+    top: 80,
+    left: 16,
+    right: 16,
+    backgroundColor: 'white',
+    borderRadius: 8,
+    padding: 16,
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  headerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#2563eb',
+  },
+  statusBadge: {
+    backgroundColor: '#fef3c7',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
+  },
+  statusText: {
+    color: '#92400e',
+  },
+  content: {
+    borderTopWidth: 1,
+    borderTopColor: '#e5e7eb',
+    paddingVertical: 8,
+  },
+  infoText: {
+    color: '#4b5563',
+    marginVertical: 2,
+  },
+  button: {
+    backgroundColor: '#3b82f6',
+    borderRadius: 6,
+    paddingVertical: 8,
+    marginTop: 8,
+  },
+  buttonText: {
+    color: 'white',
+    textAlign: 'center',
+  },
   container: {
     flex: 1,
     backgroundColor: 'gray',

@@ -4,6 +4,7 @@ import { generalColor } from '@src/theme/color';
 import { Card_Key } from '@src/utils/localStorage';
 import { useEffect, useState } from 'react';
 import {
+  Alert,
   StyleSheet,
   Switch,
   Text,
@@ -12,9 +13,10 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { showMessage } from 'react-native-flash-message';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import styled from 'styled-components';
-import { getAllValuesMatchingPattern } from '../Notification/components/as';
+import { deleteAllMatchingPattern, getAllValuesMatchingPattern, removeItem } from '../Notification/components/as';
 import { AdvancedCardSlider } from './components/CardCarousel';
 
 const mockCards = [
@@ -44,8 +46,8 @@ const mockCards = [
 const AddCardView = () => {
   const user = useUserStore((state) => state.user);
   const setUser = useUserStore((state) => state.setUser);
-  const [selectedCard, setSelectedCard] = useState(mockCards[0]);
-  const [isEnabled, setIsEnabled] = useState(user?.cardInfo?.id === selectedCard.id);
+  const [selectedCard, setSelectedCard] = useState({});
+  // const [isEnabled, setIsEnabled] = useState(user?.cardInfo?.id == selectedCard?.id);
   const [cards,setCards] = useState([]);
   const [idx, setIdx] = useState(0);
   useEffect(() => {
@@ -54,16 +56,55 @@ const AddCardView = () => {
     });
     return async () => {};
   }, []);
-  console.log(">>>>>>>>>>>>>>>CARDS",cards);
+  console.log(">>>>>>>>>>>>>>>user",user.cardInfo, cards);
   const toggleSwitch = () => {
-    const newIsEnabled = !isEnabled;
-    setIsEnabled(newIsEnabled);
+    // const newIsEnabled = !isEnabled;
+    // setIsEnabled(newIsEnabled);
+    if (idx == -1) return;
+    const card = cards[idx];
+    if (user.cardInfo?.id == card.id) {
+      setUser({
+        ...user,
+        cardInfo: null,
+      });
+      return;
+    }
     setUser({
       ...user,
-      cardInfo: newIsEnabled ? cards[idx] : null,
+      cardInfo:  card,
     });
   };
-
+  const handleDeleteCard =async () =>{
+    if (idx == -1) return;
+    const card = cards[idx];
+    if(user.cardInfo?.id == card.id){
+      Alert.alert("Thông báo","Bạn không thể xoá thẻ mặc định")
+      return;
+    }
+    
+    Alert.alert(
+      "Xác nhận",
+      "Bạn có chắc chắn muốn xoá thẻ này không?",
+      [
+        {
+          text: "Hủy",
+          style: "cancel"
+        },
+        { text: "OK", onPress: async () => {
+            await removeItem(Card_Key + "-" + card.id);
+            await deleteAllMatchingPattern(Card_Key);
+            getAllValuesMatchingPattern(Card_Key).then(data => {
+              setIdx(0);
+              setCards(data);
+            });
+            showMessage({
+              message: "Xoá thẻ thành công",
+              type: "success",
+            });
+          }}
+      ]
+    );
+  }
   return (
     <View
       style={{
@@ -92,13 +133,55 @@ const AddCardView = () => {
         </Heading>
       </View>
 
+          {
+            cards.length == 0 && 
+            <View
+            style={{
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <Text>Không có thẻ nào</Text>
+
+            <TouchableHighlight
+          onPress={() => {
+            navigate('AddCardComonent');
+
+          }}
+          style={{
+            borderRadius: 6,
+            marginTop: 20,
+          }}
+          underlayColor={'#cf0023'}>
+          <View
+            style={{
+              backgroundColor: generalColor.other.bluepurple,
+         
+              padding: 12,
+              borderRadius: 6,
+            }}>
+            <Text
+              style={{
+                color: 'white',
+                fontSize: 16,
+                textAlign: 'center',
+              }}>
+              Thêm mới thẻ
+            </Text>
+          </View>
+        </TouchableHighlight>
+          </View>
+          }
+          {
+            cards.length > 0 &&
+            <>
+        
       <View style={styles.container}>
         <AdvancedCardSlider
           cards={cards}
           initialIndex={idx}
           onCardChange={setIdx}></AdvancedCardSlider>
       </View>
-
       <View
         style={{
           flex: 1,
@@ -126,11 +209,15 @@ const AddCardView = () => {
               ios_backgroundColor="#3e3e3e"
               thumbColor={'#f4f3f4'}
               onValueChange={toggleSwitch}
-              value={isEnabled}
+              value={user.cardInfo?.id == cards[idx]?.id}
             />
             <Text>Đặt làm phương thức mặc định</Text>
-          </View>
+            </View>
 
+{
+  cards.length > 0 && 
+  <>
+ 
           <View
             style={{
               height: 60,
@@ -141,6 +228,7 @@ const AddCardView = () => {
               editable={false}
               style={{
                 flex: 1,
+                color:"black",
                 fontSize: 20,
                 letterSpacing: 2,
               }}></TextInput>
@@ -165,7 +253,7 @@ const AddCardView = () => {
                   fontSize: 20,
                 }}></TextInput>
             </View>
-            <View
+            {/* <View
               style={{
                 height: 60,
               }}>
@@ -177,10 +265,10 @@ const AddCardView = () => {
                   flex: 1,
                   fontSize: 20,
                 }}></TextInput>
-            </View>
+            </View> */}
           </View>
           <TouchableHighlight
-            onPress={() => { }}
+            onPress={handleDeleteCard}
             style={{
               borderRadius: 6,
             }}
@@ -201,8 +289,6 @@ const AddCardView = () => {
               </Text>
             </View>
           </TouchableHighlight>
-        </View>
-
         <TouchableHighlight
           onPress={() => {
             navigate('AddCardComonent');
@@ -230,7 +316,13 @@ const AddCardView = () => {
             </Text>
           </View>
         </TouchableHighlight>
+ </>
+}
+</View>
       </View>
+          </>
+          }
+
     </View>
   );
 };
