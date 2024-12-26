@@ -8,14 +8,14 @@ Video Demo: [YouTube](https://www.youtube.com/watch?v=demo_video_link)
 
 ## 🚗 BUILDING A PARKING MANAGEMENT SYSTEM
 
-**Instructor:** [Nguyễn Tấn Toàn]
+**Instructor:** Nguyễn Tấn Toàn
 
 ---
 
 ## 👥 Student Contributors:
 | Leader               | Member               | Member               | Member               | Member               |
 |-----------------------|----------------------|----------------------|----------------------|----------------------|
-| [![](https://avatars.githubusercontent.com/u/90507570?v=4)](https://github.com/lancer2672) <br> **[Leader Name](https://github.com/lancer2672)** | [![](https://avatars.githubusercontent.com/u/23456789?v=4)](https://github.com/Member1Profile) <br> **[Member 1](https://github.com/Member1Profile)** | [![](https://avatars.githubusercontent.com/u/34567890?v=4)](https://github.com/Member2Profile) <br> **[Member 2](https://github.com/Member2Profile)** | [![](https://avatars.githubusercontent.com/u/45678901?v=4)](https://github.com/Member3Profile) <br> **[Member 3](https://github.com/Member3Profile)** | [![](https://avatars.githubusercontent.com/u/56789012?v=4)](https://github.com/Member4Profile) <br> **[Member 4](https://github.com/Member4Profile)** |
+| [![](https://avatars.githubusercontent.com/u/90507570?v=4)](https://github.com/lancer2672) <br> **Trần Quốc Khánh - 20520578(https://github.com/lancer2672)** | [![](https://avatars.githubusercontent.com/u/100852896?v=4)](https://github.com/DinhDaiDuong) <br> **Đinh Đại Dương - 21521986(https://github.com/DinhDaiDuong)** | [![](https://avatars.githubusercontent.com/u/89231623?v=4)](https://github.com/AkiraNoob) <br> **Nguyễn Đức Phương - 21521307(https://github.com/AkiraNoob)** | [![]
 
 ---
 
