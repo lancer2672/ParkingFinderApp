@@ -1,6 +1,6 @@
 # PROJECT: FinderParkCar
 
-Website Demo: [FinderParkCar](https://finderparkcar.vercel.app)  
+Website Demo: [FinderParkCar](https://admin-parking.vercel.app/sign-in)  
 Backend Repository: [FinderParkCarBE](https://github.com/YourBackendRepo)  
 Video Demo: [YouTube](https://www.youtube.com/watch?v=demo_video_link)
 
@@ -8,14 +8,14 @@ Video Demo: [YouTube](https://www.youtube.com/watch?v=demo_video_link)
 
 ## 🚗 BUILDING A PARKING MANAGEMENT SYSTEM
 
-**Instructor:** [Tên Giảng Viên](https://github.com/instructor_profile)  
+**Instructor:** [Nguyễn Tấn Toàn]
 
 ---
 
 ## 👥 Student Contributors:
 | Leader               | Member               | Member               | Member               | Member               |
 |-----------------------|----------------------|----------------------|----------------------|----------------------|
-| [![](https://avatars.githubusercontent.com/u/12345678?v=4)](https://github.com/LeaderProfile) <br> **[Leader Name](https://github.com/LeaderProfile)** | [![](https://avatars.githubusercontent.com/u/23456789?v=4)](https://github.com/Member1Profile) <br> **[Member 1](https://github.com/Member1Profile)** | [![](https://avatars.githubusercontent.com/u/34567890?v=4)](https://github.com/Member2Profile) <br> **[Member 2](https://github.com/Member2Profile)** | [![](https://avatars.githubusercontent.com/u/45678901?v=4)](https://github.com/Member3Profile) <br> **[Member 3](https://github.com/Member3Profile)** | [![](https://avatars.githubusercontent.com/u/56789012?v=4)](https://github.com/Member4Profile) <br> **[Member 4](https://github.com/Member4Profile)** |
+| [![](https://avatars.githubusercontent.com/u/12345678?v=4)](https://github.com/lancer2672) <br> **[Leader Name](https://github.com/lancer2672)** | [![](https://avatars.githubusercontent.com/u/23456789?v=4)](https://github.com/Member1Profile) <br> **[Member 1](https://github.com/Member1Profile)** | [![](https://avatars.githubusercontent.com/u/34567890?v=4)](https://github.com/Member2Profile) <br> **[Member 2](https://github.com/Member2Profile)** | [![](https://avatars.githubusercontent.com/u/45678901?v=4)](https://github.com/Member3Profile) <br> **[Member 3](https://github.com/Member3Profile)** | [![](https://avatars.githubusercontent.com/u/56789012?v=4)](https://github.com/Member4Profile) <br> **[Member 4](https://github.com/Member4Profile)** |
 
 ---
 
