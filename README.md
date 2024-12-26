@@ -1,79 +1,97 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# PROJECT: FinderParkCar
 
-# Getting Started
+Website Demo: [FinderParkCar](https://finderparkcar.vercel.app)  
+Backend Repository: [FinderParkCarBE](https://github.com/YourBackendRepo)  
+Video Demo: [YouTube](https://www.youtube.com/watch?v=demo_video_link)
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+---
 
-## Step 1: Start the Metro Server
+## 🚗 BUILDING A PARKING MANAGEMENT SYSTEM
 
-First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
+**Instructor:** [Tên Giảng Viên](https://github.com/instructor_profile)  
 
-To start Metro, run the following command from the _root_ of your React Native project:
+---
 
+## 👥 Student Contributors:
+| Leader               | Member               | Member               | Member               | Member               |
+|-----------------------|----------------------|----------------------|----------------------|----------------------|
+| [![](https://avatars.githubusercontent.com/u/12345678?v=4)](https://github.com/LeaderProfile) <br> **[Leader Name](https://github.com/LeaderProfile)** | [![](https://avatars.githubusercontent.com/u/23456789?v=4)](https://github.com/Member1Profile) <br> **[Member 1](https://github.com/Member1Profile)** | [![](https://avatars.githubusercontent.com/u/34567890?v=4)](https://github.com/Member2Profile) <br> **[Member 2](https://github.com/Member2Profile)** | [![](https://avatars.githubusercontent.com/u/45678901?v=4)](https://github.com/Member3Profile) <br> **[Member 3](https://github.com/Member3Profile)** | [![](https://avatars.githubusercontent.com/u/56789012?v=4)](https://github.com/Member4Profile) <br> **[Member 4](https://github.com/Member4Profile)** |
+
+---
+
+## 🛠️ Technologies Used:
+- **Frontend:**  
+  ![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)
+
+- **Backend:**  
+  ![NestJS](https://img.shields.io/badge/NestJS-E0234E?style=for-the-badge&logo=nestjs&logoColor=white)
+
+- **Database & Cloud:**  
+  ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)  
+  ![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)
+
+- **Other Tools:**  
+  ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)  
+  ![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)
+
+---
+
+## 📚 Introduction
+
+**FinderParkCar** is a parking management system designed to streamline the process of locating, booking, and managing parking spaces. The system integrates advanced search, reservation, and payment features, ensuring an efficient experience for both users and administrators.
+
+---
+
+## 🌟 Features:
+### 1. User Management
+- Register and log in with role-based access.
+- Profile management for users and parking owners.
+
+### 2. Parking Spot Search
+- Advanced search for nearby parking spots.
+- Filters for pricing, availability, and amenities.
+
+### 3. Reservations
+- Book parking spots in advance.
+- Real-time updates on availability.
+
+### 4. Admin Panel
+- Manage users, parking lots, and transactions.
+- Generate reports on parking lot performance.
+
+### 5. Payment Integration
+- Support for multiple payment methods like MoMo.
+
+---
+
+## 👥 User Roles:
+### **Admin**
+- Full control over the system.
+- Assign roles, manage accounts, and oversee operations.
+
+### **Parking Owner**
+- Add and manage parking spaces.
+- View and process reservations.
+
+### **User**
+- Book parking spots.
+- Manage reservations and payment history.
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js installed
+- Docker (optional, for containerization)
+
+### Installation
 ```bash
-# using npm
-npm start
+# Clone the repository
+git clone https://github.com/YourRepo/FinderParkCar.git
 
-# OR using Yarn
-yarn start
-```
+# Install dependencies
+npm install
 
-## Step 2: Start your Application
-
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
-
-### For Android
-
-```bash
-# using npm
-npm run android
-
-# OR using Yarn
-yarn android
-```
-
-### For iOS
-
-```bash
-# using npm
-npm run ios
-
-# OR using Yarn
-yarn ios
-```
-
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
-
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
-
-## Step 3: Modifying your App
-
-Now that you have successfully run the app, let's modify it.
-
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
-
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+# Run the application
+npm run dev
