@@ -21,7 +21,7 @@ Video Demo: [YouTube](https://www.youtube.com/watch?v=demo_video_link)
 
 ## 🛠️ Technologies Used:
 - **Frontend:**  
-  ![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)
+  ![Next.js](https://img.shields.io/badge/React-Native-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)
 
 - **Backend:**  
   ![NestJS](https://img.shields.io/badge/NestJS-E0234E?style=for-the-badge&logo=nestjs&logoColor=white)
