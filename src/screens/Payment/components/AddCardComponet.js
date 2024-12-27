@@ -1,33 +1,26 @@
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import { goBack } from '@src/navigation/NavigationController';
-import RNDateTimePicker from '@react-native-community/datetimepicker';
+import { goBack, navigate } from '@src/navigation/NavigationController';
 import {
-        ScrollView, Text, View, StyleSheet, Switch, TextInput,
-        TouchableHighlight,
-        TouchableOpacity,
-        Modal,
-        Image,
+  Image,
+  Modal,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableHighlight,
+  TouchableOpacity,
+  View
 } from 'react-native';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import styled from 'styled-components/native';
 
-import { Avatar } from 'react-native-paper';
-import CardComponent from '../components/CardComponent';
-import { useState } from 'react';
-import Swiper from 'react-native-swiper';
+import { addItem } from '@src/screens/Notification/components/as';
 import useUserStore from '@src/store/userStore';
 import { generalColor } from '@src/theme/color';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Card_Key } from '@src/utils/localStorage';
+import { useState } from 'react';
 
 const dayjs = require('dayjs');
 
 const AddCardComonent = ({ navigation }) => {
-        const toggleSwitch = () => {
-                setIsEnabled((previousState) => !previousState);
-                setUser({
-                        ...user,
-                        cardInfo: isEnabled ? null : selectedCard,
-                });
-        }
         const user = useUserStore((state) => state.user);
         const setUser = useUserStore((state) => state.setUser);
         const [selectedCard, setSelectedCard] = useState({
@@ -39,7 +32,7 @@ const AddCardComonent = ({ navigation }) => {
         });
         const [isEnabled, setIsEnabled] = useState(user?.cardInfo?.id == selectedCard.id);
         const [modalVisible, setModalVisible] = useState(false);
-
+ 
         const formatExpiryDate = (text) => {
                 if (text.length === 2 && !text.includes('/')) {
                         return text + '/';
@@ -51,13 +44,13 @@ const AddCardComonent = ({ navigation }) => {
                 const newCard = {
                         id: Date.now(),
                         cardNumber: selectedCard.cardNumber,
-                        cardHolder: selectedCard.cardHolder,
+                        cardHolder: selectedCard.cardHolder.toUpperCase(),
                         expiryDate: selectedCard.expiryDate,
                         type: selectedCard.type,
                 };
-                await AsyncStorage.setItem('newCard', JSON.stringify(newCard));
-                setSelectedCard(newCard);
+                addItem(Card_Key + "-" + Date.now(), newCard);
                 setModalVisible(true);
+                setSelectedCard(newCard);
                 console.log(newCard);
         };
 
@@ -138,6 +131,7 @@ const AddCardComonent = ({ navigation }) => {
                           onChangeText={(text) => setSelectedCard({ ...selectedCard, cardHolder: text })}
                           editable={true}
                           style={styles.textInput}
+                          textTransform="uppercase"
                         />
                       </View>
                       <View
@@ -210,7 +204,8 @@ const AddCardComonent = ({ navigation }) => {
                       underlayColor={'#cf0023'}>
                       <View
                         style={{
-                          backgroundColor: '#613EEA',
+                          backgroundColor: generalColor.other.bluepurple,
+
                           padding: 12,
                           borderRadius: 6,
                         }}>
@@ -240,7 +235,7 @@ const AddCardComonent = ({ navigation }) => {
                         <TouchableHighlight
                           style={{ ...styles.openButton, backgroundColor: "#008000" }}
                           onPress={() => {
-                                goBack();
+                            navigate("Wallet")
                           }}>
                           <Text style={styles.textStyle}>OK</Text>
                         </TouchableHighlight>
@@ -252,7 +247,7 @@ const AddCardComonent = ({ navigation }) => {
             };  
 const Heading = styled.Text`
   font-weight: bold;
-  font-size: 28;
+  font-size: 24;
   color: black;
 `;
 export default AddCardComonent;

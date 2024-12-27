@@ -1,14 +1,16 @@
+import { addItem, getNotiKey } from '@src/screens/Notification/components/as';
 import axiosClient from './axiosClient';
 
 const reservationAPI = {
-  createReservation: async ({ userId, parkingLotId, startTime, endTime, vehicleType }) => {
+  createReservation: async ({ userId, parkingLotId, startTime, endTime, vehicleType,cancelMinute }) => {
     try {
-      console.log("userId", userId, "parkingLotId", parkingLotId, "startTime", startTime, "endTime", endTime, "vehicleType", vehicleType);
+      console.log("cancelMinute",cancelMinute);
       const response = await axiosClient.post('/api/reservations', {
         userId,
         parkingLotId,
         startTime,
         endTime,
+        cancelMinute,
         vehicleType,
       });
       return response.data;
@@ -49,6 +51,29 @@ const reservationAPI = {
       throw error;
     }
   },
+  createPayment: async ({ reservation_id, amount , payment_method}) => {
+    try {
+      console.log('Create payment', reservation_id, amount);
+      const response = await axiosClient.post('/api/payments', {
+        reservation_id,
+        amount,
+        payment_method,
+      });
+   
+      (async () => {
+        await addItem(getNotiKey(Date.now()), {
+          title: 'Thông báo',
+          description: `Bạn vừa thanh toán: ${amount.toLocaleString()}đ, mã đặt chỗ: ${reservation_id}`,
+          createdAt: Date.now(),
+          isSeen: false,
+        });
+      })();
+      return response.data;
+    } catch (error) {
+      console.error('Error creating payment:', error);
+      throw error;
+    }
+  }
 };
 
 export default reservationAPI;

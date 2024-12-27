@@ -1,9 +1,9 @@
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import ButtonComponent from '@src/components/Button';
-import {generalColor} from '@src/theme/color';
-import {useEffect} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
-import {showMessage} from 'react-native-flash-message';
+import { generalColor } from '@src/theme/color';
+import { useEffect } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import { showMessage } from 'react-native-flash-message';
 import QRCode from 'react-native-qrcode-svg';
 const QrcodeScreen = ({route}) => {
   const {qrData} = route.params;
@@ -23,26 +23,27 @@ const QrcodeScreen = ({route}) => {
   }, []);
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Your QR Code</Text>
+      <Text style={styles.title}>QR Đặt Chỗ</Text>
       <View style={styles.floatingContainer}>
         <Text style={styles.name}>{parkingslot.name}</Text>
         <Text style={styles.address}>{parkingslot.address}</Text>
       </View>
       <QRCode value={qrData} size={200} />
-      <View style={styles.floatingContainer}>
-        <Text style={styles.infoLabel1}> Booking Detail</Text>
+      {/* <View style={styles.floatingContainer}>
+        <Text style={styles.infoLabel1}>Thông tin đặt chỗ</Text>
         <Text style={styles.infoLabel}>
-          Check-in Time: {new Date(checkinTime).toLocaleString()}
+          Thời gian Check-in: {new Date(checkinTime).toLocaleString()}
         </Text>
         {duration > 0 && (
           <Text style={styles.infoLabel}>Duration: {duration} minutes</Text>
         )}
-      </View>
+      </View> */}
       <ButtonComponent
         onPress={handleBackToParkingLot}
         color={generalColor.other.bluepurple}
         style={{marginVertical: 24, marginTop: 40, borderRadius: 12}}
-        text={'Back to Parking Lot'}
+        text={'Quay về màn hình chính'}
+
       />
     </View>
   );
@@ -58,6 +59,8 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
+    color: '#000',
+
     marginBottom: 16,
   },
   floatingContainer: {
@@ -78,6 +81,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   name: {
+    color: '#091E3D',
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 8,

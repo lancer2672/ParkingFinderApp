@@ -4,24 +4,20 @@ import reservationAPI from '@src/api/reservation.api';
 import ButtonComponent from '@src/components/Button';
 import LoadingModal from '@src/components/LoadingModal/LoadingModal';
 import { generalColor } from '@src/theme/color';
-import { RES_STATUS } from '@src/utils/constant';
+import { PAY_METHOD, RES_STATUS } from '@src/utils/constant';
 import { useEffect, useState } from 'react';
 import {
   Image,
+  ImageBackground,
   LayoutAnimation,
+  Modal,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
-  Pressable,
-  ImageBackground,
-  BackHandler,
-  Modal,
+  View
 } from 'react-native';
-import QRCodeScanner from 'react-native-qrcode-scanner';
 import { showMessage } from 'react-native-flash-message';
-import { launchImageLibrary } from 'react-native-image-picker';
-import Material from 'react-native-vector-icons/MaterialIcons';
+import QRCodeScanner from 'react-native-qrcode-scanner';
 
 const QrScan = () => {
   const navigation = useNavigation();
@@ -38,7 +34,7 @@ const QrScan = () => {
     
     setQrData(parsedData);
     setModalVisible(true);
-    fetchResById(parsedData.reservation.id);
+    fetchResById(parsedData.id);
   };
 
   const isInValidResStatus = status => {
@@ -46,6 +42,7 @@ const QrScan = () => {
   };
 
   const fetchResById = async id => {
+    console.log("ID", id);
     if (!id) {
       return;
     }
@@ -101,6 +98,16 @@ const QrScan = () => {
         });
         setReservation(prev => ({ ...prev, status: nextStatus }));
       }
+      // Cứ tạo request -> vì nếu người dùng đã thanh toán thì request này sẽ lỗi -> ignore 
+  
+      if (nextStatus === RES_STATUS.CHECKED_OUT) {
+        reservationAPI.createPayment({
+          reservationId: reservation.id,
+          amount: reservation.price,
+          userId: reservation.userId,
+          paymentMethod: PAY_METHOD.BANK_TRANSFER,
+        }).catch((error) => {})
+      }
     } catch (error) {
       showMessage({
         message: 'Lỗi không xác định',
@@ -110,14 +117,6 @@ const QrScan = () => {
     }
   };
 
-  const handleSelectImage = () => {
-    launchImageLibrary({ mediaType: 'photo' }, response => {
-      if (response.assets && response.assets.length > 0) {
-        const selectedImage = response.assets[0];
-        alert(`Selected image: ${selectedImage.uri}`);
-      }
-    });
-  };
 
   const getBtnContentByStatus = status => {
     switch (status) {
@@ -132,7 +131,7 @@ const QrScan = () => {
 
   useEffect(() => {
     LayoutAnimation.configureNext(expandAnimation);
-    if (qrData && qrData.reservation && qrData.reservation.id) {
+    if (qrData && qrData.reservation && qrData.reservation?.id) {
       fetchResById(qrData.reservation.id); // Use the scanned QR code data
       console.log('Id park:', qrData.reservation.id);
     }
@@ -182,12 +181,12 @@ const QrScan = () => {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalView}>
-            <Text style={styles.modalText}>QR Code Information</Text>
+            <Text style={styles.modalText}>Thông tin đặt vé</Text>
             <Text>ID: {reservation?.id}</Text>
-            <Text>Parking Lot ID: {reservation?.parkingLotId}</Text>
+            {/* <Text>Parking Lot ID: {reservation?.parkingLotId}</Text> */}
             <Text>Start Time: {new Date(reservation?.startTime).toLocaleString()}</Text>
             <Text>Check Out Time: {reservation?.checkOutTime ? new Date(reservation?.checkOutTime).toLocaleString() : 'N/A'}</Text>
-            <Text>Total Price: {reservation?.totalPrice}</Text>
+            <Text>Total Price: {reservation?.price}</Text>
             <ButtonComponent
               onPress={handleSubmit}
               color={generalColor.other.bluepurple}
@@ -197,7 +196,7 @@ const QrScan = () => {
               style={styles.closeButton}
               onPress={() => setModalVisible(!modalVisible)}
             >
-              <Text style={styles.textStyle}>Close</Text>
+              <Text style={styles.textStyle}>Đóng</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -294,6 +293,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 20,
     padding: 35,
+    width:"90%",
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: {

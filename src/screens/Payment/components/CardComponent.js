@@ -1,4 +1,4 @@
-import {Image, StyleSheet, Text, View} from 'react-native';
+import { Image, StyleSheet, Text, View } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 
 const CardComponent = ({card}) => {
@@ -15,7 +15,7 @@ const CardComponent = ({card}) => {
       <View style={styles.information}>
         <View style={styles.cardHolder}>
           <Text style={styles.subTitle}>Tên chủ thẻ</Text>
-          <Text style={styles.content}>{card.cardHolder}</Text>
+          <Text style={styles.content}>{card.cardHolder.toUpperCase()}</Text>
         </View>
 
         <View style={styles.expires}>
