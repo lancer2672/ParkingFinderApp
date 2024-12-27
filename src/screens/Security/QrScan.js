@@ -101,12 +101,12 @@ const QrScan = () => {
       // Cứ tạo request -> vì nếu người dùng đã thanh toán thì request này sẽ lỗi -> ignore 
   
       if (nextStatus === RES_STATUS.CHECKED_OUT) {
-        await reservationAPI.createPayment({
+        reservationAPI.createPayment({
           reservationId: reservation.id,
           amount: reservation.price,
           userId: reservation.userId,
           paymentMethod: PAY_METHOD.BANK_TRANSFER,
-        });
+        }).catch((error) => {})
       }
     } catch (error) {
       showMessage({

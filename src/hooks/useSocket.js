@@ -1,5 +1,5 @@
-import {serverURL} from '@src/api/axiosClient';
-import {useEffect, useState} from 'react';
+import { serverURL } from '@src/api/axiosClient';
+import { useCallback, useEffect, useState } from 'react';
 import io from 'socket.io-client';
 
 const useSocket = () => {
@@ -39,8 +39,12 @@ const useSocket = () => {
       socket.on(event, callback);
     }
   };
-
-  return {socket, emit, on};
+  const off = useCallback((event, callback) => {
+    if (socket) {
+      socket.off(event, callback);
+    }
+  }, [socket]);
+  return {socket, emit, on,off};
 };
 
 export default useSocket;

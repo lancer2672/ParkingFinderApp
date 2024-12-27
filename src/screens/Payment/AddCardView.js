@@ -16,7 +16,7 @@ import {
 import { showMessage } from 'react-native-flash-message';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import styled from 'styled-components';
-import { deleteAllMatchingPattern, getAllValuesMatchingPattern, removeItem } from '../Notification/components/as';
+import { addItem, deleteAllMatchingPattern, getAllValuesMatchingPattern, removeItem } from '../Notification/components/as';
 import { AdvancedCardSlider } from './components/CardCarousel';
 
 const mockCards = [
@@ -57,7 +57,7 @@ const AddCardView = () => {
     return async () => {};
   }, []);
   console.log(">>>>>>>>>>>>>>>user",user.cardInfo, cards);
-  const toggleSwitch = () => {
+  const toggleSwitch = async () => {
     // const newIsEnabled = !isEnabled;
     // setIsEnabled(newIsEnabled);
     if (idx == -1) return;
@@ -67,12 +67,14 @@ const AddCardView = () => {
         ...user,
         cardInfo: null,
       });
+      await removeItem(Card_Key);
       return;
     }
     setUser({
       ...user,
       cardInfo:  card,
     });
+    await addItem(Card_Key, card);
   };
   const handleDeleteCard =async () =>{
     if (idx == -1) return;

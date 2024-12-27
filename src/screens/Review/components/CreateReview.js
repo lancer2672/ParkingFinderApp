@@ -4,7 +4,7 @@ import { generalColor } from '@src/theme/color';
 import { rowCenter } from '@src/theme/style';
 import textStyle from '@src/theme/text';
 import { REVIEW_TEXT, SCREEN_HEIGHT } from '@src/utils/constant';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   FlatList,
   Image,
@@ -18,7 +18,9 @@ import {
 } from 'react-native';
 import StarRating from 'react-native-star-rating';
 
+import axiosClient from '@src/api/axiosClient';
 import fileAPI from '@src/api/file.api';
+import reviewAPI from '@src/api/review.api';
 import useUserStore from '@src/store/userStore';
 import { showMessage } from 'react-native-flash-message';
 import { launchImageLibrary } from 'react-native-image-picker';
@@ -30,6 +32,20 @@ const CreateReviewModal = ({parkingLotId, isVisible, onClose}) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [content, setContent] = useState('');
   const [rating, setRating] = useState(0);
+  const [parkingLot,setParkingLot] = useState(null);
+
+  useEffect(() => {
+    const fetchParkingLot = async () => {
+      try {
+        const res = await axiosClient.get("api/parking-lots/"+parkingLotId);
+        setParkingLot(res.data);
+      } catch (er) {
+        console.log('er', er);
+      }
+    };
+    fetchParkingLot();
+  }, [parkingLotId]);
+
   const selectImages = () => {
     const options = {
       noData: true,
@@ -67,24 +83,27 @@ const CreateReviewModal = ({parkingLotId, isVisible, onClose}) => {
       return;
     }
     try {
-      const uploadPromises = images.map((image, index) => {
-        const formData = new FormData();
-        formData.append('file', {
-          uri: image,
-          type: 'image/jpeg', 
-          name: `image${index}.jpg`
+      let imageUrls = '';
+      if (images.length > 0) {
+        const uploadPromises = images.map((image, index) => {
+          const formData = new FormData();
+          formData.append('file', {
+            uri: image,
+            type: 'image/jpeg', 
+            name: `image${index}.jpg`
+          });
+          return fileAPI.upload(formData);
         });
-        return fileAPI.upload(formData);
-      });
-      const res = await Promise.all(uploadPromises);
-      const imageUrls = res.join(',');
-      console.log('upload res', imageUrls);
+        const res = await Promise.all(uploadPromises);
+        imageUrls = res.join(',');
+        console.log('upload res', imageUrls);
+      }
       const createReviewRes  = await reviewAPI.create({
         parkingLotId,
         rating,
         userId: user.id,
         comment: content,
-        imageId:imageUrls,
+        imageId: imageUrls,
       })
       console.log('createReviewRes', createReviewRes);
       showMessage({
@@ -94,7 +113,7 @@ const CreateReviewModal = ({parkingLotId, isVisible, onClose}) => {
       onClose();
     }
     catch(er){
-
+      console.log(">>>ER",er)
     }
   };
   return (
@@ -126,17 +145,17 @@ const CreateReviewModal = ({parkingLotId, isVisible, onClose}) => {
             <View style={styles.row}>
               <Avatar.Image
                 size={80}
-                source={{uri: 'https://picsum.photos/200'}}
+                source={{uri: parkingLot?.imageUrls || 'https://picsum.photos/200'}}
               />
             </View>
             <View style={styles.row}>
               <Text style={[textStyle.h[2], {color: generalColor.primary}]}>
-                "Parking name"
+              {parkingLot?.name || "Name"}
               </Text>
             </View>
             <View style={styles.row}>
               <Text style={[textStyle.content.medium, {textAlign: 'center'}]}>
-                "Address"
+                  {parkingLot?.address || "Address"}
               </Text>
             </View>
             <View style={styles.row}>

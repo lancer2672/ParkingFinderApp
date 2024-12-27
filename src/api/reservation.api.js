@@ -2,14 +2,15 @@ import { addItem, getNotiKey } from '@src/screens/Notification/components/as';
 import axiosClient from './axiosClient';
 
 const reservationAPI = {
-  createReservation: async ({ userId, parkingLotId, startTime, endTime, vehicleType }) => {
+  createReservation: async ({ userId, parkingLotId, startTime, endTime, vehicleType,cancelMinute }) => {
     try {
-      console.log("userId", userId, "parkingLotId", parkingLotId, "startTime", startTime, "endTime", endTime, "vehicleType", vehicleType);
+      console.log("cancelMinute",cancelMinute);
       const response = await axiosClient.post('/api/reservations', {
         userId,
         parkingLotId,
         startTime,
         endTime,
+        cancelMinute,
         vehicleType,
       });
       return response.data;
@@ -62,7 +63,7 @@ const reservationAPI = {
       (async () => {
         await addItem(getNotiKey(Date.now()), {
           title: 'Thông báo',
-          description: 'Bạn vừa thanh toán: ' + amount + 'đ, mã đặt chỗ: ' + reservation_id,
+          description: `Bạn vừa thanh toán: ${amount.toLocaleString()}đ, mã đặt chỗ: ${reservation_id}`,
           createdAt: Date.now(),
           isSeen: false,
         });

@@ -1,6 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import reservationAPI from '@src/api/reservation.api';
 import ButtonComponent from '@src/components/Button';
+import useUserStore from '@src/store/userStore';
 import { generalColor } from '@src/theme/color';
 import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
@@ -8,7 +9,8 @@ import { showMessage } from 'react-native-flash-message';
 import QRCode from 'react-native-qrcode-svg';
 
 const DetailQr = ({ route }) => {
-  const userId = 6;
+  const user = useUserStore(state => state.user);
+  const userId = user.id;
   const [qrData, setQrData] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigation = useNavigation();

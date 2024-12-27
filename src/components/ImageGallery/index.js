@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import {
-    Dimensions,
-    Image,
-    Modal,
-    StyleSheet,
-    TouchableOpacity,
-    View
+  Dimensions,
+  Image,
+  Modal,
+  StyleSheet,
+  TouchableOpacity,
+  View
 } from 'react-native';
 
 const ImageGallery = ({ images }) => {
@@ -19,25 +19,30 @@ const ImageGallery = ({ images }) => {
   const closeImageModal = () => {
     setSelectedImage(null);
   };
-
+  console.log(">>>> images", images, images.length)
   return (
     <View style={styles.container}>
-      {images.map((image, index) => (
-        <TouchableOpacity 
-          key={index} 
-          onPress={() => openImageModal(image)}
-          style={styles.imageWrapper}
-        >
-          <Image 
-            source={{ uri: image }} 
-            style={[
-              styles.image, 
-              { width: screenWidth * 0.33, height: screenWidth * 0.4 }
-            ]} 
-            resizeMode="cover"
-          />
-        </TouchableOpacity>
-      ))}
+      {images.map((image, index) => {
+        if(image == ""){
+          return <></>
+        }
+        return (
+          <TouchableOpacity 
+            key={index} 
+            onPress={() => openImageModal(image)}
+            style={styles.imageWrapper}
+          >
+            <Image 
+              source={{ uri: image }} 
+              style={[
+                styles.image, 
+                { width: screenWidth * 0.33, height: screenWidth * 0.4 }
+              ]} 
+              resizeMode="cover"
+            />
+          </TouchableOpacity>
+        );
+      })}
 
       {/* Detailed Image Modal */}
       <Modal
